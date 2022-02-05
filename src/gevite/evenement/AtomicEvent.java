@@ -5,8 +5,13 @@ import java.time.LocalTime;
 import java.util.HashMap;
 
 public abstract class AtomicEvent implements AtomicEventI {
-private HashMap<String, Serializable> listPoperty;
 	
+	private HashMap<String, Serializable> listPoperty;
+	
+	
+	public AtomicEvent() {
+		listPoperty = new HashMap<String, Serializable>();
+	}
 	
 	@Override
 	public LocalTime getTimeStamp() {

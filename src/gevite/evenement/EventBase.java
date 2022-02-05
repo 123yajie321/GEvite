@@ -43,8 +43,10 @@ public class EventBase implements EventBaseI {
 		return listEvent.contains(e);
 	}
 
+	
 	@Override
 	public void clearEvents(Duration d) {
+		/*
 		for(int i = 0 ; i < listEvent.size() ; i++) {
 			LocalTime time=LocalTime.now();
 			if( Duration.between(time, listEvent.get(i).getTimeStamp())>d) {
@@ -53,7 +55,8 @@ public class EventBase implements EventBaseI {
 				
 			}
 		}
-
+*/
 	}
+	
 
 }
