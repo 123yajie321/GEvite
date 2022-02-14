@@ -3,9 +3,10 @@ package gevite.cep.cvm;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.cvm.AbstractCVM;
 import gevite.cep.CEPBusManagementCI;
-import gevite.cep.gestionEvent.CEPBus;
-import gevite.cep.gestionEvent.ConnectorRegister;
-import gevite.cep.gestionEvent.Emetteur;
+import gevite.cepbus.CEPBus;
+import gevite.connector.ConnectorRegister;
+import gevite.correlateur.Correlateur;
+import gevite.emitteur.Emetteur;
 
 public class CVM extends AbstractCVM {
 
@@ -18,7 +19,11 @@ public class CVM extends AbstractCVM {
 		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {});
 		String desURI = AbstractComponent.createComponent(Emetteur.class.getCanonicalName(), new Object[] {});
 		
+		String correlateurURI = AbstractComponent.createComponent(Correlateur.class.getCanonicalName(), new Object[] {});
 		this.doPortConnection(desURI, Emetteur.ESOP_URI, CEPBus.CEPIP_URI, ConnectorRegister.class.getCanonicalName());
+		System.out.println(correlateurURI+";"+Correlateur.CCROP_URI+";"+CEPBus.CCRIP_URI);
+		//this.doPortConnection(correlateurURI,Correlateur.CCROP_URI, CEPBus.CCRIP_URI, ConnectorRegister.class.getCanonicalName());
+
 		super.deploy();
 	}
 

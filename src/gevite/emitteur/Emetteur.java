@@ -1,4 +1,4 @@
-package gevite.cep.gestionEvent;
+package gevite.emitteur;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
@@ -10,11 +10,11 @@ import gevite.cep.CEPBusManagementCI;
 public class Emetteur extends AbstractComponent {
 	
 	public static final String ESOP_URI = "esop-uri";
-	protected EmitServiceOutboundPort esop;
+	protected EmitterRegisterOutboundPort esop;
 
 	protected Emetteur() throws Exception {
 		super(1,0);
-		this.esop = new EmitServiceOutboundPort(ESOP_URI,this);
+		this.esop = new EmitterRegisterOutboundPort(ESOP_URI,this);
 		this.esop.publishPort();
 	}
 	@Override

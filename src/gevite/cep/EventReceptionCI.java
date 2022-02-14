@@ -6,9 +6,9 @@ import gevite.evenement.EventI;
 
 public interface EventReceptionCI extends OfferedCI, RequiredCI {
 	
-	public void receiveEvent(String emitterURI, EventI e);
+	public void receiveEvent(String emitterURI, EventI e)throws Exception;
 	
-	public void receiveEvents(String emitterURI, EventI[] events);
+	public void receiveEvents(String emitterURI, EventI[] events)throws Exception;
 	
 
 }

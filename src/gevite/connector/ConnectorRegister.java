@@ -1,28 +1,13 @@
-package gevite.cep.gestionEvent;
+package gevite.connector;
 
-import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.interfaces.RequiredCI;
-import fr.sorbonne_u.components.ports.AbstractOutboundPort;
+import fr.sorbonne_u.components.connectors.AbstractConnector;
 import gevite.cep.CEPBusManagementCI;
 
-public class EmitServiceOutboundPort extends AbstractOutboundPort implements CEPBusManagementCI {
-
-	private static final long serialVersionUID=1L;
-	
-	public EmitServiceOutboundPort( ComponentI owner) throws Exception {
-		super(CEPBusManagementCI.class, owner);
-		
-	}
-	
-	public EmitServiceOutboundPort(String uri,ComponentI owner) throws Exception{
-		super(uri, CEPBusManagementCI.class, owner);
-	
-	}
+public class ConnectorRegister extends AbstractConnector implements CEPBusManagementCI {
 
 	@Override
-	public String registerEmitter(String uri)throws Exception {
-		
-		return ((CEPBusManagementCI)this.getConnector()).registerEmitter(uri);
+	public String registerEmitter(String uri) throws Exception {
+		return ((CEPBusManagementCI)this.offering).registerEmitter(uri);
 	}
 
 	@Override
@@ -32,9 +17,8 @@ public class EmitServiceOutboundPort extends AbstractOutboundPort implements CEP
 	}
 
 	@Override
-	public String registerCorrelator(String uri, String inboundPortURI) {
-		
-		return null;
+	public String registerCorrelator(String uri, String inboundPortURI) throws Exception {
+		return ((CEPBusManagementCI)this.offering).registerCorrelator(uri, inboundPortURI);
 	}
 
 	@Override

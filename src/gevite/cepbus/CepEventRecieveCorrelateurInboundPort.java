@@ -1,4 +1,4 @@
-package gevite.cep.gestionEvent;
+package gevite.cepbus;
 
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.interfaces.OfferedCI;
@@ -6,12 +6,16 @@ import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
-public class ReceptionServiceInboundPort extends AbstractInboundPort implements EventReceptionCI {
+public class CepEventRecieveCorrelateurInboundPort extends AbstractInboundPort implements EventReceptionCI {
 
-	public ReceptionServiceInboundPort(Class<? extends OfferedCI> implementedInterface, ComponentI owner)
+	public CepEventRecieveCorrelateurInboundPort(ComponentI owner)
 			throws Exception {
-		super(implementedInterface, owner);
-		// TODO Auto-generated constructor stub
+		super(EventReceptionCI.class, owner);
+	}
+	
+	public CepEventRecieveCorrelateurInboundPort(String uri,ComponentI owner)
+			throws Exception {
+		super(uri,EventReceptionCI.class, owner);
 	}
 
 	@Override
