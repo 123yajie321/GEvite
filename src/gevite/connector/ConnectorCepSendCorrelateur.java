@@ -6,7 +6,7 @@ import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
-public class ConnectorCorrelateurSend extends AbstractConnector implements EventReceptionCI {
+public class ConnectorCepSendCorrelateur extends AbstractConnector implements EventReceptionCI {
 
 	@Override
 	public void receiveEvent(String emitterURI, EventI e) throws Exception {

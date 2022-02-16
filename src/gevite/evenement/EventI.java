@@ -11,6 +11,6 @@ import java.time.LocalTime;
 public interface EventI extends Serializable {
 	public LocalTime getTimeStamp();
 	public boolean  hasProperty(String name);
-	Serializable getProperty(String name);
+	Serializable getPropertyValue(String name);
 }
 

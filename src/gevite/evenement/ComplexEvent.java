@@ -24,7 +24,7 @@ public abstract class ComplexEvent implements ComplexEventI {
 	}
 
 	@Override
-	public Serializable getProperty(String name) {
+	public Serializable getPropertyValue(String name) {
 		
 		return listPoperty.get(name);
 	}

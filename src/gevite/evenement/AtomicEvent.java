@@ -28,7 +28,7 @@ public abstract class AtomicEvent implements AtomicEventI {
 	}
 
 	@Override
-	public Serializable getProperty(String name) {
+	public Serializable getPropertyValue(String name) {
 		
 		return listPoperty.get(name);
 	}

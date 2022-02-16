@@ -6,17 +6,17 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventReceptionCI;
 
-public class CepCorrelateurRegisterOutboundPort extends AbstractOutboundPort implements CEPBusManagementCI {
+public class CorrelateurRegisterCepOutboundPort extends AbstractOutboundPort implements CEPBusManagementCI {
 	
 	
 	
 
-	public CepCorrelateurRegisterOutboundPort(ComponentI owner)
+	public CorrelateurRegisterCepOutboundPort(ComponentI owner)
 			throws Exception {
 		super(CEPBusManagementCI.class, owner);
 	}
 	
-	public CepCorrelateurRegisterOutboundPort(String uri,ComponentI owner)
+	public CorrelateurRegisterCepOutboundPort(String uri,ComponentI owner)
 			throws Exception {
 		super(uri,CEPBusManagementCI.class, owner);
 	}

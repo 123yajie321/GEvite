@@ -2,6 +2,7 @@ package gevite.rule;
 
 import java.util.ArrayList;
 
+import gevite.correlateur.CorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 

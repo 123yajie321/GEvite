@@ -23,7 +23,7 @@ public class Correlateur extends AbstractComponent {
 	//public static final String CESCOP_URI = "cescop-uri";
 	
 	protected CepEventRecieveCorrelateurInboundPort cercip;
-	protected CepCorrelateurRegisterOutboundPort ccrop;
+	protected CorrelateurRegisterCepOutboundPort ccrop;
 	
 	protected EventBase baseEvent;
 	protected HashMap<EventI, String>eventEmitter;
@@ -33,7 +33,7 @@ public class Correlateur extends AbstractComponent {
 		super(1,0);
 		baseEvent =new EventBase();
 		this.cercip= new CepEventRecieveCorrelateurInboundPort(CERCIP_URI,this);
-		this.ccrop=new CepCorrelateurRegisterOutboundPort(CCROP_URI,this);
+		this.ccrop=new CorrelateurRegisterCepOutboundPort(CCROP_URI,this);
 		this.ccrop.publishPort();
 		this.cercip.publishPort();
 		

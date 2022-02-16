@@ -1,4 +1,4 @@
-package gevite.emitteur;
+package gevite.correlateur;
 
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
@@ -7,20 +7,21 @@ import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
-public class EmitterSendOutboundPort extends AbstractOutboundPort implements EventReceptionCI {
+public class CorrelateurSendCepOutboundPort extends AbstractOutboundPort implements  EventReceptionCI {
 
-	private static final long serialVersionUID=1L;
-	
-	public EmitterSendOutboundPort( ComponentI owner) throws Exception {
+	public CorrelateurSendCepOutboundPort( ComponentI owner)
+			throws Exception {
 		super(EventReceptionCI.class, owner);
 		
 	}
+
 	
-	public EmitterSendOutboundPort(String uri,ComponentI owner) throws Exception{
+	public CorrelateurSendCepOutboundPort(String uri,ComponentI owner) throws Exception{
 		super(uri, EventReceptionCI.class, owner);
 	
 	}
 
+	
 	@Override
 	public void receiveEvent(String emitterURI, EventI e) throws Exception {
 		((EventReceptionCI)this.getConnector()).receiveEvent(emitterURI, e);
@@ -32,6 +33,9 @@ public class EmitterSendOutboundPort extends AbstractOutboundPort implements Eve
 		// TODO Auto-generated method stub
 		
 	}
-
 	
+	
+	
+
+
 }

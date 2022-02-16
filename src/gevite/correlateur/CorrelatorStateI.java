@@ -1,4 +1,4 @@
-package gevite.rule;
+package gevite.correlateur;
 
 public interface CorrelatorStateI {
 
