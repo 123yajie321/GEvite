@@ -4,28 +4,35 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import gevite.cep.CEPBusManagementCI;
+import gevite.evenement.HealthEvent;
 
 
 @RequiredInterfaces(required = {CEPBusManagementCI.class})
 public class Emetteur extends AbstractComponent {
 	
+	public static final String EROP_URI = "erop-uri";
 	public static final String ESOP_URI = "esop-uri";
-	protected EmitterRegisterOutboundPort esop;
+	protected EmitterRegisterOutboundPort erop;
+	protected EmitterSendOutboundPort esop;
 
 	protected Emetteur() throws Exception {
 		super(1,0);
-		this.esop = new EmitterRegisterOutboundPort(ESOP_URI,this);
+		this.erop = new EmitterRegisterOutboundPort(EROP_URI,this);
+		this.erop.publishPort();
+		this.esop = new EmitterSendOutboundPort(ESOP_URI,this);
 		this.esop.publishPort();
 	}
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		this.esop.registerEmitter(ESOP_URI);
+		String uri=this.erop.registerEmitter(EROP_URI);
+		
+		HealthEvent he=new HealthEvent();
 	}
 	
 	@Override
 	public synchronized void finalise() throws Exception {		
-		this.doPortDisconnection(ESOP_URI);
+		this.doPortDisconnection(EROP_URI);
 		super.finalise();
 	}
 	

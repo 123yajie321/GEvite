@@ -5,6 +5,7 @@ import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
+import gevite.cepbus.CEPBus;
 import gevite.evenement.EventI;
 
 public class CepEventRecieveCorrelateurInboundPort extends AbstractInboundPort implements EventEmissionCI {
@@ -21,9 +22,13 @@ public class CepEventRecieveCorrelateurInboundPort extends AbstractInboundPort i
 
 
 	@Override
-	public void sendEvent(String emitterURI, EventI event) {
-		// TODO Auto-generated method stub
-		
+	public void sendEvent(String emitterURI, EventI event) throws Exception{
+		/*
+		  this.getOwner().handleRequest(
+				c-> ((Correlateur)c).addEvent(emitterURI, event)
+						);*/
+		this.getOwner().runTask(c-> ((Correlateur)c).addEvent(emitterURI, event));
+		  
 	}
 
 	@Override

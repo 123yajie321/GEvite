@@ -1,5 +1,7 @@
 package gevite.correlateur;
 
+import java.util.HashMap;
+
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
@@ -8,6 +10,7 @@ import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.evenement.EventBase;
+import gevite.evenement.EventI;
 import gevite.rule.RuleBase;
 
 @OfferedInterfaces(offered = {EventEmissionCI.class})
@@ -23,10 +26,12 @@ public class Correlateur extends AbstractComponent {
 	protected CepCorrelateurRegisterOutboundPort ccrop;
 	
 	protected EventBase baseEvent;
+	protected HashMap<EventI, String>eventEmitter;
 	protected RuleBase baseRule;
 	
 	protected Correlateur() throws Exception{
 		super(1,0);
+		baseEvent =new EventBase();
 		this.cercip= new CepEventRecieveCorrelateurInboundPort(CERCIP_URI,this);
 		this.ccrop=new CepCorrelateurRegisterOutboundPort(CCROP_URI,this);
 		this.ccrop.publishPort();
@@ -52,6 +57,13 @@ public class Correlateur extends AbstractComponent {
 	public synchronized void shutdown() throws ComponentShutdownException {
 		super.shutdown();
 	}
+	
+	public void addEvent(String emitterURI, EventI event) {
+			
+			this.baseEvent.addEvent(event);
+			this.eventEmitter.put(event, emitterURI);
+	}
+	
 	
 	
 	

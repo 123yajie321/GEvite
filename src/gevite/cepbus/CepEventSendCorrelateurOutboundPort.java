@@ -3,10 +3,13 @@ package gevite.cepbus;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
+import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
 public class CepEventSendCorrelateurOutboundPort extends AbstractOutboundPort implements EventReceptionCI {
+
+	private static final long serialVersionUID = 1L;
 
 	public CepEventSendCorrelateurOutboundPort(ComponentI owner)
 			throws Exception {
@@ -20,7 +23,9 @@ public class CepEventSendCorrelateurOutboundPort extends AbstractOutboundPort im
 
 	@Override
 	public void receiveEvent(String emitterURI, EventI e)throws Exception {
-
+		((EventReceptionCI)this.getConnector()).receiveEvent(emitterURI, e);
+		   
+					
 	}
 
 	@Override

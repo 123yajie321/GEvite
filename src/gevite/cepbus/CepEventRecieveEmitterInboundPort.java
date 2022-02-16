@@ -1,9 +1,12 @@
 package gevite.cepbus;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.cep.EventEmissionCI;
+import gevite.correlateur.Correlateur;
 import gevite.evenement.EventI;
 
 public class CepEventRecieveEmitterInboundPort extends AbstractInboundPort implements EventEmissionCI {
@@ -23,14 +26,14 @@ public class CepEventRecieveEmitterInboundPort extends AbstractInboundPort imple
 	}
 
 	@Override
-	public void sendEvent(String emitterURI, EventI event) {
+	public void sendEvent(String emitterURI, EventI event) throws Exception {
 		
-
+		this.getOwner().runTask(cep-> ((CEPBus)cep).addEvent(emitterURI, event));
 	}
 
 	@Override
 	public void sendEvents(String emitterURI, EventI[] events) {
-		// TODO Auto-generated method stub
+		
 
 	}
 

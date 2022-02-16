@@ -3,7 +3,7 @@ package gevite.connector;
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 import gevite.cep.CEPBusManagementCI;
 
-public class ConnectorRegister extends AbstractConnector implements CEPBusManagementCI {
+public class ConnectorEmitterRegister extends AbstractConnector implements CEPBusManagementCI {
 
 	@Override
 	public String registerEmitter(String uri) throws Exception {
@@ -18,7 +18,7 @@ public class ConnectorRegister extends AbstractConnector implements CEPBusManage
 
 	@Override
 	public String registerCorrelator(String uri, String inboundPortURI) throws Exception {
-		return ((CEPBusManagementCI)this.offering).registerCorrelator(uri, inboundPortURI);
+		return null;
 	}
 
 	@Override
