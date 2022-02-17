@@ -9,6 +9,6 @@ public interface HealthCorrelatorStateI extends CorrelatorStateI
 	
 	public boolean inZone(String p);
 	public boolean isAmbulanceAvailable();
-	
+	public void intervanetionAmbulance();
 	
 }

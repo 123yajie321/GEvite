@@ -34,28 +34,26 @@ public class S1 implements RuleI {
 
 	@Override
 	public boolean correlate(ArrayList<EventI> matchedEvents) {
-		// TODO Auto-generated method stub
-		return false;
+		
+		return true;
 	}
 
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) {
 		HealthCorrelatorStateI samuState = (HealthCorrelatorStateI)cs;
-		String p="  ";
-		
-		return samuState.inZone(p)&& samuState.isAmbulanceAvailable();
+		return samuState.inZone("p")&& samuState.isAmbulanceAvailable();
 	}
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
-		// TODO Auto-generated method stub
+		HealthCorrelatorStateI samuState = (HealthCorrelatorStateI)c;
+		samuState.intervanetionAmbulance();
 
 	}
 
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) {
-		// TODO Auto-generated method stub
-
+		eb.removeEvent(matchedEvents.get(0));
 	}
 
 }
