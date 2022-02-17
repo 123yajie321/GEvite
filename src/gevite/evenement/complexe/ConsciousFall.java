@@ -13,8 +13,8 @@ public class ConsciousFall  extends ComplexEvent implements ComplexEventI {
 	private HashMap<String, Serializable> listPoperty;
 	private ArrayList<EventI> correlateEvents;
 	
-	public ConsciousFall() {
-		AlarmeSante aSante = new AlarmeSante();
+	public ConsciousFall(ArrayList<EventI> correlateEvents) {
+		this.correlateEvents = correlateEvents;
 		
 	}
 
