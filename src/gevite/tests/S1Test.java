@@ -22,7 +22,7 @@ public class S1Test {
 	void test() {
 		EventBase base=new EventBase();
 		AlarmeSante aSante = new AlarmeSante();
-		Correlateur correlateur = new Correlateur();
+		//Correlateur correlateur = new Correlateur();
 		HealthCorrelatorStateI samuStateI;
 		
 		aSante.putProperty("type", "urgence");
