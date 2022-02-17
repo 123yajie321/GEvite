@@ -1,4 +1,4 @@
-package gevite.evenement;
+package gevite.evenement.atomique;
 
 import java.awt.List;
 import java.io.Serializable;

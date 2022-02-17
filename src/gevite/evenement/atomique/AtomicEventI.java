@@ -1,6 +1,8 @@
-package gevite.evenement;
+package gevite.evenement.atomique;
 
 import java.io.Serializable;
+
+import gevite.evenement.EventI;
 
 public interface AtomicEventI extends EventI {
 	

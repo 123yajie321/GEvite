@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.HealthCorrelatorStateI;
-import gevite.evenement.AlarmeSante;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
+import gevite.evenement.atomique.AlarmeSante;
 
 public class S1 implements RuleI {
 

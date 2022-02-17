@@ -1,9 +1,11 @@
-package gevite.evenement;
+package gevite.evenement.complexe;
 
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import gevite.evenement.EventI;
 
 public abstract class ComplexEvent implements ComplexEventI {
 
