@@ -1,13 +1,16 @@
-package gevite.rule;
+package gevite.rule.samu;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.HealthCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
-import gevite.evenement.atomique.AlarmeSante;
-import gevite.evenement.atomique.SignaleManuel;
+import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.evenement.atomique.samu.SignaleManuel;
+import gevite.rule.RuleI;
 
 public class S7 implements RuleI{
 	@Override

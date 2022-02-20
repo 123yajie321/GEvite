@@ -4,7 +4,7 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import gevite.cep.CEPBusManagementCI;
-import gevite.evenement.atomique.HealthEvent;
+import gevite.evenement.atomique.samu.HealthEvent;
 
 
 @RequiredInterfaces(required = {CEPBusManagementCI.class})

@@ -16,7 +16,7 @@ import gevite.rule.RuleBase;
 @OfferedInterfaces(offered = {EventEmissionCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class})
 
-public class Correlateur extends AbstractComponent implements HealthCorrelatorStateI{
+public class Correlateur extends AbstractComponent {
 	
 	public static final String CERCIP_URI = "cercip-uri";
 	public static final String CCROP_URI = "ccrop-uri";
@@ -66,28 +66,7 @@ public class Correlateur extends AbstractComponent implements HealthCorrelatorSt
 
 
 
-	@Override
-	public boolean inZone(String p) {
-	
-		return true;
-	}
 
-
-
-	@Override
-	public boolean isAmbulanceAvailable() {
-		
-		return true;
-	}
-
-
-
-
-
-	@Override
-	public void intervanetionAmbulance() {
-		System.out.println("ambulance arrive");
-	}
 	
 	
 	

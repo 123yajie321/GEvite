@@ -1,0 +1,10 @@
+package gevite.evenement.atomique.circulation;
+
+import java.io.Serializable;
+
+import gevite.evenement.atomique.AtomicEvent;
+
+public class PassageVehicule extends AtomicEvent {
+
+
+}
