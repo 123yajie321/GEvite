@@ -35,7 +35,7 @@ public class BouchonPompierCorrelateur implements PompierCorrelatorStateI{
 	@Override
 	public boolean isNotEchelleDisponible() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	

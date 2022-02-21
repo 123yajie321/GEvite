@@ -19,11 +19,11 @@ public class CVM extends AbstractCVM {
 		
 		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {});
 		String desURI = AbstractComponent.createComponent(Emetteur.class.getCanonicalName(), new Object[] {});
-		this.doPortConnection(desURI, Emetteur.EROP_URI, CEPBus.CEPIP_URI, ConnectorEmitterRegister.class.getCanonicalName());
+		this.doPortConnection(desURI, Emetteur.EROP_URI, CEPBus.CRIP_URI, ConnectorEmitterRegister.class.getCanonicalName());
 
 		String correlateurURI = AbstractComponent.createComponent(Correlateur.class.getCanonicalName(), new Object[] {});
 		//System.out.println(correlateurURI+";"+Correlateur.CCROP_URI+";"+CEPBus.CCRIP_URI);
-		this.doPortConnection(correlateurURI,Correlateur.CCROP_URI, CEPBus.CCRIP_URI, ConnectorCorrelateurRegister.class.getCanonicalName());
+		this.doPortConnection(correlateurURI,Correlateur.CCROP_URI, CEPBus.CRIP_URI, ConnectorCorrelateurRegister.class.getCanonicalName());
 
 		super.deploy();
 	}

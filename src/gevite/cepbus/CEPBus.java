@@ -16,9 +16,8 @@ import gevite.evenement.EventI;
 
 public class CEPBus extends AbstractComponent{
 	
-	public static final String CEPIP_URI = "cepip-uri";
+	public static final String CRIP_URI = "crip-uri";
 	public static final String CEREIP_URI = "cereip-uri";
-	public static final String CCRIP_URI="ccrip-uri";
 	public static final String CERCIP_URI = "cercip-uri";
 	public static final String CESCOP_URI = "cescop-uri";
 
@@ -29,9 +28,8 @@ public class CEPBus extends AbstractComponent{
 	protected HashMap<String,String> uriSubscription;
 
 	
-	protected CepEmitterRegisterInboundPort cepip;
+	protected CepRegisterInboundPort crip;
 	protected CepEventRecieveEmitterInboundPort cereip;
-	protected CepCorrelateurRegisterInboundPort ccrip;
 	protected CepEventRecieveCorrelateurInboundPort cercip;
 	protected CepEventSendCorrelateurOutboundPort cescop;
 
@@ -44,28 +42,26 @@ public class CEPBus extends AbstractComponent{
 		uriSubscription = new HashMap<String,String>();
 		eventEmitter=new HashMap<EventI,String>();
 		
-		this.cepip = new CepEmitterRegisterInboundPort(CEPIP_URI,this); 
+		this.crip = new CepRegisterInboundPort(CRIP_URI,this); 
 		this.cereip = new CepEventRecieveEmitterInboundPort(CEREIP_URI,this);
-		this.ccrip = new CepCorrelateurRegisterInboundPort(CCRIP_URI,this);
 		this.cercip = new CepEventRecieveCorrelateurInboundPort(CERCIP_URI, this);
 		this.cescop = new CepEventSendCorrelateurOutboundPort(CESCOP_URI, this);
-		this.cepip.publishPort();
+		this.crip.publishPort();
 		this.cereip.publishPort();
-		this.ccrip.publishPort();
 		this.cercip.publishPort();
 		this.cescop.publishPort();
 
 	}
 	
 	public String registerEmitter(String uri)throws Exception {
-		System.out.println("Emetteur : "+ uri +"registed");
+		System.out.println("Emetteur : "+ uri +" registed");
 		uriEmitters.add(uri);
 		return this.CEREIP_URI;
 	}
 	
 	public String registerCorrelator(String uri, String inboundPortURI) throws Exception{
 		uriCorrelateur.add(uri);
-		System.out.println("RegisterCorrelateur:" + uri);
+		System.out.println(" RegisterCorrelateur: " + uri);
 		return " port recevoir";// le port pour recevoir le event depuis correlateur
 	}
 
@@ -74,7 +70,7 @@ public class CEPBus extends AbstractComponent{
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
 		try {
-			this.cepip.unpublishPort();
+			this.crip.unpublishPort();
 			
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e);		

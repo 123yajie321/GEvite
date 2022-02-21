@@ -4,31 +4,32 @@ import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import gevite.cep.CEPBusManagementCI;
+import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
-public class EmitterSendOutboundPort extends AbstractOutboundPort implements EventReceptionCI {
+public class EmitterSendOutboundPort extends AbstractOutboundPort implements EventEmissionCI {
 
 	private static final long serialVersionUID=1L;
 	
 	public EmitterSendOutboundPort( ComponentI owner) throws Exception {
-		super(EventReceptionCI.class, owner);
+		super(EventEmissionCI.class, owner);
 		
 	}
 	
 	public EmitterSendOutboundPort(String uri,ComponentI owner) throws Exception{
-		super(uri, EventReceptionCI.class, owner);
+		super(uri, EventEmissionCI.class, owner);
 	
 	}
 
 	@Override
-	public void receiveEvent(String emitterURI, EventI e) throws Exception {
-		((EventReceptionCI)this.getConnector()).receiveEvent(emitterURI, e);
+	public void sendEvent(String emitterURI, EventI event) throws Exception {
+		((EventEmissionCI)this.getConnector()).sendEvent(emitterURI, event);
 		
 	}
 
 	@Override
-	public void receiveEvents(String emitterURI, EventI[] events) throws Exception {
+	public void sendEvents(String emitterURI, EventI[] events) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}

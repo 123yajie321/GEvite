@@ -5,16 +5,16 @@ import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.cep.CEPBusManagementCI;
 
-public class CepEmitterRegisterInboundPort extends AbstractInboundPort implements CEPBusManagementCI {
+public class CepRegisterInboundPort extends AbstractInboundPort implements CEPBusManagementCI {
 	
 	private static final long serialVersionUID=1L;
 
-	public CepEmitterRegisterInboundPort(ComponentI owner) throws Exception {
+	public CepRegisterInboundPort(ComponentI owner) throws Exception {
 		super(CEPBusManagementCI.class,owner);
 		
 	}
 	
-	public CepEmitterRegisterInboundPort(String uri,ComponentI owner) throws Exception{
+	public CepRegisterInboundPort(String uri,ComponentI owner) throws Exception{
 		super(uri, CEPBusManagementCI.class,owner);
 		
 	}
@@ -36,8 +36,9 @@ public class CepEmitterRegisterInboundPort extends AbstractInboundPort implement
 
 	@Override
 	public String registerCorrelator(String uri, String inboundPortURI)throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getOwner().handleRequest(
+				cep-> ((CEPBus)cep).registerCorrelator(uri, inboundPortURI)
+						);
 	}
 
 	@Override

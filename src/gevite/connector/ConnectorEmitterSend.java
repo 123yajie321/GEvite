@@ -6,15 +6,17 @@ import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
-public class ConnectorEmitterSend extends AbstractConnector implements EventReceptionCI {
+public class ConnectorEmitterSend extends AbstractConnector implements EventEmissionCI {
+
 
 	@Override
-	public void receiveEvent(String emitterURI, EventI e) throws Exception {
-		((EventEmissionCI)this.offering).sendEvent(emitterURI, e);
+	public void sendEvent(String emitterURI, EventI event) throws Exception {
+		((EventEmissionCI)this.offering).sendEvent(emitterURI, event);
+		
 	}
 
 	@Override
-	public void receiveEvents(String emitterURI, EventI[] events) throws Exception {
+	public void sendEvents(String emitterURI, EventI[] events) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}

@@ -9,32 +9,40 @@ public class BouchonHealthCorrelateur implements HealthCorrelatorStateI{
 	
 	@Override
 	public boolean isMedicAvailable() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public void triggerMedicCall(Serializable personId) {
-		// TODO Auto-generated method stub
-		
+	public void triggerMedicCall(Serializable personId) {		
 	}
 
 	@Override
 	public boolean inZone(String p) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isAmbulanceAvailable() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	public void intervanetionAmbulance() {
-		// TODO Auto-generated method stub
-		
+	public void intervanetionAmbulance() {		
+	}
+
+	@Override
+	public boolean isNotAmbulanceAvailable() {
+		return true;
+	}
+
+	@Override
+	public boolean procheSamuExiste() {
+		return true;
+	}
+
+	@Override
+	public boolean isNotMedicAvailable() {
+		return true;
 	}
 
 	

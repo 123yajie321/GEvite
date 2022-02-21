@@ -7,11 +7,9 @@ import gevite.correlateur.HealthCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
-import gevite.evenement.atomique.samu.InterventionCause;
-import gevite.evenement.complexe.samu.DemandeIntervention;
 import gevite.rule.RuleI;
 
-public class S2 implements RuleI {
+public class S4 implements RuleI{
 
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb) {
@@ -19,7 +17,7 @@ public class S2 implements RuleI {
 		for (int i = 0 ; i < eb.numberOfEvents() && (as == null ) ; i++) {
 			EventI e = eb.getEvent(i);
 			if (e instanceof AlarmeSante && e.hasProperty("type")&& e.hasProperty("position")
-					&& ((String)e.getPropertyValue("type")).equals("urgence")
+					&& ((String)e.getPropertyValue("type")).equals("medicale")
 					&&((String)e.getPropertyValue("position")).equals("p")) {
 				as = e;
 			}
@@ -30,9 +28,8 @@ public class S2 implements RuleI {
 				return matchedEvents;
 			} else {
 				return null;
-			}
+				}
 			
-		
 	}
 
 	@Override
@@ -42,25 +39,21 @@ public class S2 implements RuleI {
 	}
 
 	@Override
-	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) {
-		HealthCorrelatorStateI samuState = (HealthCorrelatorStateI)cs;
-		return samuState.inZone("p")&& samuState.isNotAmbulanceAvailable()&&samuState.procheSamuExiste();
+	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
+		HealthCorrelatorStateI samuState = (HealthCorrelatorStateI)c;
+		return samuState.inZone("p") && samuState.isNotMedicAvailable()&&samuState.procheSamuExiste();
 	}
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
-		InterventionCause iCause = new InterventionCause();
-		ArrayList<EventI> eventComplex = matchedEvents; 
-		eventComplex.add(iCause);
-		DemandeIntervention dIntervention = new DemandeIntervention(eventComplex);
 		HealthCorrelatorStateI samuState = (HealthCorrelatorStateI)c;
-		samuState.intervanetionAmbulance();
-
+		samuState.triggerMedicCall(matchedEvents);;		
 	}
 
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) {
 		eb.removeEvent(matchedEvents.get(0));
+		
 	}
 
 }
