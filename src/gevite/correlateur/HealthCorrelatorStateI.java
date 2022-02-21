@@ -9,6 +9,10 @@ public interface HealthCorrelatorStateI extends CorrelatorStateI
 	public boolean isAmbulanceAvailable();
 	public void intervanetionAmbulance();
 	
+	/*s2*/
+	public boolean isNotAmbulanceAvailable();
+
+	
 	/*s3*/
 	public boolean isMedicAvailable(); 
 	public void triggerMedicCall(Serializable personId);
