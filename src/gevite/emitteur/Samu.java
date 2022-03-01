@@ -4,6 +4,8 @@ import java.time.LocalTime;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import fr.sorbonne_u.cps.smartcity.connections.SAMUActionConnector;
 import fr.sorbonne_u.cps.smartcity.connections.SAMUActionOutboundPort;
 import fr.sorbonne_u.cps.smartcity.connections.SAMUNotificationInboundPort;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
@@ -15,12 +17,12 @@ import gevite.evenement.atomique.samu.HealthEvent;
 
 public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	
-	protected String sendEventOutboundPort_URI;
-	protected String registeOutboundPort_URI;
-	protected String emitterRecieveNotifyInboundPort_URI;
+	//protected String sendEventOutboundPort_URI;
+	//protected String registeOutboundPort_URI;
+	protected String SAMUReceiveNotifyInboundPort_URI;
 	protected String samuId;
 	protected String actionInboundPort_URI;
-	protected String actionOutboundPort_URI;
+	//protected String actionOutboundPort_URI;
 
 	protected EmitterRegisterOutboundPort erop;
 	protected EmitterSendOutboundPort esop;
@@ -31,22 +33,43 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	protected Samu(String registeOutport,String sendOutport,String samuInport,
 			String samuId,String actionInboundPort) throws Exception {
 		super(1,0);
-		this.sendEventOutboundPort_URI = sendOutport;
-		this.registeOutboundPort_URI = registeOutport;
-		this.emitterRecieveNotifyInboundPort_URI = samuInport;
+	//	this.sendEventOutboundPort_URI = sendOutport;
+		//this.registeOutboundPort_URI = registeOutport;
+		this.SAMUReceiveNotifyInboundPort_URI = samuInport;
 		this.samuId = samuId;
 		this.actionInboundPort_URI = actionInboundPort;
 		
 		
-		this.erop = new EmitterRegisterOutboundPort(registeOutboundPort_URI,this);
+		this.erop = new EmitterRegisterOutboundPort(this);
 		this.erop.publishPort();
-		this.esop = new EmitterSendOutboundPort(sendEventOutboundPort_URI,this);
+		this.esop = new EmitterSendOutboundPort(this);
 		this.esop.publishPort();
-		this.snip = new SAMUNotificationInboundPort(emitterRecieveNotifyInboundPort_URI, this);
+		this.snip = new SAMUNotificationInboundPort(SAMUReceiveNotifyInboundPort_URI, this);
 		this.snip.publishPort();
 		this.saop = new SAMUActionOutboundPort(this);
 		this.saop.publishPort();
 	}
+	
+	
+	@Override
+	public synchronized void	start() throws ComponentStartException
+	{
+		super.start();
+
+		try {
+			this.doPortConnection(
+					this.saop.getPortURI(),
+					this.actionInboundPort_URI,
+					SAMUActionConnector.class.getCanonicalName());
+			
+			
+			
+		} catch (Exception e) {
+			throw new ComponentStartException(e) ;
+		}
+	}
+	
+	
 	
 	@Override
 	public synchronized void execute() throws Exception {
