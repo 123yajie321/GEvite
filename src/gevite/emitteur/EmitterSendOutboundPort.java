@@ -1,11 +1,8 @@
 package gevite.emitteur;
 
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.interfaces.RequiredCI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
-import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
-import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
 public class EmitterSendOutboundPort extends AbstractOutboundPort implements EventEmissionCI {

@@ -4,10 +4,11 @@ import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import gevite.cep.CEPBusManagementCI;
+import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
-public class CorrelateurSendCepOutboundPort extends AbstractOutboundPort implements  EventReceptionCI {
+public class CorrelateurSendCepOutboundPort extends AbstractOutboundPort implements  EventEmissionCI {
 
 	public CorrelateurSendCepOutboundPort( ComponentI owner)
 			throws Exception {
@@ -21,15 +22,16 @@ public class CorrelateurSendCepOutboundPort extends AbstractOutboundPort impleme
 	
 	}
 
-	
+
 	@Override
-	public void receiveEvent(String emitterURI, EventI e) throws Exception {
-		((EventReceptionCI)this.getConnector()).receiveEvent(emitterURI, e);
+	public void sendEvent(String emitterURI, EventI event) throws Exception {
+		((EventEmissionCI)this.getConnector()).sendEvent(emitterURI, event);
 		
 	}
 
+
 	@Override
-	public void receiveEvents(String emitterURI, EventI[] events) throws Exception {
+	public void sendEvents(String emitterURI, EventI[] events) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,8 +1,6 @@
 package gevite.connector;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
-import gevite.cep.CEPBusManagementCI;
-import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
@@ -10,7 +8,7 @@ public class ConnectorCepSendCorrelateur extends AbstractConnector implements Ev
 
 	@Override
 	public void receiveEvent(String emitterURI, EventI e) throws Exception {
-		((EventEmissionCI)this.offering).sendEvent(emitterURI, e);
+		((EventReceptionCI)this.offering).receiveEvent(emitterURI, e);
 	}
 
 	@Override

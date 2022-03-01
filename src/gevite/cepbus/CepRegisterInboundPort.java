@@ -49,8 +49,10 @@ public class CepRegisterInboundPort extends AbstractInboundPort implements CEPBu
 
 	@Override
 	public void registerExecutor(String uri, String inboundPortURI)throws Exception {
-		// TODO Auto-generated method stub
-
+		
+		this.getOwner().handleRequest(
+				cep-> ((CEPBus)cep).registerExecuteur(uri,inboundPortURI)
+						);
 	}
 
 	@Override

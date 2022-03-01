@@ -1,9 +1,7 @@
 package gevite.cepbus;
 
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.interfaces.RequiredCI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
-import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 

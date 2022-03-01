@@ -6,14 +6,15 @@ import java.util.HashMap;
 
 public abstract class AtomicEvent implements AtomicEventI {
 	
-	private HashMap<String, Serializable> listPoperty;
-	private LocalTime createtime;
+	protected HashMap<String, Serializable> listPoperty;
+	protected LocalTime createtime;
 	
 	
 	public AtomicEvent() {
 		listPoperty = new HashMap<String, Serializable>();
 		createtime=LocalTime.now();
 	}
+	
 	
 	@Override
 	public LocalTime getTimeStamp() {

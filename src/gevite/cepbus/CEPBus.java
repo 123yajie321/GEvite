@@ -1,5 +1,6 @@
 package gevite.cepbus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -16,16 +17,21 @@ import gevite.evenement.EventI;
 
 public class CEPBus extends AbstractComponent{
 	
-	public static final String CRIP_URI = "crip-uri";
-	public static final String CEREIP_URI = "cereip-uri";
-	public static final String CERCIP_URI = "cercip-uri";
-	public static final String CESCOP_URI = "cescop-uri";
+	public static final String CRIP_URI = "crip-uri";		//register
+	public static final String CEREIP_URI = "cereip-uri";	//event recieve emitter
+	public static final String CERCIP_URI = "cercip-uri"; 	//event recieve correlateur doit etre supprimer
+	
+	public static final String CESCOP_URI = "cescop-uri";	//event send
 
 	
-    protected HashMap<EventI, String>eventEmitter;
+    protected HashMap<EventI, String>eventRecu;
+
 	protected HashSet<String> uriEmitters;
 	protected HashSet<String> uriCorrelateur;
-	protected HashMap<String,String> uriSubscription;
+	protected HashSet<String> uriExecuteur;
+
+	protected HashMap<String,ArrayList<String>> uriSubscription;
+	//protected ArrayList<Pair<String,String>> uriSubscription;
 
 	
 	protected CepRegisterInboundPort crip;
@@ -39,8 +45,9 @@ public class CEPBus extends AbstractComponent{
 		
 		uriEmitters = new HashSet<String>();
 		uriCorrelateur = new HashSet<String>();
-		uriSubscription = new HashMap<String,String>();
-		eventEmitter=new HashMap<EventI,String>();
+		//uriSubscription = new ArrayList<Pair<String, String>>();
+		uriSubscription = new HashMap<String,ArrayList<String>>();
+		eventRecu=new HashMap<EventI,String>();
 		
 		this.crip = new CepRegisterInboundPort(CRIP_URI,this); 
 		this.cereip = new CepEventRecieveEmitterInboundPort(CEREIP_URI,this);
@@ -64,6 +71,12 @@ public class CEPBus extends AbstractComponent{
 		System.out.println(" RegisterCorrelateur: " + uri);
 		return " port recevoir";// le port pour recevoir le event depuis correlateur
 	}
+	
+	public String registerExecuteur(String uri, String inboundPortURI)throws Exception {
+		System.out.println("Executeur : "+ uri +" registed");
+		uriExecuteur.add(uri);
+		return null;
+	}
 
 	
 	
@@ -80,7 +93,7 @@ public class CEPBus extends AbstractComponent{
 
 	public void addEvent(String emitterURI, EventI event) {
 		
-		this.eventEmitter.put(event, emitterURI);
+		this.eventRecu.put(event, emitterURI);
 }
 
 

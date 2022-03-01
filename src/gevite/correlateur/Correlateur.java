@@ -8,7 +8,6 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
-import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.rule.RuleBase;

@@ -1,14 +1,14 @@
 package gevite.correlateur;
 
 import fr.sorbonne_u.components.ComponentI;
-import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
-import gevite.cepbus.CEPBus;
 import gevite.evenement.EventI;
 
-public class CepEventRecieveCorrelateurInboundPort extends AbstractInboundPort implements EventEmissionCI {
+public class CepEventRecieveCorrelateurInboundPort extends AbstractInboundPort implements EventReceptionCI {
+
+	private static final long serialVersionUID = 1L;
 
 	public CepEventRecieveCorrelateurInboundPort(ComponentI owner)
 			throws Exception {
@@ -20,19 +20,13 @@ public class CepEventRecieveCorrelateurInboundPort extends AbstractInboundPort i
 		super(uri,EventEmissionCI.class, owner);
 	}
 
-
 	@Override
-	public void sendEvent(String emitterURI, EventI event) throws Exception{
-		/*
-		  this.getOwner().handleRequest(
-				c-> ((Correlateur)c).addEvent(emitterURI, event)
-						);*/
-		this.getOwner().runTask(c-> ((Correlateur)c).addEvent(emitterURI, event));
-		  
+	public void receiveEvent(String emitterURI, EventI e) throws Exception {
+		this.getOwner().runTask(c-> ((Correlateur)c).addEvent(emitterURI, e));		
 	}
 
 	@Override
-	public void sendEvents(String emitterURI, EventI[] events) {
+	public void receiveEvents(String emitterURI, EventI[] events) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
