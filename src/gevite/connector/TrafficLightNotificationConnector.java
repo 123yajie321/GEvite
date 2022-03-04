@@ -6,7 +6,7 @@ import fr.sorbonne_u.components.connectors.AbstractConnector;
 import fr.sorbonne_u.cps.smartcity.grid.Direction;
 import fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightNotificationCI;
 
-public class ConnectorTrafficNotification extends AbstractConnector implements TrafficLightNotificationCI{
+public class TrafficLightNotificationConnector extends AbstractConnector implements TrafficLightNotificationCI{
 
 	/**
 	 * @see fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightNotificationCI#vehiclePassage(java.lang.String, fr.sorbonne_u.cps.smartcity.grid.Direction, java.time.LocalTime)

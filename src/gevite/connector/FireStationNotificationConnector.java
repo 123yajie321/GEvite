@@ -9,7 +9,7 @@ import fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationCI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 
-public class ConnectorFIRENotification extends AbstractConnector implements FireStationNotificationCI{
+public class FireStationNotificationConnector extends AbstractConnector implements FireStationNotificationCI{
 
 	/**
 	 * @see fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationCI#fireAlarm(fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition, java.time.LocalTime, fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire)

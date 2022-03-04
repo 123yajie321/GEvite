@@ -9,7 +9,7 @@ import fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationCI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 
-public class ConnectorSAMUNotification extends AbstractConnector implements SAMUNotificationCI{
+public class SAMUNotificationConnector extends AbstractConnector implements SAMUNotificationCI{
 
 	/**
 	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationCI#healthAlarm(fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition, fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm, java.time.LocalTime)
