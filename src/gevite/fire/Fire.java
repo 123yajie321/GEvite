@@ -79,7 +79,7 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 						ConnectorExcuteurRegister.class.getCanonicalName());
 				this.doPortConnection(
 						this.esop.getPortURI(),
-						CEPBus.CEREIP_URI,
+						CEPBus.CERIP_URI,
 						ConnectorEmitterSend.class.getCanonicalName());
 				this.doPortConnection(
 						this.faop.getPortURI(),
@@ -140,9 +140,7 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 							  " at " + occurrence + "\n");
 		}
 
-		/**
-		 * @see fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI#endOfFire(fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition, java.time.LocalTime)
-		 */
+
 		@Override
 		public void			endOfFire(
 			AbsolutePosition position,
@@ -153,9 +151,7 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 							  " at " + occurrence + "\n");
 		}
 
-		/**
-		 * @see fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI#requestPriority(fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition, fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority, java.lang.String, fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition, java.time.LocalTime)
-		 */
+
 		@Override
 		public void			requestPriority(
 			IntersectionPosition intersection,
@@ -171,9 +167,7 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 							  "\n");
 		}
 
-		/**
-		 * @see fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI#atDestination(java.lang.String, java.time.LocalTime)
-		 */
+
 		@Override
 		public void			atDestination(String vehicleId, LocalTime occurrence)
 		throws Exception
@@ -182,9 +176,7 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 							   " has arrived at destination\n");
 		}
 
-		/**
-		 * @see fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI#atStation(java.lang.String, java.time.LocalTime)
-		 */
+
 		@Override
 		public void			atStation(String vehicleId, LocalTime occurrence)
 		throws Exception
@@ -192,9 +184,7 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 			this.traceMessage("Vehicle " + vehicleId + " has arrived at station\n");
 		}
 
-		/**
-		 * @see fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI#notifyNoStandardTruckAvailable(java.time.LocalTime)
-		 */
+
 		@Override
 		public void			notifyNoStandardTruckAvailable(LocalTime occurrence)
 		throws Exception
@@ -203,9 +193,7 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 							  occurrence + "\n");
 		}
 
-		/**
-		 * @see fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI#notifyStandardTrucksAvailable(java.time.LocalTime)
-		 */
+
 		@Override
 		public void			notifyStandardTrucksAvailable(LocalTime occurrence)
 		throws Exception
@@ -214,9 +202,7 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 							  occurrence + "\n");		
 		}
 
-		/**
-		 * @see fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI#notifyNoHighLadderTruckAvailable(java.time.LocalTime)
-		 */
+
 		@Override
 		public void			notifyNoHighLadderTruckAvailable(LocalTime occurrence)
 		throws Exception
@@ -225,9 +211,7 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 							  occurrence + "\n");
 		}
 
-		/**
-		 * @see fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI#notifyHighLadderTrucksAvailable(java.time.LocalTime)
-		 */
+	
 		@Override
 		public void 		notifyHighLadderTrucksAvailable(LocalTime occurrence)
 		throws Exception

@@ -80,10 +80,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 					this.exrop.getPortURI(),
 					CEPBus.CRIP_URI,
 					ConnectorExcuteurRegister.class.getCanonicalName());
-			this.doPortConnection(
-					this.esop.getPortURI(),
-					CEPBus.CEREIP_URI,
-					ConnectorEmitterSend.class.getCanonicalName());
+			
 			this.doPortConnection(
 					this.saop.getPortURI(),
 					this.actionInboundPort_URI,
@@ -101,7 +98,11 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		String uri=this.erop.registerEmitter(erop.getPortURI());
+		String SendEventInbound_URI=this.erop.registerEmitter(samuId);
+		this.doPortConnection(
+				this.esop.getPortURI(),
+				SendEventInbound_URI,
+				ConnectorEmitterSend.class.getCanonicalName());
 		
 	}
 	
@@ -151,12 +152,10 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 		aSante.putProperty("type", type.toString());
 		aSante.putProperty("position", position);
 		
-		this.esop.sendEvent(esop.getPortURI(), aSante);
+		this.esop.sendEvent(samuId, aSante);
 	}
 
-	/**
-	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI#trackingAlarm(fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition, java.lang.String, java.time.LocalTime)
-	 */
+
 	@Override
 	public void			trackingAlarm(
 		AbsolutePosition position,
@@ -175,9 +174,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 						  " received at " + occurrence + "\n");
 	}
 
-	/**
-	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI#manualSignal(java.lang.String, java.time.LocalTime)
-	 */
+
 	@Override
 	public void			manualSignal(
 		String personId,
@@ -191,9 +188,6 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 						  " received at " + occurrence + "\n");
 	}
 
-	/**
-	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI#requestPriority(fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition, fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority, java.lang.String, fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition, java.time.LocalTime)
-	 */
 	@Override
 	public void			requestPriority(
 		IntersectionPosition intersection,
@@ -208,9 +202,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 						  " towards " + destination + " at " + occurrence + "\n");
 	}
 
-	/**
-	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI#atDestination(java.lang.String, java.time.LocalTime)
-	 */
+
 	@Override
 	public void			atDestination(String vehicleId, LocalTime occurrence)
 	throws Exception
@@ -219,9 +211,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 						  " has arrived at destination at " + occurrence + "\n");
 	}
 
-	/**
-	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI#atStation(java.lang.String, java.time.LocalTime)
-	 */
+
 	@Override
 	public void			atStation(String vehicleId, LocalTime occurrence)
 	throws Exception
@@ -230,9 +220,6 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 								+ occurrence + "\n");
 	}
 
-	/**
-	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI#notifyMedicsAvailable(java.time.LocalTime)
-	 */
 	@Override
 	public void			notifyMedicsAvailable(LocalTime occurrence)
 	throws Exception
@@ -244,9 +231,6 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 															occurrence + "\n");
 	}
 
-	/**
-	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI#notifyNoMedicAvailable(java.time.LocalTime)
-	 */
 	@Override
 	public void			notifyNoMedicAvailable(LocalTime occurrence)
 	throws Exception
@@ -258,9 +242,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 															occurrence + "\n");
 	}
 
-	/**
-	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI#notifyAmbulancesAvailable(java.time.LocalTime)
-	 */
+
 	@Override
 	public void			notifyAmbulancesAvailable(LocalTime occurrence)
 	throws Exception
@@ -272,9 +254,6 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 															occurrence + "\n");
 	}
 
-	/**
-	 * @see fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI#notifyNoAmbulanceAvailable(java.time.LocalTime)
-	 */
 	@Override
 	public void			notifyNoAmbulanceAvailable(LocalTime occurrence)
 	throws Exception

@@ -3,7 +3,7 @@ package gevite.rule.samu;
 import java.util.ArrayList;
 
 import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.HealthCorrelatorStateI;
+import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
@@ -43,7 +43,7 @@ public class S2 implements RuleI {
 
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) {
-		HealthCorrelatorStateI samuState = (HealthCorrelatorStateI)cs;
+		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
 		return samuState.inZone("p")&& samuState.isNotAmbulanceAvailable()&&samuState.procheSamuExiste();
 	}
 
@@ -53,7 +53,7 @@ public class S2 implements RuleI {
 		ArrayList<EventI> eventComplex = matchedEvents; 
 		eventComplex.add(iCause);
 		DemandeIntervention dIntervention = new DemandeIntervention(eventComplex);
-		HealthCorrelatorStateI samuState = (HealthCorrelatorStateI)c;
+		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
 		samuState.intervanetionAmbulance();
 
 	}

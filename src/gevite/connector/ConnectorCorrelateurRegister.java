@@ -46,9 +46,8 @@ public class ConnectorCorrelateurRegister extends AbstractConnector implements C
 	}
 
 	@Override
-	public void subscribe(String subscriberURI, String emitterURI) {
-		// TODO Auto-generated method stub
-
+	public void subscribe(String subscriberURI, String emitterURI) throws Exception {
+		((CEPBusManagementCI)this.offering).subscribe(subscriberURI, emitterURI);
 	}
 
 	@Override

@@ -66,7 +66,7 @@ public class CVM extends AbstractBasicSimCVM {
 						new Object[]{
 								CEPBus.CRIP_URI,
 								CEPBus.CRIP_URI,
-								CEPBus.CEREIP_URI,
+								CEPBus.CERIP_URI,
 								notificationInboundPortURI,
 								fireStationId,
 								BasicSimSmartCityDescriptor.
@@ -85,7 +85,7 @@ public class CVM extends AbstractBasicSimCVM {
 							new Object[]{
 									CEPBus.CRIP_URI,
 									CEPBus.CRIP_URI,
-									CEPBus.CEREIP_URI,
+									CEPBus.CERIP_URI,
 									notificationInboundPortURI,
 									samuStationId,
 									BasicSimSmartCityDescriptor.
@@ -104,7 +104,7 @@ public class CVM extends AbstractBasicSimCVM {
 							new Object[]{
 									CEPBus.CRIP_URI,
 									CEPBus.CRIP_URI,
-									CEPBus.CEREIP_URI,
+									CEPBus.CERIP_URI,
 									notificationInboundPortURI,
 									p,
 									BasicSimSmartCityDescriptor.

@@ -1,10 +1,10 @@
-package gevite.tests;
+package gevite.samu;
 
 import java.io.Serializable;
 
 import gevite.correlateur.SamuCorrelatorStateI;
 
-public class BouchonHealthCorrelateur implements SamuCorrelatorStateI{
+public class SamuCorrelatorState implements SamuCorrelatorStateI{
 
 	
 	@Override

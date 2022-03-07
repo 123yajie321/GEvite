@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.HealthCorrelatorStateI;
+import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.correlateur.CirculationCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;

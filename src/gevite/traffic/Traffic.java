@@ -78,7 +78,7 @@ public class Traffic extends AbstractComponent implements TrafficLightNotificati
 					ConnectorExcuteurRegister.class.getCanonicalName());
 			this.doPortConnection(
 					this.esop.getPortURI(),
-					CEPBus.CEREIP_URI,
+					CEPBus.CERIP_URI,
 					ConnectorEmitterSend.class.getCanonicalName());
 			this.doPortConnection(
 					this.taop.getPortURI(),

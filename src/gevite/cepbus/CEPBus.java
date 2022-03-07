@@ -3,6 +3,9 @@ package gevite.cepbus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -10,6 +13,8 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventReceptionCI;
+import gevite.connector.ConnectorCepSendCorrelateur;
+import gevite.connector.ConnectorEmitterSend;
 import gevite.evenement.EventI;
 
 @OfferedInterfaces(offered = {CEPBusManagementCI.class})
@@ -18,8 +23,7 @@ import gevite.evenement.EventI;
 public class CEPBus extends AbstractComponent{
 	
 	public static final String CRIP_URI = "crip-uri";		//register
-	public static final String CEREIP_URI = "cereip-uri";	//event recieve emitter
-	public static final String CERCIP_URI = "cercip-uri"; 	//event recieve correlateur doit etre supprimer
+	public static final String CERIP_URI = "cerip-uri";	//event recieve 
 	
 	public static final String CESCOP_URI = "cescop-uri";	//event send
 
@@ -27,16 +31,15 @@ public class CEPBus extends AbstractComponent{
     protected HashMap<EventI, String>eventRecu;
 
 	protected HashSet<String> uriEmitters;
-	protected HashSet<String> uriCorrelateur;
-	protected HashSet<String> uriExecuteur;
+	protected HashMap<String,String> uriCorrelateurs;
+	protected HashMap<String,String> uriExecuteurs;
 
 	protected HashMap<String,ArrayList<String>> uriSubscription;
 	//protected ArrayList<Pair<String,String>> uriSubscription;
 
 	
 	protected CepRegisterInboundPort crip;
-	protected CepEventRecieveEmitterInboundPort cereip;
-	protected CepEventRecieveCorrelateurInboundPort cercip;
+	protected CepEventRecieveInboundPort cerip;
 	protected CepEventSendCorrelateurOutboundPort cescop;
 
 
@@ -44,40 +47,51 @@ public class CEPBus extends AbstractComponent{
 		super(1, 0);
 		
 		uriEmitters = new HashSet<String>();
-		uriCorrelateur = new HashSet<String>();
+		uriCorrelateurs = new HashMap<String,String>();
 		//uriSubscription = new ArrayList<Pair<String, String>>();
 		uriSubscription = new HashMap<String,ArrayList<String>>();
 		eventRecu=new HashMap<EventI,String>();
-		
+		this.uriExecuteurs=new HashMap<String,String>();
 		this.crip = new CepRegisterInboundPort(CRIP_URI,this); 
-		this.cereip = new CepEventRecieveEmitterInboundPort(CEREIP_URI,this);
-		this.cercip = new CepEventRecieveCorrelateurInboundPort(CERCIP_URI, this);
+		this.cerip = new CepEventRecieveInboundPort(CERIP_URI,this);
 		this.cescop = new CepEventSendCorrelateurOutboundPort(CESCOP_URI, this);
 		this.crip.publishPort();
-		this.cereip.publishPort();
-		this.cercip.publishPort();
+		this.cerip.publishPort();
 		this.cescop.publishPort();
 
 	}
 	
+	
+	
+	
+	
+	
 	public String registerEmitter(String uri)throws Exception {
 		System.out.println("Emetteur : "+ uri +" registed");
 		uriEmitters.add(uri);
-		return this.CEREIP_URI;
+		return this.CERIP_URI;
 	}
 	
 	public String registerCorrelator(String uri, String inboundPortURI) throws Exception{
-		uriCorrelateur.add(uri);
+		uriCorrelateurs.put(uri,inboundPortURI);
 		System.out.println(" RegisterCorrelateur: " + uri);
 		return " port recevoir";// le port pour recevoir le event depuis correlateur
 	}
 	
 	public String registerExecuteur(String uri, String inboundPortURI)throws Exception {
 		System.out.println("Executeur : "+ uri +" registed");
-		uriExecuteur.add(uri);
+		uriExecuteurs.put(uri,inboundPortURI);
 		return null;
 	}
 
+	@Override
+	public synchronized void execute() throws Exception {
+		super.execute();
+		
+		
+	}
+	
+	
 	
 	
 	@Override
@@ -91,13 +105,42 @@ public class CEPBus extends AbstractComponent{
 		super.shutdown();
 	}
 
-	public void addEvent(String emitterURI, EventI event) {
+	public void recieveEvent(String emitterURI, EventI event) throws Exception {
 		
 		this.eventRecu.put(event, emitterURI);
+		Iterator<Entry<String, ArrayList<String>>> iterator=uriSubscription.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String,ArrayList<String>> entry = (Map.Entry<String,ArrayList<String>> )iterator.next();
+			ArrayList<String> emitters= entry.getValue();
+				if(emitters.contains(emitterURI)) {
+					
+					String uri_correlateur= entry.getKey();
+					String receiveEventInboundPort=uriCorrelateurs.get(uri_correlateur);
+					this.doPortConnection(CESCOP_URI, receiveEventInboundPort, ConnectorCepSendCorrelateur.class.getCanonicalName());
+					this.cescop.receiveEvent(emitterURI, event);
+					
+					
+					
+				}
+		}
+	
+		
+		
+		
+		
 }
 
 
-	
+	public boolean subscribe(String subscriberURI, String emitterURI) throws Exception {
+		
+		ArrayList<String> emitters=uriSubscription.get(subscriberURI);
+		if(emitters==null) {
+			emitters=new ArrayList<String>();
+			uriSubscription.put(subscriberURI, emitters);
+		}
+		uriSubscription.get(subscriberURI).add(emitterURI);
+		return true;
+	}
 
 
 }

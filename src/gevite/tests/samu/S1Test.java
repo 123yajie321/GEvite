@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import gevite.correlateur.Correlateur;
 import gevite.correlateur.CorrelateurRegisterCepOutboundPort;
 import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.HealthCorrelatorStateI;
+import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;

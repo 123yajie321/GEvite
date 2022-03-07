@@ -2,7 +2,7 @@ package gevite.correlateur;
 
 import java.io.Serializable;
 
-public interface HealthCorrelatorStateI extends CorrelatorStateI
+public interface SamuCorrelatorStateI extends CorrelatorStateI
 {
 	/*s1*/
 	public boolean inZone(String p);

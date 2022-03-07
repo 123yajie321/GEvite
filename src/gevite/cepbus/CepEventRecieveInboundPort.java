@@ -9,17 +9,17 @@ import gevite.cep.EventEmissionCI;
 import gevite.correlateur.Correlateur;
 import gevite.evenement.EventI;
 
-public class CepEventRecieveEmitterInboundPort extends AbstractInboundPort implements EventEmissionCI {
+public class CepEventRecieveInboundPort extends AbstractInboundPort implements EventEmissionCI {
 
 	private static final long serialVersionUID=1L;
 
-	public CepEventRecieveEmitterInboundPort(ComponentI owner)
+	public CepEventRecieveInboundPort(ComponentI owner)
 			throws Exception {
 		super(EventEmissionCI.class, owner);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public CepEventRecieveEmitterInboundPort(String uri,ComponentI owner)
+	public CepEventRecieveInboundPort(String uri,ComponentI owner)
 			throws Exception {
 		super(uri,EventEmissionCI.class, owner);
 		// TODO Auto-generated constructor stub
@@ -28,7 +28,13 @@ public class CepEventRecieveEmitterInboundPort extends AbstractInboundPort imple
 	@Override
 	public void sendEvent(String emitterURI, EventI event) throws Exception {
 		
-		this.getOwner().runTask(cep-> ((CEPBus)cep).addEvent(emitterURI, event));
+		this.getOwner().runTask(cep-> {
+			try {
+				((CEPBus)cep).recieveEvent(emitterURI, event);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Override

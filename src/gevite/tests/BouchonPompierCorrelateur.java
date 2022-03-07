@@ -3,7 +3,7 @@ package gevite.tests;
 import java.io.Serializable;
 
 import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.HealthCorrelatorStateI;
+import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.correlateur.PompierCorrelatorStateI;
 
 public class BouchonPompierCorrelateur implements PompierCorrelatorStateI{

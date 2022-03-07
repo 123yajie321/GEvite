@@ -11,6 +11,8 @@ public class CorrelateurRegisterCepOutboundPort extends AbstractOutboundPort imp
 	
 	
 
+	private static final long serialVersionUID = 1L;
+
 	public CorrelateurRegisterCepOutboundPort(ComponentI owner)
 			throws Exception {
 		super(CEPBusManagementCI.class, owner);
@@ -64,8 +66,8 @@ public class CorrelateurRegisterCepOutboundPort extends AbstractOutboundPort imp
 
 	@Override
 	public void subscribe(String subscriberURI, String emitterURI) throws Exception {
-		// TODO Auto-generated method stub
-
+		
+		 ((CEPBusManagementCI)this.getConnector()).subscribe(subscriberURI, emitterURI);
 	}
 
 	@Override

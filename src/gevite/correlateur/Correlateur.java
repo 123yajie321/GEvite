@@ -1,5 +1,6 @@
 package gevite.correlateur;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import fr.sorbonne_u.components.AbstractComponent;
@@ -25,17 +26,26 @@ public class Correlateur extends AbstractComponent {
 	protected CorrelateurRegisterCepOutboundPort ccrop;
 	
 	protected EventBase baseEvent;
-	protected HashMap<EventI, String>eventEmitter;
+	//protected HashMap<EventI, String>eventEmitter;
 	protected RuleBase baseRule;
+	protected String correlateurId;
+	protected CorrelatorStateI correlatorStat;
+	protected ArrayList<String>executors;
+	protected String sendEventInboundPort;
+	protected ArrayList<String>emitters;
 	
-	protected Correlateur() throws Exception{
+	protected Correlateur(String correlateurId,ArrayList<String> executors,ArrayList<String>emitters,CorrelatorStateI correlatorStat,RuleBase ruleBase) throws Exception{
 		super(1,0);
 		baseEvent =new EventBase();
 		this.cercip= new CepEventRecieveCorrelateurInboundPort(CERCIP_URI,this);
 		this.ccrop=new CorrelateurRegisterCepOutboundPort(CCROP_URI,this);
 		this.ccrop.publishPort();
 		this.cercip.publishPort();
-		
+		this.correlateurId= correlateurId;
+		this.executors=executors;
+		this.emitters=emitters;
+		this.correlatorStat=correlatorStat;
+		this.baseRule=ruleBase;
 	}
 	
 
@@ -43,7 +53,12 @@ public class Correlateur extends AbstractComponent {
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		this.ccrop.registerCorrelator(CCROP_URI, CERCIP_URI);
+		sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, CERCIP_URI);
+		for(String emitter: emitters) {
+			this.ccrop.subscribe(correlateurId, emitter);
+		}
+		
+		
 	}
 	
 	@Override
@@ -60,7 +75,9 @@ public class Correlateur extends AbstractComponent {
 	public void addEvent(String emitterURI, EventI event) {
 			
 			this.baseEvent.addEvent(event);
-			this.eventEmitter.put(event, emitterURI);
+			//this.eventEmitter.put(event, emitterURI);
+			baseRule.fireAllOn(baseEvent, correlatorStat);
+			
 	}
 
 
