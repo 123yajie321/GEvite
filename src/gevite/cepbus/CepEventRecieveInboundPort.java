@@ -6,7 +6,7 @@ import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.cep.EventEmissionCI;
-import gevite.correlateur.Correlateur;
+import gevite.correlateur.CorrelateurSamu;
 import gevite.evenement.EventI;
 
 public class CepEventRecieveInboundPort extends AbstractInboundPort implements EventEmissionCI {

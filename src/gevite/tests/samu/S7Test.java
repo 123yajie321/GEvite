@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 
-import gevite.correlateur.Correlateur;
+import gevite.correlateur.CorrelateurSamu;
 import gevite.correlateur.CorrelateurSendCepOutboundPort;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;

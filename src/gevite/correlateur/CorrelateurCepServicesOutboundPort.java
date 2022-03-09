@@ -6,19 +6,19 @@ import fr.sorbonne_u.components.ports.AbstractOutboundPort;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventReceptionCI;
 
-public class CorrelateurRegisterCepOutboundPort extends AbstractOutboundPort implements CEPBusManagementCI {
+public class CorrelateurCepServicesOutboundPort extends AbstractOutboundPort implements CEPBusManagementCI {
 	
 	
 	
 
 	private static final long serialVersionUID = 1L;
 
-	public CorrelateurRegisterCepOutboundPort(ComponentI owner)
+	public CorrelateurCepServicesOutboundPort(ComponentI owner)
 			throws Exception {
 		super(CEPBusManagementCI.class, owner);
 	}
 	
-	public CorrelateurRegisterCepOutboundPort(String uri,ComponentI owner)
+	public CorrelateurCepServicesOutboundPort(String uri,ComponentI owner)
 			throws Exception {
 		super(uri,CEPBusManagementCI.class, owner);
 	}
@@ -54,8 +54,8 @@ public class CorrelateurRegisterCepOutboundPort extends AbstractOutboundPort imp
 
 	@Override
 	public String getExecutorInboundPortURI(String uri) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return  ((CEPBusManagementCI)this.getConnector()).getExecutorInboundPortURI(uri);
 	}
 
 	@Override

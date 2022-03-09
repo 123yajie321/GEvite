@@ -9,9 +9,9 @@ import fr.sorbonne_u.cps.smartcity.BasicSimSmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cepbus.CEPBus;
-import gevite.connector.ConnectorCorrelateurRegister;
+import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.connector.ConnectorEmitterRegister;
-import gevite.correlateur.Correlateur;
+import gevite.correlateur.CorrelateurSamu;
 import gevite.emitteur.Emetteur;
 import gevite.fire.Fire;
 import gevite.samu.Samu;
@@ -40,7 +40,7 @@ public class CVM extends AbstractBasicSimCVM {
 		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {});
 
 
-		String correlateurURI = AbstractComponent.createComponent(Correlateur.class.getCanonicalName(), new Object[] {});
+		String correlateurURI = AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), new Object[] {});
 		
 		
 		

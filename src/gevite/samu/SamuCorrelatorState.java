@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 import gevite.correlateur.SamuCorrelatorStateI;
 
-public class SamuCorrelatorState implements SamuCorrelatorStateI{
+public class SamuCorrelatorState {
 
-	
+	/*
 	@Override
 	public boolean isMedicAvailable() {
 		return true;
@@ -45,6 +45,6 @@ public class SamuCorrelatorState implements SamuCorrelatorStateI{
 		return true;
 	}
 
-	
+	*/
 
 }

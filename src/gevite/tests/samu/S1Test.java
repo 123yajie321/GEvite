@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 
-import gevite.correlateur.Correlateur;
-import gevite.correlateur.CorrelateurRegisterCepOutboundPort;
+import gevite.correlateur.CorrelateurSamu;
+import gevite.correlateur.CorrelateurCepServicesOutboundPort;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBase;

@@ -3,7 +3,7 @@ package gevite.connector;
 import fr.sorbonne_u.components.connectors.AbstractConnector;
 import gevite.cep.CEPBusManagementCI;
 
-public class ConnectorCorrelateurRegister extends AbstractConnector implements CEPBusManagementCI {
+public class ConnectorCorrelateurCepServices extends AbstractConnector implements CEPBusManagementCI {
 
 	@Override
 	public String registerEmitter(String uri) throws Exception {
@@ -11,7 +11,7 @@ public class ConnectorCorrelateurRegister extends AbstractConnector implements C
 	}
 
 	@Override
-	public void unregisterEmitter(String uri) {
+	public void unregisterEmitter(String uri) throws Exception{
 		// TODO Auto-generated method stub
 
 	}
@@ -22,25 +22,25 @@ public class ConnectorCorrelateurRegister extends AbstractConnector implements C
 	}
 
 	@Override
-	public void unregisterCorrelator(String uri) {
+	public void unregisterCorrelator(String uri)throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void registerExecutor(String uri, String inboundPortURI) {
+	public void registerExecutor(String uri, String inboundPortURI)throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String getExecutorInboundPortURI(String uri) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getExecutorInboundPortURI(String uri) throws Exception {
+		
+		return ((CEPBusManagementCI)this.offering).getExecutorInboundPortURI(uri);
 	}
 
 	@Override
-	public void unregisterExecutor(String uri) {
+	public void unregisterExecutor(String uri)throws Exception {
 		// TODO Auto-generated method stub
 
 	}
@@ -51,7 +51,7 @@ public class ConnectorCorrelateurRegister extends AbstractConnector implements C
 	}
 
 	@Override
-	public void unsubscribe(String subscriberURI, String emitterURI) {
+	public void unsubscribe(String subscriberURI, String emitterURI)throws Exception {
 		// TODO Auto-generated method stub
 
 	}

@@ -1,8 +1,11 @@
 package gevite.samu;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
 import fr.sorbonne_u.components.AbstractComponent;
+import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.cps.smartcity.descriptions.SmartCityDescriptor;
@@ -11,6 +14,11 @@ import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
+import gevite.actions.ActionI;
+import gevite.cep.ActionExecutionCI;
+import gevite.cep.CEPBusManagementCI;
+import gevite.cep.EventEmissionCI;
+import gevite.cep.ResponseI;
 import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
@@ -22,6 +30,8 @@ import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.atomique.samu.HealthEvent;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 
+@OfferedInterfaces(offered= {ActionExecutionCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
 public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	
 	//protected String sendEventOutboundPort_URI;
@@ -132,6 +142,23 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 		
 		super.shutdown();
 	}
+	
+	
+	
+
+	
+	
+	
+public ResponseI execute(ActionI a, Serializable[] params) {
+		
+		return null;
+	}
+	
+	
+	
+	
+	
+	
 	@Override
 	public void			healthAlarm(
 		AbsolutePosition position,
@@ -264,5 +291,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 				"Notification that no ambulance are available received at " +
 															occurrence + "\n");
 	}
+
+
 
 }

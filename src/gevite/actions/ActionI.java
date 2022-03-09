@@ -1,4 +1,4 @@
-package gevite.cep;
+package gevite.actions;
 
 import java.io.Serializable;
 
