@@ -10,10 +10,12 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.cps.smartcity.descriptions.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import gevite.actions.SamuActions;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
+import gevite.connector.ConnectorCorrelateurExecutor;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.rule.RuleBase;
@@ -29,7 +31,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	protected CepEventRecieveCorrelateurInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
-	
+	protected CorrelateurActionExecutionOutboundPort caeop;
 	protected EventBase baseEvent;
 	//protected HashMap<EventI, String>eventEmitter;
 	protected RuleBase baseRule;
@@ -49,6 +51,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		baseEvent =new EventBase();
 		this.cercip= new CepEventRecieveCorrelateurInboundPort(CERCIP_URI,this);
 		this.ccrop=new CorrelateurCepServicesOutboundPort(CCROP_URI,this);
+		this.caeop=new CorrelateurActionExecutionOutboundPort(this);
+		this.caeop.publishPort();
 		this.ccrop.publishPort();
 		this.cercip.publishPort();
 		this.correlateurId= correlateurId;
@@ -82,11 +86,11 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		super.shutdown();
 	}
 	
-	public void addEvent(String emitterURI, EventI event) {
+	public void addEvent(String emitterURI, EventI event) throws Exception {
 			
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
-			baseRule.fireAllOn(baseEvent, correlatorStat);
+			baseRule.fireFirstOn(baseEvent, this);
 			
 	}
 
@@ -141,9 +145,11 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 
 
 	@Override
-	public void intervanetionAmbulance() {
-	//SamuActions	Intervention=  SamuActions.InterventionAmbulance;
-	
+	public void intervanetionAmbulance(AbsolutePosition position,String personId,TypeOfSAMURessources type) throws Exception {
+		SamuActions	Intervention=  SamuActions.InterventionAmbulance;
+		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
+		this.caeop.execute(Intervention, new Serializable[] {position,personId,type}); 
 	
 	}
 
@@ -158,9 +164,9 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 
 
 	@Override
-	public boolean procheSamuExiste() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean procheSamuExiste()throws Exception {
+		
+		return true;
 	}
 
 

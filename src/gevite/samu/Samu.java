@@ -13,8 +13,10 @@ import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 import gevite.actions.ActionI;
+import gevite.actions.SamuActions;
 import gevite.cep.ActionExecutionCI;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
@@ -149,9 +151,22 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	
 	
 	
-public ResponseI execute(ActionI a, Serializable[] params) {
+public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
+	assert a instanceof SamuActions;
+	assert params != null && params.length == 3 && params[0] instanceof AbsolutePosition&&params[2] instanceof TypeOfSAMURessources;
+	AbsolutePosition position = (AbsolutePosition) params[0];
+	String personId=(String)params[1];
+	TypeOfSAMURessources type=(TypeOfSAMURessources)params[2];
+	
+	switch((SamuActions)a) {
+	case InterventionAmbulance:this.saop.triggerIntervention(position, personId, type); break;
+	case IntervetionMedcin: break;
+	case AppelMedcin:
 		
-		return null;
+	}
+    ResponseI response=null;
+	return  response;	
+		
 	}
 	
 	

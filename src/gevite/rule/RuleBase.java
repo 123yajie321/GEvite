@@ -15,11 +15,11 @@ public class RuleBase {
 	}
 	
 	
-	public void addRule(RuleI r) {
+	public void addRule(RuleI r) throws Exception {
 		rules.add(r);
 		
 	}
-	public boolean fireFirstOn(EventBaseI eb,CorrelatorStateI c) {
+	public boolean fireFirstOn(EventBaseI eb,CorrelatorStateI c) throws Exception {
 		
 		for(RuleI rule: rules) {
 			ArrayList<EventI> eventmatched = rule.match(eb);
@@ -37,7 +37,7 @@ public class RuleBase {
 		}
 		return false;
 	}
-	public boolean fireAllOn(EventBaseI eb,CorrelatorStateI c) {
+	public boolean fireAllOn(EventBaseI eb,CorrelatorStateI c) throws Exception {
 		boolean matched=false;
 		for(RuleI rule: rules) {
 			ArrayList<EventI> eventmatched = rule.match(eb);
