@@ -3,13 +3,17 @@ package gevite.correlateur;
 import java.io.Serializable;
 
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 
 public interface SamuCorrelatorStateI extends CorrelatorStateI
 {
 	/*s1*/
 	public boolean inZone(AbsolutePosition p)throws Exception;
 	public boolean isAmbulanceAvailable()throws Exception;
-	public void intervanetionAmbulance()throws Exception;
+	
+	public void intervanetionAmbulance(	AbsolutePosition position,
+			String personId,
+			TypeOfSAMURessources type)throws Exception;
 	
 	/*s2*/
 	public boolean isNotAmbulanceAvailable()throws Exception;

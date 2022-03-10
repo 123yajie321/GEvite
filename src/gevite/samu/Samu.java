@@ -176,7 +176,7 @@ public ResponseI execute(ActionI a, Serializable[] params) {
 						  " at position " + position +
 						  " received at " + occurrence + "\n");
 		AlarmeSante aSante = new AlarmeSante(occurrence);
-		aSante.putProperty("type", type.toString());
+		aSante.putProperty("type", type);
 		aSante.putProperty("position", position);
 		
 		this.esop.sendEvent(samuId, aSante);
