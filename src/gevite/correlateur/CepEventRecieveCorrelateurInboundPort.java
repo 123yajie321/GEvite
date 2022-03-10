@@ -22,7 +22,14 @@ public class CepEventRecieveCorrelateurInboundPort extends AbstractInboundPort i
 
 	@Override
 	public void receiveEvent(String emitterURI, EventI e) throws Exception {
-		this.getOwner().runTask(c-> ((CorrelateurSamu)c).addEvent(emitterURI, e));		
+		this.getOwner().runTask(c-> {
+			try {
+				((CorrelateurSamu)c).addEvent(emitterURI, e);
+			} catch (Exception e1) {
+			
+				e1.printStackTrace();
+			}
+		});		
 	}
 
 	@Override

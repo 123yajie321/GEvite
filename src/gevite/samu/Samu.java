@@ -160,8 +160,8 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 	
 	switch((SamuActions)a) {
 	case InterventionAmbulance:this.saop.triggerIntervention(position, personId, type); break;
-	case IntervetionMedcin: break;
-	case AppelMedcin:
+	case IntervetionMedcin:this.saop.triggerIntervention(position, personId, type);break;
+	case AppelMedcin:this.saop.triggerIntervention(position, personId, type);
 		
 	}
     ResponseI response=null;

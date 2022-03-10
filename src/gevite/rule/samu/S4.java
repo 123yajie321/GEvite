@@ -46,7 +46,7 @@ public class S4 implements RuleI{
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
 		EventI alarmSante=matchedEvents.get(0);
-		return samuState.inZone((AbsolutePosition) alarmSante.getPropertyValue("position"))&& !samuState.isMedicAvailable();
+		return samuState.inZone((AbsolutePosition) alarmSante.getPropertyValue("position"))&& !samuState.isMedicAvailable()&&samuState.procheSamuExiste();
 	}
 
 	@Override

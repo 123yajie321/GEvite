@@ -28,8 +28,8 @@ import gevite.rule.RuleBase;
 
 public class CorrelateurSamu extends AbstractComponent implements SamuCorrelatorStateI{
 	
-	public static final String CERCIP_URI = "cercip-uri";
-	public static final String CCROP_URI = "ccrop-uri";
+	//public static final String CERCIP_URI = "cercip-uri";
+	//public static final String CCROP_URI = "ccrop-uri";
 	//public static final String CESCOP_URI = "cescop-uri";
 	
 	protected CepEventRecieveCorrelateurInboundPort cercip;
@@ -54,8 +54,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	protected CorrelateurSamu(String correlateurId,ArrayList<String> executors,ArrayList<String>emitters,CorrelatorStateI correlatorStat,RuleBase ruleBase) throws Exception{
 		super(1,0);
 		baseEvent =new EventBase();
-		this.cercip= new CepEventRecieveCorrelateurInboundPort(CERCIP_URI,this);
-		this.ccrop=new CorrelateurCepServicesOutboundPort(CCROP_URI,this);
+		this.cercip= new CepEventRecieveCorrelateurInboundPort(this);
+		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
 		this.caeop=new CorrelateurActionExecutionOutboundPort(this);
 		this.cscop=new CorrelateurSendCepOutboundPort(this);
 		this.caeop.publishPort();
@@ -72,7 +72,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	@Override
 	public synchronized void start()throws ComponentStartException{
 		try {
-			this.doPortConnection(this.cscop.getPortURI(), CEPBus.CERIP_URI, ConnectorCorrelateurSendCep.class.getCanonicalName());
+			sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
+			this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -85,7 +86,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, CERCIP_URI);
+		
+		
 		for(String emitter: emitters) {
 			this.ccrop.subscribe(correlateurId, emitter);
 		}
@@ -95,7 +97,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	@Override
 	public synchronized void finalise() throws Exception {		
-		this.doPortDisconnection(CCROP_URI);
+		this.doPortDisconnection(this.ccrop.getPortURI());
 		super.finalise();
 	}
 	
@@ -138,9 +140,6 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
     	this.medicsAvailable=true;
     	
     }	
-	
-	
-	
 
 	@Override
 	public boolean inZone(AbsolutePosition p) {
@@ -164,14 +163,26 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 
 	@Override
 	public void intervanetionAmbulance(AbsolutePosition position,String personId,TypeOfSAMURessources type) throws Exception {
-		SamuActions	Intervention=  SamuActions.InterventionAmbulance;
+		SamuActions	intervention=  SamuActions.InterventionAmbulance;
 		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
 		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
-		this.caeop.execute(Intervention, new Serializable[] {position,personId,type}); 
+		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
 	
 	}
 
 
+	@Override
+	public void triggerMedicCall(AbsolutePosition position, String personId, TypeOfSAMURessources type)
+			throws Exception {
+		SamuActions intervention=SamuActions.AppelMedcin;
+		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
+		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
+		
+	}
+	
+	
+	
 
 	@Override
 	public boolean isNotAmbulanceAvailable() {
@@ -184,7 +195,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	@Override
 	public boolean procheSamuExiste()throws Exception {
 		
-		return true;
+		return false;
 	}
 
 
@@ -212,12 +223,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 
 
 
-	@Override
-	public void triggerMedicCall(AbsolutePosition position, String personId, TypeOfSAMURessources type)
-			throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 
 

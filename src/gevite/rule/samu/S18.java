@@ -10,24 +10,24 @@ import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.evenement.atomique.samu.AmbulancesAvailable;
+import gevite.evenement.atomique.samu.AmbulancesBusy;
 import gevite.rule.RuleI;
 
-public class S1 implements RuleI {
+public class S18 implements RuleI {
 
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb)throws Exception {
-		EventI as=null;
-		for (int i = 0 ; i < eb.numberOfEvents() && (as == null ) ; i++) {
+		EventI AmbulancesAvailable=null;
+		for (int i = 0 ; i < eb.numberOfEvents() && (AmbulancesAvailable == null ) ; i++) {
 			EventI e = eb.getEvent(i);
-			if (e instanceof AlarmeSante && e.hasProperty("type")&& e.hasProperty("position")
-					&& e.getPropertyValue("type")==TypeOfHealthAlarm.EMERGENCY
-					) {
-				as = e;
+			if (e instanceof AmbulancesAvailable ) {
+				AmbulancesAvailable = e;
 			}
 		}	
-			if(as  != null ) {
+			if(AmbulancesAvailable  != null ) {
 				ArrayList<EventI> matchedEvents = new ArrayList<>();
-				matchedEvents.add(as);
+				matchedEvents.add(AmbulancesAvailable);
 				return matchedEvents;
 			} else {
 				return null;
@@ -44,16 +44,14 @@ public class S1 implements RuleI {
 
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
-		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
-		EventI alarmSante=matchedEvents.get(0);
-		return samuState.inZone((AbsolutePosition) alarmSante.getPropertyValue("position"))&& samuState.isAmbulanceAvailable();
+		
+		return true;
 	}
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
-		EventI alarmSante=matchedEvents.get(0);
-		samuState.intervanetionAmbulance((AbsolutePosition) alarmSante.getPropertyValue("position"),null,TypeOfSAMURessources.AMBULANCE);
+		samuState.setAmbulancesAvailable();
 
 	}
 

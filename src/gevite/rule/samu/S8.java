@@ -12,10 +12,13 @@ import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.evenement.atomique.samu.InterventionCause;
 import gevite.evenement.atomique.samu.SignaleManuel;
+import gevite.evenement.complexe.samu.ConsciousFall;
+import gevite.evenement.complexe.samu.DemandeIntervention;
 import gevite.rule.RuleI;
 
-public class S7 implements RuleI{
+public class S8 implements RuleI{
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb)throws Exception {
 		EventI he = null; EventI s = null;
@@ -59,15 +62,17 @@ public class S7 implements RuleI{
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
-		return samuState.isMedicAvailable();
+		return samuState.isMedicAvailable()&&samuState.procheSamuExiste();
 	}
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
-		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI) cs;
-		EventI alarmSante=matchedEvents.get(0);
-		samuState.triggerMedicCall((AbsolutePosition) alarmSante.getPropertyValue("position"),(String)matchedEvents.get(0).getPropertyValue("personId"),
-	    		TypeOfSAMURessources.MEDIC);
+		
+		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
+		ConsciousFall fall = new ConsciousFall(matchedEvents);
+		samuState.propagerEvent(fall);
+		
+		
 
 	}
 
