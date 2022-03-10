@@ -28,8 +28,16 @@ import gevite.connector.ConnectorExcuteurRegister;
 import gevite.connector.ConnectorSAMUAction;
 import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.emitteur.EmitterSendOutboundPort;
+import gevite.evenement.atomique.circulation.AtDestination;
+import gevite.evenement.atomique.circulation.AtStation;
+import gevite.evenement.atomique.circulation.DemandePriorite;
 import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.evenement.atomique.samu.AmbulancesAvailable;
+import gevite.evenement.atomique.samu.AmbulancesBusy;
 import gevite.evenement.atomique.samu.HealthEvent;
+import gevite.evenement.atomique.samu.MedecinAvailable;
+import gevite.evenement.atomique.samu.MedecinBusy;
+import gevite.evenement.atomique.samu.SignaleManuel;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class})
@@ -214,6 +222,14 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		this.traceMessage("Health notification of type tracking for " +
 						  personId + " at position " + position +
 						  " received at " + occurrence + "\n");
+		AlarmeSante aSante = new AlarmeSante(occurrence);
+		aSante.putProperty("type", TypeOfHealthAlarm.TRACKING);
+		aSante.putProperty("position", position);
+		aSante.putProperty("personId", personId);
+
+		this.esop.sendEvent(samuId, aSante);
+	
+	
 	}
 
 
@@ -228,6 +244,11 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 
 		this.traceMessage("Manual signal emitted by " + personId +
 						  " received at " + occurrence + "\n");
+		
+		SignaleManuel sManuel = new SignaleManuel(occurrence);
+		sManuel.putProperty("personId", personId);
+		
+		this.esop.sendEvent(samuId, sManuel);
 	}
 
 	@Override
@@ -242,6 +263,14 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		this.traceMessage("priority " + priority + " requested for vehicle " +
 						  vehicleId + " at intersection " + intersection +
 						  " towards " + destination + " at " + occurrence + "\n");
+	
+		DemandePriorite dPriorite = new DemandePriorite(occurrence);
+		dPriorite.putProperty("interPosition", intersection);
+		dPriorite.putProperty("priority", priority);
+		dPriorite.putProperty("vehicleId", vehicleId);
+		dPriorite.putProperty("destination", destination);
+		
+		this.esop.sendEvent(samuId, dPriorite);
 	}
 
 
@@ -251,6 +280,10 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 	{
 		this.traceMessage("Vehicle " + vehicleId +
 						  " has arrived at destination at " + occurrence + "\n");
+		AtDestination atDestination = new AtDestination(occurrence);
+		atDestination.putProperty("vehicleId", vehicleId);
+		
+		this.esop.sendEvent(samuId, atDestination);
 	}
 
 
@@ -260,6 +293,10 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 	{
 		this.traceMessage("Vehicle " + vehicleId + " has arrived at station at "
 								+ occurrence + "\n");
+		AtStation atStation =  new AtStation(occurrence);
+		atStation.putProperty("vehicleId", atStation);
+		
+		this.esop.sendEvent(samuId, atStation);
 	}
 
 	@Override
@@ -271,6 +308,9 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		this.traceMessage(
 				"Notification that medics are available received at " +
 															occurrence + "\n");
+		
+		MedecinAvailable medecinAvailable = new MedecinAvailable(occurrence);
+		this.esop.sendEvent(samuId, medecinAvailable);
 	}
 
 	@Override
@@ -282,6 +322,8 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		this.traceMessage(
 				"Notification that no medic are available received at " +
 															occurrence + "\n");
+		MedecinBusy medecinBusy = new MedecinBusy(occurrence);
+		this.esop.sendEvent(samuId, medecinBusy);
 	}
 
 
@@ -294,6 +336,9 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		this.traceMessage(
 				"Notification that ambulances are available received at " +
 															occurrence + "\n");
+		AmbulancesAvailable ambulancesAvailable = new AmbulancesAvailable(occurrence);
+		this.esop.sendEvent(samuId, ambulancesAvailable);
+	
 	}
 
 	@Override
@@ -305,8 +350,11 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		this.traceMessage(
 				"Notification that no ambulance are available received at " +
 															occurrence + "\n");
+		AmbulancesBusy ambulancesBusy = new AmbulancesBusy(occurrence);
+		this.esop.sendEvent(samuId, ambulancesBusy);
+	
 	}
 
-
+	
 
 }

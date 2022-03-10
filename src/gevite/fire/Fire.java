@@ -1,15 +1,25 @@
 package gevite.fire;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
 import fr.sorbonne_u.components.AbstractComponent;
+import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
+import gevite.actions.ActionI;
+import gevite.actions.SamuActions;
+import gevite.cep.ActionExecutionCI;
+import gevite.cep.CEPBusManagementCI;
+import gevite.cep.EventEmissionCI;
+import gevite.cep.ResponseI;
 import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
@@ -17,9 +27,20 @@ import gevite.connector.ConnectorExcuteurRegister;
 import gevite.connector.ConnectorFIREAction;
 import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.emitteur.EmitterSendOutboundPort;
+import gevite.evenement.atomique.circulation.AtDestination;
+import gevite.evenement.atomique.circulation.AtStation;
+import gevite.evenement.atomique.circulation.DemandePriorite;
+import gevite.evenement.atomique.pompier.AlarmFeu;
+import gevite.evenement.atomique.pompier.EndFire;
+import gevite.evenement.atomique.pompier.HighLadderTrucksAvailable;
+import gevite.evenement.atomique.pompier.HighLadderTrucksBusy;
+import gevite.evenement.atomique.pompier.StandardTrucksAvailable;
+import gevite.evenement.atomique.pompier.StandardTrucksBusy;
+import gevite.evenement.atomique.samu.MedecinAvailable;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 
-
+@OfferedInterfaces(offered= {ActionExecutionCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
 public class Fire extends AbstractComponent implements FireStationNotificationImplI{
 
 		//protected String sendEventOutboundPort_URI;
@@ -126,7 +147,25 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 			
 			super.shutdown();
 		}
-
+		/*
+		public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
+			assert a instanceof SamuActions;
+			assert params != null && params.length == 3 && params[0] instanceof AbsolutePosition&&params[2] instanceof TypeOfSAMURessources;
+			AbsolutePosition position = (AbsolutePosition) params[0];
+			String personId=(String)params[1];
+			TypeOfSAMURessources type=(TypeOfSAMURessources)params[2];
+			
+			switch((SamuActions)a) {
+			case InterventionAmbulance:this.saop.triggerIntervention(position, personId, type); break;
+			case IntervetionMedcin:this.saop.triggerIntervention(position, personId, type);break;
+			case AppelMedcin:this.saop.triggerIntervention(position, personId, type);
+				
+			}
+		    ResponseI response=null;
+			return  response;	
+				
+			}
+*/
 
 		@Override
 		public void			fireAlarm(
@@ -138,6 +177,12 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 			this.traceMessage("Fire alarm of type " + type +
 							  " received from position " + position +
 							  " at " + occurrence + "\n");
+			AlarmFeu aFeu = new AlarmFeu(occurrence);
+			aFeu.putProperty("position", position);
+			aFeu.putProperty("type", type);
+			
+			this.esop.sendEvent(fireId, aFeu);
+
 		}
 
 
@@ -149,6 +194,10 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 		{
 			this.traceMessage("End of fire received from position " + position +
 							  " at " + occurrence + "\n");
+			EndFire endFire = new EndFire(occurrence);
+			endFire.putProperty("position", position);
+			
+			this.esop.sendEvent(fireId, endFire);
 		}
 
 
@@ -165,6 +214,14 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 							  vehicleId + " at intersection " + intersection +
 							  " towards " + destination + " at " + occurrence +
 							  "\n");
+			
+			DemandePriorite dPriorite = new DemandePriorite(occurrence);
+			dPriorite.putProperty("interPosition", intersection);
+			dPriorite.putProperty("priority", priority);
+			dPriorite.putProperty("vehicleId", vehicleId);
+			dPriorite.putProperty("destination", destination);
+			
+			this.esop.sendEvent(fireId, dPriorite);
 		}
 
 
@@ -174,6 +231,10 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 		{
 			this.traceMessage("Vehicle " + vehicleId +
 							   " has arrived at destination\n");
+			AtDestination atDestination = new AtDestination(occurrence);
+			atDestination.putProperty("vehicleId", vehicleId);
+			
+			this.esop.sendEvent(fireId, atDestination);
 		}
 
 
@@ -182,6 +243,10 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 		throws Exception
 		{
 			this.traceMessage("Vehicle " + vehicleId + " has arrived at station\n");
+			AtStation atStation =  new AtStation(occurrence);
+			atStation.putProperty("vehicleId", atStation);
+			
+			this.esop.sendEvent(fireId, atStation);
 		}
 
 
@@ -191,6 +256,8 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 		{
 			this.traceMessage("No standard truck available received at " +
 							  occurrence + "\n");
+			StandardTrucksBusy StandardTrucksBusy = new StandardTrucksBusy(occurrence);
+			this.esop.sendEvent(fireId, StandardTrucksBusy);
 		}
 
 
@@ -199,7 +266,9 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 		throws Exception
 		{
 			this.traceMessage("Standard trucks available received at " +
-							  occurrence + "\n");		
+							  occurrence + "\n");	
+			StandardTrucksAvailable StandardTrucksAvailable = new StandardTrucksAvailable(occurrence);
+			this.esop.sendEvent(fireId, StandardTrucksAvailable);
 		}
 
 
@@ -209,6 +278,8 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 		{
 			this.traceMessage("No high ladder truck available received at " +
 							  occurrence + "\n");
+			HighLadderTrucksBusy HighLadderTrucksBusy = new HighLadderTrucksBusy(occurrence);
+			this.esop.sendEvent(fireId, HighLadderTrucksBusy);
 		}
 
 	
@@ -218,6 +289,8 @@ public class Fire extends AbstractComponent implements FireStationNotificationIm
 		{
 			this.traceMessage("High ladder trucks available received at " +
 							  occurrence + "\n");
+			HighLadderTrucksAvailable HighLadderTrucksAvailable = new HighLadderTrucksAvailable(occurrence);
+			this.esop.sendEvent(fireId, HighLadderTrucksAvailable);
 		}
 		
 		

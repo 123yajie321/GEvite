@@ -1,5 +1,6 @@
 package gevite.correlateur;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,7 +18,7 @@ import gevite.rule.RuleBase;
 @OfferedInterfaces(offered = {EventReceptionCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
 
-public class CorrelateurtTraffic extends AbstractComponent {
+public class CorrelateurtTraffic extends AbstractComponent implements CirculationCorrelatorStateI{
 	
 	public static final String CERCIP_URI = "cercip-uri";
 	public static final String CCROP_URI = "ccrop-uri";
@@ -73,12 +74,44 @@ public class CorrelateurtTraffic extends AbstractComponent {
 		super.shutdown();
 	}
 	
-	public void addEvent(String emitterURI, EventI event) {
+	public void addEvent(String emitterURI, EventI event) throws Exception {
 			
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
-			baseRule.fireAllOn(baseEvent, correlatorStat);
+			baseRule.fireAllOn(baseEvent, this);
 			
+	}
+
+
+
+	@Override
+	public void passerIntersectionP(Serializable p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public boolean estAvantDestination(Serializable destination) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public void passerIntersectionN(Serializable priorite) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public boolean estApresDestination(Serializable destination) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

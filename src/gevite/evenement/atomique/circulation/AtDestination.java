@@ -6,17 +6,14 @@ import java.util.HashMap;
 
 import gevite.evenement.atomique.AtomicEvent;
 
-public class PassageVehicule extends AtomicEvent {
-	private static final long serialVersionUID = 1L;
-
-	public PassageVehicule() {
+public class AtDestination extends AtomicEvent{
+	
+	public AtDestination() {
 		super();
 	}
 
-	public PassageVehicule(LocalTime occurrence) {
+	public AtDestination(LocalTime occurrence) {
 		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		createtime = occurrence;
 	}
-
-
 }

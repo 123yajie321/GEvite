@@ -3,11 +3,16 @@ package gevite.traffic;
 import java.time.LocalTime;
 
 import fr.sorbonne_u.components.AbstractComponent;
+import fr.sorbonne_u.components.annotations.OfferedInterfaces;
+import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.cps.smartcity.grid.Direction;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightNotificationImplI;
+import gevite.cep.ActionExecutionCI;
+import gevite.cep.CEPBusManagementCI;
+import gevite.cep.EventEmissionCI;
 import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
@@ -15,8 +20,11 @@ import gevite.connector.ConnectorExcuteurRegister;
 import gevite.connector.ConnectorTrafficAction;
 import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.emitteur.EmitterSendOutboundPort;
+import gevite.evenement.atomique.circulation.DemandePriorite;
+import gevite.evenement.atomique.circulation.PassageVehicule;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
-
+@OfferedInterfaces(offered= {ActionExecutionCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
 public class Traffic extends AbstractComponent implements TrafficLightNotificationImplI{
 	
 	protected IntersectionPosition					position;
@@ -139,6 +147,11 @@ public class Traffic extends AbstractComponent implements TrafficLightNotificati
 						  " receives the notification of the passage of " +
 						  vehicleId + " in the direction of " + d +
 						  " at " + occurrence + "\n");
+		PassageVehicule pVehicule = new PassageVehicule(occurrence);
+		pVehicule.putProperty("vehicleId", vehicleId);
+		pVehicule.putProperty("direction", d);
+		
+		//this.esop.sendEvent(samuId, pVehicule);
 	}
 	
 }
