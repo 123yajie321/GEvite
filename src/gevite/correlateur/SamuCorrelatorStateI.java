@@ -23,7 +23,9 @@ public interface SamuCorrelatorStateI extends CorrelatorStateI
 	
 	/*s3*/
 	public boolean isMedicAvailable()throws Exception; 
-	public void triggerMedicCall(Serializable personId)throws Exception;
+	public void triggerMedicCall(AbsolutePosition position,
+			String personId,
+			TypeOfSAMURessources type)throws Exception;
 	
 	/*s4*/
 	public boolean isNotMedicAvailable()throws Exception; 

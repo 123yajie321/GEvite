@@ -2,6 +2,9 @@ package gevite.rule.samu;
 
 import java.util.ArrayList;
 
+import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
@@ -17,8 +20,8 @@ public class S3 implements RuleI{
 		for (int i = 0 ; i < eb.numberOfEvents() && (as == null ) ; i++) {
 			EventI e = eb.getEvent(i);
 			if (e instanceof AlarmeSante && e.hasProperty("type")&& e.hasProperty("position")
-					&& ((String)e.getPropertyValue("type")).equals("medicale")
-					&&((String)e.getPropertyValue("position")).equals("p")) {
+					&& e.getPropertyValue("type")==TypeOfHealthAlarm.MEDICAL
+					) {
 				as = e;
 			}
 		}	
@@ -39,15 +42,17 @@ public class S3 implements RuleI{
 	}
 
 	@Override
-	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
-		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
-		return samuState.inZone("p") && samuState.isMedicAvailable();
+	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
+		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
+		EventI alarmSante=matchedEvents.get(0);
+		return samuState.inZone((AbsolutePosition) alarmSante.getPropertyValue("position"))&& samuState.isMedicAvailable();
 	}
 
 	@Override
-	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
+	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
-		samuState.triggerMedicCall(matchedEvents);;		
+		EventI alarmSante=matchedEvents.get(0);
+		samuState.triggerMedicCall((AbsolutePosition) alarmSante.getPropertyValue("position"),null,TypeOfSAMURessources.MEDIC);;		
 	}
 
 	@Override
