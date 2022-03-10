@@ -2,11 +2,15 @@ package gevite.rule.samu;
 
 import java.util.ArrayList;
 
+import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.evenement.atomique.samu.InterventionCause;
+import gevite.evenement.complexe.samu.DemandeIntervention;
 import gevite.rule.RuleI;
 
 public class S4 implements RuleI{
@@ -17,8 +21,8 @@ public class S4 implements RuleI{
 		for (int i = 0 ; i < eb.numberOfEvents() && (as == null ) ; i++) {
 			EventI e = eb.getEvent(i);
 			if (e instanceof AlarmeSante && e.hasProperty("type")&& e.hasProperty("position")
-					&& ((String)e.getPropertyValue("type")).equals("medicale")
-					&&((String)e.getPropertyValue("position")).equals("p")) {
+					&& e.getPropertyValue("type")==TypeOfHealthAlarm.MEDICAL
+				) {
 				as = e;
 			}
 		}	
@@ -39,15 +43,20 @@ public class S4 implements RuleI{
 	}
 
 	@Override
-	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
-		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
-		return samuState.inZone("p") && samuState.isNotMedicAvailable()&&samuState.procheSamuExiste();
+	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
+		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
+		EventI alarmSante=matchedEvents.get(0);
+		return samuState.inZone((AbsolutePosition) alarmSante.getPropertyValue("position"))&& !samuState.isMedicAvailable();
 	}
 
 	@Override
-	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
+	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
-		samuState.triggerMedicCall(matchedEvents);;		
+		EventI interventionCause=new InterventionCause();
+		ArrayList<EventI> eventComplex = matchedEvents; 
+		eventComplex.add(interventionCause);
+		DemandeIntervention dIntervention = new DemandeIntervention(eventComplex);
+		samuState.propagerEvent(dIntervention);
 	}
 
 	@Override

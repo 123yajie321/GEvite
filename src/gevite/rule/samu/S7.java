@@ -4,6 +4,9 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
+import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
@@ -19,7 +22,7 @@ public class S7 implements RuleI{
 	    for (int i = 0 ; i < eb.numberOfEvents() && (he == null || s == null) ; i++) {
 	    	EventI e = eb.getEvent(i);
 	    	if (e instanceof AlarmeSante && e.hasProperty("type")
-	    			&& ((String)e.getPropertyValue("type")).equals("tracking")) {
+	    			&& e.getPropertyValue("type")==TypeOfHealthAlarm.TRACKING) {
 	    		he = e;
 	    	}
 	    	if (e instanceof SignaleManuel) { s = e; }
@@ -54,15 +57,17 @@ public class S7 implements RuleI{
 	}
 
 	@Override
-	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) {
+	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
-		return samuState.isAmbulanceAvailable();
+		return samuState.isMedicAvailable();
 	}
 
 	@Override
-	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) {
+	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI) cs;
-	    samuState.triggerMedicCall(matchedEvents.get(0).getPropertyValue("personId"));
+		EventI alarmSante=matchedEvents.get(0);
+		samuState.triggerMedicCall((AbsolutePosition) alarmSante.getPropertyValue("position"),(String)matchedEvents.get(0).getPropertyValue("personId"),
+	    		TypeOfSAMURessources.MEDIC);
 
 	}
 
