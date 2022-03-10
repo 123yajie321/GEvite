@@ -51,15 +51,14 @@ public class S2 implements RuleI {
 	}
 
 	@Override
-	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
-		/*
-		InterventionCause iCause = new InterventionCause();
-		ArrayList<EventI> eventComplex = matchedEvents; 
-		eventComplex.add(iCause);
-		DemandeIntervention dIntervention = new DemandeIntervention(eventComplex);
-*/
+	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
+	
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
-		samuState.intervanetionAmbulance();
+		EventI interventionCause=new InterventionCause();
+		ArrayList<EventI> eventComplex = matchedEvents; 
+		eventComplex.add(interventionCause);
+		DemandeIntervention dIntervention = new DemandeIntervention(eventComplex);
+		samuState.propagerEvent(dIntervention);
 
 	}
 

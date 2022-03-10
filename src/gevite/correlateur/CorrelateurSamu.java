@@ -8,6 +8,7 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.cps.smartcity.descriptions.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
@@ -15,7 +16,9 @@ import gevite.actions.SamuActions;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
+import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorCorrelateurExecutor;
+import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.rule.RuleBase;
@@ -32,6 +35,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	protected CepEventRecieveCorrelateurInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
 	protected CorrelateurActionExecutionOutboundPort caeop;
+	protected CorrelateurSendCepOutboundPort cscop;
+	
 	protected EventBase baseEvent;
 	//protected HashMap<EventI, String>eventEmitter;
 	protected RuleBase baseRule;
@@ -52,6 +57,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		this.cercip= new CepEventRecieveCorrelateurInboundPort(CERCIP_URI,this);
 		this.ccrop=new CorrelateurCepServicesOutboundPort(CCROP_URI,this);
 		this.caeop=new CorrelateurActionExecutionOutboundPort(this);
+		this.cscop=new CorrelateurSendCepOutboundPort(this);
 		this.caeop.publishPort();
 		this.ccrop.publishPort();
 		this.cercip.publishPort();
@@ -63,6 +69,18 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	}
 	
 
+	@Override
+	public synchronized void start()throws ComponentStartException{
+		try {
+			this.doPortConnection(this.cscop.getPortURI(), CEPBus.CERIP_URI, ConnectorCorrelateurSendCep.class.getCanonicalName());
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 	
 	@Override
 	public synchronized void execute() throws Exception {
@@ -178,19 +196,27 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	}
 
 
+	@Override
+	public boolean isNotMedicAvailable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 
 	@Override
-	public void triggerMedicCall(Serializable personId) {
-		// TODO Auto-generated method stub
+	public void propagerEvent(EventI event) throws Exception {
+		this.cscop.sendEvent(this.correlateurId, event);
 		
 	}
 
 
 
 	@Override
-	public boolean isNotMedicAvailable() {
+	public void triggerMedicCall(AbsolutePosition position, String personId, TypeOfSAMURessources type)
+			throws Exception {
 		// TODO Auto-generated method stub
-		return false;
+		
 	}
 
 

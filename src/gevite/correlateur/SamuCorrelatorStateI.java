@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
+import gevite.evenement.EventI;
 
 public interface SamuCorrelatorStateI extends CorrelatorStateI
 {
@@ -18,6 +19,7 @@ public interface SamuCorrelatorStateI extends CorrelatorStateI
 	/*s2*/
 	public boolean isNotAmbulanceAvailable()throws Exception;
 	public boolean procheSamuExiste()throws Exception;
+	public void propagerEvent(EventI event) throws Exception;
 
 
 	

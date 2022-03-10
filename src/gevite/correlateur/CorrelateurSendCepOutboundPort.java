@@ -10,6 +10,9 @@ import gevite.evenement.EventI;
 
 public class CorrelateurSendCepOutboundPort extends AbstractOutboundPort implements  EventEmissionCI {
 
+	private static final long serialVersionUID = 1L;
+
+
 	public CorrelateurSendCepOutboundPort( ComponentI owner)
 			throws Exception {
 		super(EventReceptionCI.class, owner);
