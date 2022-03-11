@@ -38,7 +38,9 @@ import gevite.evenement.atomique.samu.HealthEvent;
 import gevite.evenement.atomique.samu.MedecinAvailable;
 import gevite.evenement.atomique.samu.MedecinBusy;
 import gevite.evenement.atomique.samu.SignaleManuel;
+import gevite.executeur.ActionExecutionInboundPort;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
+import javassist.expr.NewArray;
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
@@ -60,6 +62,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	
 	protected SAMUNotifyInboundPort snip;
 	protected SAMUActionOutboundPort saop;
+	protected ActionExecutionInboundPort SAMUaeip;
 	
 
 	protected Samu(String registeEmitteurInboundPort,String registeExecuteurInboundPort,String sendInboundPort,String samuInport,
@@ -71,7 +74,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 		this.SAMUReceiveNotifyInboundPort_URI = samuInport;
 		this.samuId = samuId;
 		this.actionInboundPort_URI = actionInboundPort;
-		
+		this.SAMUaeip=new ActionExecutionInboundPort(actionInboundPort, this);
 		
 		this.erop = new EmitterRegisterOutboundPort(this);
 		this.erop.publishPort();
@@ -106,10 +109,13 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 					this.actionInboundPort_URI,
 					ConnectorSAMUAction.class.getCanonicalName());
 			
-			
+			String SendEventInbound_URI=this.erop.registerEmitter(samuId);
+			this.doPortConnection(
+					this.esop.getPortURI(),
+					SendEventInbound_URI,
+					ConnectorEmitterSend.class.getCanonicalName());
 			
 		} catch (Exception e) {
-			throw new ComponentStartException(e) ;
 		}
 	}
 	
@@ -118,11 +124,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		String SendEventInbound_URI=this.erop.registerEmitter(samuId);
-		this.doPortConnection(
-				this.esop.getPortURI(),
-				SendEventInbound_URI,
-				ConnectorEmitterSend.class.getCanonicalName());
+		
 		
 	}
 	

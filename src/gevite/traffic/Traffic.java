@@ -1,5 +1,6 @@
 package gevite.traffic;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 
 import fr.sorbonne_u.components.AbstractComponent;
@@ -7,12 +8,18 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.Direction;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightNotificationImplI;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
+import gevite.actions.ActionI;
+import gevite.actions.SamuActions;
+import gevite.actions.TrafficLightActions;
 import gevite.cep.ActionExecutionCI;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
+import gevite.cep.ResponseI;
 import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
@@ -22,12 +29,14 @@ import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.emitteur.EmitterSendOutboundPort;
 import gevite.evenement.atomique.circulation.DemandePriorite;
 import gevite.evenement.atomique.circulation.PassageVehicule;
+import gevite.executeur.ActionExecutionInboundPort;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 @OfferedInterfaces(offered= {ActionExecutionCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
 public class Traffic extends AbstractComponent implements TrafficLightNotificationImplI{
 	
 	protected IntersectionPosition					position;
+	protected String idTrafficLight; 
 
 	//protected String sendEventOutboundPort_URI;
 	protected String registeEmInboundPort_URI;
@@ -44,17 +53,20 @@ public class Traffic extends AbstractComponent implements TrafficLightNotificati
 	
 	protected TrafficNotifyInboundPort tnip;
 	protected TrafficActionOutboundPort taop;
-	
+	protected ActionExecutionInboundPort TrafficLightAeip;
+
 
 	protected Traffic(String registeEmitteurInboundPort,String registeExecuteurInboundPort,String sendInboundPort,String trafficInport,
-			IntersectionPosition position,String actionInboundPort) throws Exception {
+			IntersectionPosition position,String actionInboundPort,String id) throws Exception {
 		super(1,0);
 	//	this.sendEventOutboundPort_URI = sendOutport;
 		this.registeEmInboundPort_URI = registeEmitteurInboundPort;
 		this.registeExInboundPort_URI = registeExecuteurInboundPort;
 		this.TrafficReceiveNotifyInboundPort_URI = trafficInport;
 		this.position = position;
+		this.idTrafficLight=id;
 		this.actionInboundPort_URI = actionInboundPort;
+		this.TrafficLightAeip=new ActionExecutionInboundPort(actionInboundPort, this);
 		
 		
 		this.erop = new EmitterRegisterOutboundPort(this);
@@ -84,14 +96,18 @@ public class Traffic extends AbstractComponent implements TrafficLightNotificati
 					this.exrop.getPortURI(),
 					CEPBus.CRIP_URI,
 					ConnectorExcuteurRegister.class.getCanonicalName());
-			this.doPortConnection(
-					this.esop.getPortURI(),
-					CEPBus.CERIP_URI,
-					ConnectorEmitterSend.class.getCanonicalName());
+			
 			this.doPortConnection(
 					this.taop.getPortURI(),
 					this.actionInboundPort_URI,
 					ConnectorTrafficAction.class.getCanonicalName());
+			
+			
+			String SendEventInbound_URI=this.erop.registerEmitter(idTrafficLight);
+			this.doPortConnection(
+					this.esop.getPortURI(),
+					SendEventInbound_URI,
+					ConnectorEmitterSend.class.getCanonicalName());
 			
 			
 			
@@ -105,7 +121,7 @@ public class Traffic extends AbstractComponent implements TrafficLightNotificati
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		String uri=this.erop.registerEmitter(erop.getPortURI());
+		
 		
 	}
 	
@@ -151,7 +167,27 @@ public class Traffic extends AbstractComponent implements TrafficLightNotificati
 		pVehicule.putProperty("vehicleId", vehicleId);
 		pVehicule.putProperty("direction", d);
 		
-		//this.esop.sendEvent(samuId, pVehicule);
+		this.esop.sendEvent(idTrafficLight, pVehicule);
 	}
+	
+	public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
+		assert a instanceof TrafficLightActions;
+		assert params != null && params.length == 3 && params[0] instanceof AbsolutePosition&&params[2] instanceof TypeOfSAMURessources;
+		AbsolutePosition position = (AbsolutePosition) params[0];
+		String personId=(String)params[1];
+		TypeOfSAMURessources type=(TypeOfSAMURessources)params[2];
+		
+		switch((TrafficLightActions)tf) {
+		case InterventionAmbulance:this.saop.triggerIntervention(position, personId, type); break;
+		case IntervetionMedcin:this.saop.triggerIntervention(position, personId, type);break;
+		case AppelMedcin:this.saop.triggerIntervention(position, personId, type);
+			
+		}
+	    ResponseI response=null;
+		return  response;	
+			
+		}
+	
+	
 	
 }

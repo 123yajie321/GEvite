@@ -13,7 +13,7 @@ import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.correlateur.CorrelateurSamu;
 import gevite.emitteur.Emetteur;
-import gevite.fire.Fire;
+import gevite.fire.FireStation;
 import gevite.samu.Samu;
 import gevite.traffic.Traffic;
 
@@ -62,7 +62,7 @@ public class CVM extends AbstractBasicSimCVM {
 					// and the services inbound port URI of the proxy component to
 					// connect its service outbound port properly to the proxy
 					AbstractComponent.createComponent(
-						Fire.class.getCanonicalName(),
+						FireStation.class.getCanonicalName(),
 						new Object[]{
 								CEPBus.CRIP_URI,
 								CEPBus.CRIP_URI,
