@@ -1,5 +1,6 @@
 package gevite.correlateur;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -7,12 +8,17 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.cps.smartcity.descriptions.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
+import gevite.actions.FireStationActions;
+import gevite.actions.SamuActions;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
+import gevite.connector.ConnectorCorrelateurExecutor;
+import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.rule.RuleBase;
@@ -22,52 +28,70 @@ import gevite.rule.RuleBase;
 
 public class CorrelateurPompier extends AbstractComponent implements PompierCorrelatorStateI  {
 	
-	public static final String CERCIP_URI = "cercip-uri";
-	public static final String CCROP_URI = "ccrop-uri";
+	//public static final String CERCIP_URI = "cercip-uri";
+	//public static final String CCROP_URI = "ccrop-uri";
 	//public static final String CESCOP_URI = "cescop-uri";
 	
 	protected CepEventRecieveCorrelateurInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
+	protected CorrelateurActionExecutionOutboundPort caeop;
+	protected CorrelateurSendCepOutboundPort cscop;
 	
 	protected EventBase baseEvent;
 	//protected HashMap<EventI, String>eventEmitter;
 	protected RuleBase baseRule;
 	protected String correlateurId;
-	protected CorrelatorStateI correlatorStat;
 	protected ArrayList<String>executors;
 	protected String sendEventInboundPort;
 	protected ArrayList<String>emitters;
 	
-	protected CorrelateurPompier(String correlateurId,ArrayList<String> executors,ArrayList<String>emitters,CorrelatorStateI correlatorStat,RuleBase ruleBase) throws Exception{
+	protected boolean echelleAvailable=true;
+	protected boolean camionAvailable=true;
+	
+	protected CorrelateurPompier(String correlateurId,ArrayList<String> executors,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
 		super(1,0);
 		baseEvent =new EventBase();
-		this.cercip= new CepEventRecieveCorrelateurInboundPort(CERCIP_URI,this);
-		this.ccrop=new CorrelateurCepServicesOutboundPort(CCROP_URI,this);
+		this.cercip= new CepEventRecieveCorrelateurInboundPort(this);
+		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
+		this.caeop=new CorrelateurActionExecutionOutboundPort(this);
+		this.cscop=new CorrelateurSendCepOutboundPort(this);
+		this.caeop.publishPort();
 		this.ccrop.publishPort();
 		this.cercip.publishPort();
+		this.cscop.publishPort();
 		this.correlateurId= correlateurId;
 		this.executors=executors;
 		this.emitters=emitters;
-		this.correlatorStat=correlatorStat;
 		this.baseRule=ruleBase;
 	}
 	
 
-	
 	@Override
-	public synchronized void execute() throws Exception {
-		super.execute();
-		sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, CERCIP_URI);
-		for(String emitter: emitters) {
-			this.ccrop.subscribe(correlateurId, emitter);
+	public synchronized void start()throws ComponentStartException{
+		try {
+			sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
+			this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
+		} catch (Exception e) {
+			
+			e.printStackTrace();
 		}
-		
 		
 	}
 	
 	@Override
+	public synchronized void execute() throws Exception {
+		super.execute();
+		for(String emitter: emitters) {
+			this.ccrop.subscribe(correlateurId, emitter);
+		}
+	}
+	
+	@Override
 	public synchronized void finalise() throws Exception {		
-		this.doPortDisconnection(CCROP_URI);
+		this.doPortDisconnection(this.ccrop.getPortURI());
+		this.doPortDisconnection(this.cercip.getPortURI());
+		this.doPortDisconnection(this.caeop.getPortURI());
+		this.doPortDisconnection(this.cscop.getPortURI());
 		super.finalise();
 	}
 	
@@ -77,11 +101,9 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	}
 	
 	public void addEvent(String emitterURI, EventI event) throws Exception {
-			
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
-			baseRule.fireAllOn(baseEvent, correlatorStat);
-			
+			baseRule.fireAllOn(baseEvent, this);
 	}
 
 
@@ -89,7 +111,10 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	
 	@Override
 	public boolean inZone(AbsolutePosition p) throws Exception {
-		// TODO Auto-generated method stub
+		for(String e:executors) {
+			if(SmartCityDescriptor.dependsUpon(p,e))
+				return true;
+		}
 		return false;
 	}
 
@@ -97,23 +122,26 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 	@Override
 	public void declancheFirstAlarme(AbsolutePosition position, TypeOfFirefightingResource type) throws Exception {
-		// TODO Auto-generated method stub
-		
+		FireStationActions firstAlarmActions = FireStationActions.FirstAlarme;
+		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
+		this.caeop.execute(firstAlarmActions, new Serializable[] {position,type}); 			
 	}
 
 
 
 	@Override
-	public void declancheSecondAlarme(AbsolutePosition position, TypeOfFirefightingResource type) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+	public void declancheSecondAlarme(AbsolutePosition position) throws Exception {
+		FireStationActions secondAlarmActions = FireStationActions.FirstAlarme;
+		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
+		this.caeop.execute(secondAlarmActions, new Serializable[] {position}); 			
+	}		
 
 
 
 	@Override
 	public boolean procheCaserneExiste() throws Exception {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -121,24 +149,48 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 	@Override
 	public void propagerEvent(EventI event) throws Exception {
-		// TODO Auto-generated method stub
-		
+		this.cscop.sendEvent(this.correlateurId, event);		
 	}
 
 
 
 	@Override
 	public boolean isEchelleDisponible() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		return echelleAvailable;
 	}
 
 
 
 	@Override
 	public boolean isCamionDisponible() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		return camionAvailable;
+	}
+
+
+	@Override
+	public void setHighLadderTrucksBusy() throws Exception {
+		this.echelleAvailable = false;
+	}
+
+
+	@Override
+	public void setStandardTrucksBusy() throws Exception {
+		this.camionAvailable = false;
+		
+	}
+
+
+	@Override
+	public void setHighLadderTrucksAvailable() throws Exception {
+		this.echelleAvailable = true;
+		
+	}
+
+
+	@Override
+	public void setStandardTRucksAvailable() throws Exception {
+		this.camionAvailable = true;
+		
 	}
 
 

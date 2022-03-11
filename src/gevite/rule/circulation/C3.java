@@ -53,7 +53,7 @@ public class C3 implements RuleI{
 				&& matchedEvents.get(1).hasProperty("vehicule")
 				&& matchedEvents.get(0).getPropertyValue("vehicule").equals(matchedEvents.get(1).getPropertyValue("vehicule"));
 	}
-
+/*
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
 		CirculationCorrelatorStateI circulationState = (CirculationCorrelatorStateI)c;
@@ -73,5 +73,5 @@ public class C3 implements RuleI{
 	    eb.removeEvent(matchedEvents.get(1));
 		
 	}
-
+*/
 }

@@ -17,7 +17,6 @@ public interface SamuCorrelatorStateI extends CorrelatorStateI
 			TypeOfSAMURessources type)throws Exception;
 	
 	/*s2*/
-	public boolean isNotAmbulanceAvailable()throws Exception;
 	public boolean procheSamuExiste()throws Exception;
 	public void propagerEvent(EventI event) throws Exception;
 
@@ -29,8 +28,6 @@ public interface SamuCorrelatorStateI extends CorrelatorStateI
 			String personId,
 			TypeOfSAMURessources type)throws Exception;
 	
-	/*s4*/
-	public boolean isNotMedicAvailable()throws Exception; 
 	
 
 	/*S16*/

@@ -14,10 +14,21 @@ public interface PompierCorrelatorStateI extends CorrelatorStateI{
 	
 	/*f2*/
 	public boolean isCamionDisponible()throws Exception;
-	public void declancheSecondAlarme(AbsolutePosition position,
-									 TypeOfFirefightingResource type)throws Exception;
+	public void declancheSecondAlarme(AbsolutePosition position)throws Exception;
 	/*f3*/
 	public boolean procheCaserneExiste()throws Exception;
 	public void propagerEvent(EventI event) throws Exception;
+	
+	/*f15*/
+	public void setHighLadderTrucksBusy()throws Exception;
+	/*f16*/
+	public void setStandardTrucksBusy()throws Exception;
+	/*f17*/
+	public void setHighLadderTrucksAvailable()throws Exception;
+	/*f18*/
+	public void setStandardTRucksAvailable()throws Exception;
+
+	
+
 
 }

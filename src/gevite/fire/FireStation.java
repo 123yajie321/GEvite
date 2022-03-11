@@ -65,13 +65,14 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		protected FIREActionOutboundPort faop;
 		protected ActionExecutionInboundPort FSaeip;
 		
-		protected FireStation(String registeEmitteurInboundPort,String registeExecuteurInboundPort,String sendInboundPort,String fireInport,
-				String fireStationId,String actionInboundPort) throws Exception {
+		//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
+		//String sendInboundPort
+		protected FireStation(String fireInport,String fireStationId,String actionInboundPort) throws Exception {
 			super(1,0);
-		//	this.sendEventOutboundPort_URI = sendOutport;
-			this.registeEmInboundPort_URI = registeEmitteurInboundPort;
-			this.registeExInboundPort_URI = registeExecuteurInboundPort;
-			this.FIREReceiveNotifyInboundPort_URI = fireInport;
+			//this.sendEventOutboundPort_URI = sendOutport;
+			//this.registeEmInboundPort_URI = registeEmitteurInboundPort;
+			//this.registeExInboundPort_URI = registeExecuteurInboundPort;
+			this.FIREReceiveNotifyInboundPort_URI = fireInport; 
 			this.fireStationId = fireStationId;
 			this.actionInboundPort_URI = actionInboundPort;
 			this.FSaeip=new ActionExecutionInboundPort(actionInboundPort, this);

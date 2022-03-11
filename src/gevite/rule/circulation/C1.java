@@ -2,11 +2,13 @@ package gevite.rule.circulation;
 
 import java.util.ArrayList;
 
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.correlateur.CirculationCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
+import gevite.evenement.atomique.circulation.AttentePassage;
 import gevite.evenement.atomique.circulation.DemandePriorite;
 import gevite.evenement.atomique.circulation.PassageVehicule;
 import gevite.evenement.atomique.samu.AlarmeSante;
@@ -21,10 +23,8 @@ public class C1 implements RuleI{
 		EventI dp=null;
 		for (int i = 0 ; i < eb.numberOfEvents() && (dp == null ) ; i++) {
 			EventI e = eb.getEvent(i);
-			if (e instanceof DemandePriorite && e.hasProperty("priorite")&& e.hasProperty("vehicule")&& e.hasProperty("destinationF")
-					&& ((String)e.getPropertyValue("priorite")).equals("p")
-					&&((String)e.getPropertyValue("vehicule")).equals("v")
-					&&((String)e.getPropertyValue("destinationF")).equals("df")) {
+			if (e instanceof DemandePriorite && e.hasProperty("interPosition") && e.hasProperty("priority")
+					&& e.hasProperty("vehicleId")&& e.hasProperty("destination")) {
 				dp = e;
 			}
 		}	
@@ -49,17 +49,17 @@ public class C1 implements RuleI{
 	}
 
 	@Override
-	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
+	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		CirculationCorrelatorStateI circulationState = (CirculationCorrelatorStateI)c;
-		circulationState.passerIntersectionP(matchedEvents.get(0).getPropertyValue("priorite"));
-		
+		circulationState.changePriority((TypeOfTrafficLightPriority) matchedEvents.get(0).getPropertyValue("priority"));
 	}
 
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) {
-		PassageVehicule pVehicule = new PassageVehicule();
+		AttentePassage ap = new AttentePassage();
+		ap.putProperty("vehicleId", matchedEvents.get(0).getPropertyValue("vehicleId"));
 		eb.removeEvent(matchedEvents.get(0));
-		matchedEvents.add(pVehicule);
+		matchedEvents.add(ap);
 		AttentePassageComplexe attentePassageComplexe = new AttentePassageComplexe(matchedEvents);
 		eb.addEvent(attentePassageComplexe);
 		

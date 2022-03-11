@@ -56,13 +56,13 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	protected TrafficActionOutboundPort taop;
 	protected ActionExecutionInboundPort TrafficLightAeip;
 
-
-	protected TrafficLight(String registeEmitteurInboundPort,String registeExecuteurInboundPort,String sendInboundPort,String trafficInport,
-			IntersectionPosition position,String actionInboundPort,String id) throws Exception {
+	//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
+	//String sendInboundPort
+	protected TrafficLight(String trafficInport,IntersectionPosition position,String actionInboundPort,String id) throws Exception {
 		super(1,0);
-	//	this.sendEventOutboundPort_URI = sendOutport;
-		this.registeEmInboundPort_URI = registeEmitteurInboundPort;
-		this.registeExInboundPort_URI = registeExecuteurInboundPort;
+		//this.sendEventOutboundPort_URI = sendOutport;
+		//this.registeEmInboundPort_URI = registeEmitteurInboundPort;
+		//this.registeExInboundPort_URI = registeExecuteurInboundPort;
 		this.TrafficReceiveNotifyInboundPort_URI = trafficInport;
 		this.position = position;
 		this.idTrafficLight=id;
