@@ -8,6 +8,9 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import fr.sorbonne_u.cps.smartcity.connections.FireStationActionConnector;
+import fr.sorbonne_u.cps.smartcity.connections.FireStationActionOutboundPort;
+import fr.sorbonne_u.cps.smartcity.connections.FireStationNotificationInboundPort;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI;
@@ -27,7 +30,7 @@ import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
 import gevite.connector.ConnectorExcuteurRegister;
-import gevite.connector.ConnectorFIREAction;
+
 import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.emitteur.EmitterSendOutboundPort;
 import gevite.evenement.atomique.circulation.AtDestination;
@@ -61,14 +64,14 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 
 		protected EmitterSendOutboundPort esop;
 		
-		protected FIRENotifyInboundPort fnip;
-		protected FIREActionOutboundPort faop;
+		protected FireStationNotificationInboundPort fnip;
+		protected FireStationActionOutboundPort faop;
 		protected ActionExecutionInboundPort FSaeip;
 		
 		//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
 		//String sendInboundPort
 		protected FireStation(String fireInport,String fireStationId,String actionInboundPort) throws Exception {
-			super(1,0);
+			super(5,0);
 			//this.sendEventOutboundPort_URI = sendOutport;
 			//this.registeEmInboundPort_URI = registeEmitteurInboundPort;
 			//this.registeExInboundPort_URI = registeExecuteurInboundPort;
@@ -85,10 +88,14 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			this.exrop.publishPort();
 			this.esop = new EmitterSendOutboundPort(this);
 			this.esop.publishPort();
-			this.fnip = new FIRENotifyInboundPort(FIREReceiveNotifyInboundPort_URI, this);
+			this.fnip = new FireStationNotificationInboundPort(FIREReceiveNotifyInboundPort_URI, this);
 			this.fnip.publishPort();
-			this.faop = new FIREActionOutboundPort(this);
+			this.faop = new FireStationActionOutboundPort(this);
 			this.faop.publishPort();
+			
+			this.getTracer().setTitle("FireStation");
+			this.getTracer().setRelativePosition(1, 1);
+			this.toggleTracing();
 		}
 		
 		
@@ -100,17 +107,17 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			try {
 				this.doPortConnection(
 						this.erop.getPortURI(),
-						CEPBus.CRIP_URI,
+						CEPBus.CSIP_URI,
 						ConnectorEmitterRegister.class.getCanonicalName());
 				this.doPortConnection(
 						this.exrop.getPortURI(),
-						CEPBus.CRIP_URI,
+						CEPBus.CSIP_URI,
 						ConnectorExcuteurRegister.class.getCanonicalName());
 				
 				this.doPortConnection(
 						this.faop.getPortURI(),
 						this.actionInboundPort_URI,
-						ConnectorFIREAction.class.getCanonicalName());
+						FireStationActionConnector.class.getCanonicalName());
 				
 				String SendEventInbound_URI=this.erop.registerEmitter(fireStationId);
 				this.doPortConnection(
@@ -127,6 +134,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		@Override
 		public synchronized void execute() throws Exception {
 			super.execute();
+			this.exrop.registerExecutor(this.fireStationId, actionInboundPort_URI);
 			
 			
 		}

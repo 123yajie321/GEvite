@@ -17,6 +17,8 @@ import gevite.actions.SamuActions;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
+import gevite.cepbus.CEPBus;
+import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.connector.ConnectorCorrelateurExecutor;
 import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
@@ -69,6 +71,8 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	@Override
 	public synchronized void start()throws ComponentStartException{
 		try {
+			this.doPortConnection(this.ccrop.getPortURI(), CEPBus.CSIP_URI,ConnectorCorrelateurCepServices.class.getCanonicalName() );
+			
 			sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
 			this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
 		} catch (Exception e) {
@@ -83,6 +87,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 		super.execute();
 		for(String emitter: emitters) {
 			this.ccrop.subscribe(correlateurId, emitter);
+			//System.out.println(correlateurId+ " try subscribte : "+emitter);
 		}
 	}
 	
@@ -103,7 +108,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
-			baseRule.fireAllOn(baseEvent, this);
+			baseRule.fireFirstOn(baseEvent, this);
 	}
 
 

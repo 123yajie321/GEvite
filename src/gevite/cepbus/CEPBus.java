@@ -25,7 +25,7 @@ import gevite.evenement.EventI;
 
 public class CEPBus extends AbstractComponent{
 	
-	public static final String CRIP_URI = "crip-uri";		//register
+	public static final String CSIP_URI = "csip-uri";		//register
 	public static final String CERIP_URI = "cerip-uri";	//event recieve 
 	
 	public static final String CESCOP_URI = "cescop-uri";	//event send
@@ -43,13 +43,13 @@ public class CEPBus extends AbstractComponent{
 	//protected ArrayList<Pair<String,String>> uriSubscription;
 
 	
-	protected CepServicesInboundPort crip;
+	protected CepServicesInboundPort csip;
 	protected CepEventRecieveInboundPort cerip;
 	protected CepEventSendCorrelateurOutboundPort cescop;
 
 
 	protected CEPBus()throws Exception {
-		super(1, 0);
+		super(6, 0);
 		
 		uriEmitters = new HashSet<String>();
 		uriCorrelateurs = new HashMap<String,String>();
@@ -58,10 +58,10 @@ public class CEPBus extends AbstractComponent{
 		//eventRecu=new HashMap<EventI,String>();
 		eventsRecu=new LinkedBlockingQueue<Pair<EventI,String>>();
 		this.uriExecuteurs=new HashMap<String,String>();
-		this.crip = new CepServicesInboundPort(CRIP_URI,this); 
+		this.csip = new CepServicesInboundPort(CSIP_URI,this); 
 		this.cerip = new CepEventRecieveInboundPort(CERIP_URI,this);
 		this.cescop = new CepEventSendCorrelateurOutboundPort(CESCOP_URI, this);
-		this.crip.publishPort();
+		this.csip.publishPort();
 		this.cerip.publishPort();
 		this.cescop.publishPort();
 
@@ -81,7 +81,7 @@ public class CEPBus extends AbstractComponent{
 	public String registerCorrelator(String uri, String inboundPortURI) throws Exception{
 		uriCorrelateurs.put(uri,inboundPortURI);
 		System.out.println(" RegisterCorrelateur: " + uri);
-		return " port recevoir";// le port pour recevoir le event depuis correlateur
+		return this.CERIP_URI;// le port pour recevoir le event depuis correlateur
 	}
 	
 	public String registerExecuteur(String uri, String inboundPortURI)throws Exception {
@@ -107,6 +107,7 @@ public class CEPBus extends AbstractComponent{
 						String receiveEventInboundPort=uriCorrelateurs.get(uri_correlateur);
 						this.doPortConnection(CESCOP_URI, receiveEventInboundPort, ConnectorCepSendCorrelateur.class.getCanonicalName());
 						this.cescop.receiveEvent(pair.getSecond(), pair.getFirst());
+						System.out.println("BUS send"+ uri_correlateur+" a event");
 						
 						
 						
@@ -123,7 +124,7 @@ public class CEPBus extends AbstractComponent{
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
 		try {
-			this.crip.unpublishPort();
+			this.csip.unpublishPort();
 			
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e);		
@@ -132,7 +133,7 @@ public class CEPBus extends AbstractComponent{
 	}
 
 	public void recieveEvent(String emitterURI, EventI event) throws Exception {
-		
+		System.out.println("reveive Event from :" + emitterURI);
 		this.eventsRecu.put(new Pair<EventI, String>(event, emitterURI));
 		
 		
@@ -147,6 +148,7 @@ public class CEPBus extends AbstractComponent{
 			uriSubscription.put(subscriberURI, emitters);
 		}
 		uriSubscription.get(subscriberURI).add(emitterURI);
+		System.out.println(subscriberURI+ " subscribte : "+emitterURI);
 		return true;
 	}
 	

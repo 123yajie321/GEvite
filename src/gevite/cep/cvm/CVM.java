@@ -48,6 +48,7 @@ public class CVM extends AbstractBasicSimCVM {
 	
 	
 	public CVM() throws Exception {
+		super();
 	}
 	
 	@Override
@@ -66,7 +67,7 @@ public class CVM extends AbstractBasicSimCVM {
 		*/
 		
 		// create RuleBase
-		RuleBase ruleBase = new RuleBase();
+		RuleBase ruleBaseSamu = new RuleBase();
 		S1 S1 = new S1();
 		S2 S2 = new S2();
 		S3 S3 = new S3();
@@ -80,19 +81,20 @@ public class CVM extends AbstractBasicSimCVM {
 		S18 S18 = new S18();
 		S19 S19 = new S19();
 
-		ruleBase.addRule(S1);
-		ruleBase.addRule(S2);
-		ruleBase.addRule(S3);
-		ruleBase.addRule(S4);
-		ruleBase.addRule(S5);
-		ruleBase.addRule(S6);
-		ruleBase.addRule(S7);
-		ruleBase.addRule(S8);
-		ruleBase.addRule(S16);
-		ruleBase.addRule(S17);
-		ruleBase.addRule(S18);
-		ruleBase.addRule(S19);
-
+		ruleBaseSamu.addRule(S1);
+		ruleBaseSamu.addRule(S2);
+		ruleBaseSamu.addRule(S3);
+		ruleBaseSamu.addRule(S4);
+		ruleBaseSamu.addRule(S5);
+		ruleBaseSamu.addRule(S6);
+		ruleBaseSamu.addRule(S7);
+		ruleBaseSamu.addRule(S8);
+		ruleBaseSamu.addRule(S16);
+		ruleBaseSamu.addRule(S17);
+		ruleBaseSamu.addRule(S18);
+		ruleBaseSamu.addRule(S19);
+		
+		RuleBase ruleBasePompier = new RuleBase();
 		F1 f1 = new F1();
 		F2 f2 = new F2();
 		F3 f3 = new F3();
@@ -103,18 +105,19 @@ public class CVM extends AbstractBasicSimCVM {
 		F17 f17 = new F17();
 		F18 f18 = new F18();
 		
-		ruleBase.addRule(f1);
-		ruleBase.addRule(f2);
-		ruleBase.addRule(f3);
-		ruleBase.addRule(f4);
-		ruleBase.addRule(f11);
-		ruleBase.addRule(f15);
-		ruleBase.addRule(f16);
-		ruleBase.addRule(f17);
-		ruleBase.addRule(f18);
+		ruleBasePompier.addRule(f1);
+		ruleBasePompier.addRule(f2);
+		ruleBasePompier.addRule(f3);
+		ruleBasePompier.addRule(f4);
+		ruleBasePompier.addRule(f11);
+		ruleBasePompier.addRule(f15);
+		ruleBasePompier.addRule(f16);
+		ruleBasePompier.addRule(f17);
+		ruleBasePompier.addRule(f18);
 		
+		RuleBase ruleBaseTrafficLight = new RuleBase();
 		C1 c1 = new C1();
-		ruleBase.addRule(c1);
+		ruleBaseTrafficLight.addRule(c1);
 
 		//create CEPBus
 		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {});
@@ -150,7 +153,7 @@ public class CVM extends AbstractBasicSimCVM {
 									correlateurId,
 									executorEmitteurList,
 									executorEmitteurList,
-									ruleBase
+									ruleBasePompier
 							});
 				}
 
@@ -179,7 +182,7 @@ public class CVM extends AbstractBasicSimCVM {
 									correlateurId,
 									executorEmitteurList,
 									executorEmitteurList,
-									ruleBase
+									ruleBaseSamu
 							});
 				}
 				ArrayList<String> trafficLightIdList = new ArrayList<String>();
@@ -212,7 +215,7 @@ public class CVM extends AbstractBasicSimCVM {
 								correlateurId,
 								trafficLightIdList,
 								trafficLightIdList,
-								ruleBase
+								ruleBaseTrafficLight
 						});
 				
 				super.deploy();

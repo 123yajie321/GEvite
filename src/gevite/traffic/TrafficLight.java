@@ -8,6 +8,9 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import fr.sorbonne_u.cps.smartcity.connections.TrafficLightActionConnector;
+import fr.sorbonne_u.cps.smartcity.connections.TrafficLightActionOutboundPort;
+import fr.sorbonne_u.cps.smartcity.connections.TrafficLightNotificationInboundPort;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.Direction;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
@@ -25,7 +28,7 @@ import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
 import gevite.connector.ConnectorExcuteurRegister;
-import gevite.connector.ConnectorTrafficAction;
+
 import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.emitteur.EmitterSendOutboundPort;
 import gevite.evenement.atomique.circulation.DemandePriorite;
@@ -52,14 +55,14 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 
 	protected EmitterSendOutboundPort esop;
 	
-	protected TrafficNotifyInboundPort tnip;
-	protected TrafficActionOutboundPort taop;
+	protected TrafficLightNotificationInboundPort tnip;
+	protected TrafficLightActionOutboundPort taop;
 	protected ActionExecutionInboundPort TrafficLightAeip;
 
 	//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
 	//String sendInboundPort
 	protected TrafficLight(String trafficInport,IntersectionPosition position,String actionInboundPort,String id) throws Exception {
-		super(1,0);
+		super(4,0);
 		//this.sendEventOutboundPort_URI = sendOutport;
 		//this.registeEmInboundPort_URI = registeEmitteurInboundPort;
 		//this.registeExInboundPort_URI = registeExecuteurInboundPort;
@@ -76,10 +79,14 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 		this.exrop.publishPort();
 		this.esop = new EmitterSendOutboundPort(this);
 		this.esop.publishPort();
-		this.tnip = new TrafficNotifyInboundPort(TrafficReceiveNotifyInboundPort_URI, this);
+		this.tnip = new TrafficLightNotificationInboundPort(TrafficReceiveNotifyInboundPort_URI, this);
 		this.tnip.publishPort();
-		this.taop = new TrafficActionOutboundPort(this);
+		this.taop = new TrafficLightActionOutboundPort(this);
 		this.taop.publishPort();
+		
+		this.getTracer().setTitle("TrafficLight");
+		this.getTracer().setRelativePosition(1, 2);
+		this.toggleTracing();
 	}
 	
 	
@@ -91,17 +98,17 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 		try {
 			this.doPortConnection(
 					this.erop.getPortURI(),
-					CEPBus.CRIP_URI,
+					CEPBus.CSIP_URI,
 					ConnectorEmitterRegister.class.getCanonicalName());
 			this.doPortConnection(
 					this.exrop.getPortURI(),
-					CEPBus.CRIP_URI,
+					CEPBus.CSIP_URI,
 					ConnectorExcuteurRegister.class.getCanonicalName());
 			
 			this.doPortConnection(
 					this.taop.getPortURI(),
 					this.actionInboundPort_URI,
-					ConnectorTrafficAction.class.getCanonicalName());
+					TrafficLightActionConnector.class.getCanonicalName());
 			
 			
 			String SendEventInbound_URI=this.erop.registerEmitter(idTrafficLight);
@@ -122,6 +129,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
+		this.exrop.registerExecutor(this.idTrafficLight, actionInboundPort_URI);
 		
 		
 	}

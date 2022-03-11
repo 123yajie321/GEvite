@@ -16,6 +16,8 @@ import gevite.actions.TrafficLightActions;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
+import gevite.cepbus.CEPBus;
+import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.connector.ConnectorCorrelateurExecutor;
 import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
@@ -64,6 +66,7 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	@Override
 	public synchronized void start()throws ComponentStartException{
 		try {
+			this.doPortConnection(this.ccrop.getPortURI(), CEPBus.CSIP_URI,ConnectorCorrelateurCepServices.class.getCanonicalName() );
 			sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
 			this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
 		} catch (Exception e) {
