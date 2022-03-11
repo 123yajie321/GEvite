@@ -12,10 +12,13 @@ import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 import gevite.actions.ActionI;
+import gevite.actions.FireStationActions;
 import gevite.actions.SamuActions;
+import gevite.actions.TrafficLightActions;
 import gevite.cep.ActionExecutionCI;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
@@ -37,6 +40,7 @@ import gevite.evenement.atomique.pompier.HighLadderTrucksBusy;
 import gevite.evenement.atomique.pompier.StandardTrucksAvailable;
 import gevite.evenement.atomique.pompier.StandardTrucksBusy;
 import gevite.evenement.atomique.samu.MedecinAvailable;
+import gevite.executeur.ActionExecutionInboundPort;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class})
@@ -59,6 +63,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		
 		protected FIRENotifyInboundPort fnip;
 		protected FIREActionOutboundPort faop;
+		protected ActionExecutionInboundPort FSaeip;
 		
 		protected FireStation(String registeEmitteurInboundPort,String registeExecuteurInboundPort,String sendInboundPort,String fireInport,
 				String fireStationId,String actionInboundPort) throws Exception {
@@ -69,6 +74,8 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			this.FIREReceiveNotifyInboundPort_URI = fireInport;
 			this.fireStationId = fireStationId;
 			this.actionInboundPort_URI = actionInboundPort;
+			this.FSaeip=new ActionExecutionInboundPort(actionInboundPort, this);
+			this.FSaeip.publishPort();
 			
 			
 			this.erop = new EmitterRegisterOutboundPort(this);
@@ -149,26 +156,30 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			
 			super.shutdown();
 		}
-		/*
 		public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
-			assert a instanceof SamuActions;
-			assert params != null && params.length == 3 && params[0] instanceof AbsolutePosition&&params[2] instanceof TypeOfSAMURessources;
-			AbsolutePosition position = (AbsolutePosition) params[0];
-			String personId=(String)params[1];
-			TypeOfSAMURessources type=(TypeOfSAMURessources)params[2];
+			assert a instanceof FireStationActions;
+			assert params != null &&params[0] instanceof AbsolutePosition;
 			
-			switch((SamuActions)a) {
-			case InterventionAmbulance:this.saop.triggerIntervention(position, personId, type); break;
-			case IntervetionMedcin:this.saop.triggerIntervention(position, personId, type);break;
-			case AppelMedcin:this.saop.triggerIntervention(position, personId, type);
+			AbsolutePosition position=(AbsolutePosition) params[0];
+			
+			TypeOfFirefightingResource resource=null;
+		
+			if(params[1] !=null) {
+				resource=(TypeOfFirefightingResource) params[1];
+			}
+			switch((FireStationActions)a) {
+			case FirstAlarme:this.faop.triggerFirstAlarm(position, resource);; break;
+			case SecondAlarme:this.faop.triggerSecondAlarm(position);break;
+			case GeneraleAlarme:this.faop.triggerGeneralAlarm(position);
+			default:
+				System.out.println("Invalide Action");
 				
 			}
 		    ResponseI response=null;
 			return  response;	
 				
 			}
-*/
-
+		
 		@Override
 		public void			fireAlarm(
 			AbsolutePosition position,

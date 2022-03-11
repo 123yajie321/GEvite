@@ -15,7 +15,7 @@ import gevite.correlateur.CorrelateurSamu;
 import gevite.emitteur.Emetteur;
 import gevite.fire.FireStation;
 import gevite.samu.Samu;
-import gevite.traffic.Traffic;
+import gevite.traffic.TrafficLight;
 
 public class CVM extends AbstractBasicSimCVM {
 
@@ -100,7 +100,7 @@ public class CVM extends AbstractBasicSimCVM {
 					String notificationInboundPortURI = AbstractPort.generatePortURI();
 					this.register(p.toString(), notificationInboundPortURI);
 					AbstractComponent.createComponent(
-							Traffic.class.getCanonicalName(),
+							TrafficLight.class.getCanonicalName(),
 							new Object[]{
 									CEPBus.CRIP_URI,
 									CEPBus.CRIP_URI,

@@ -8,6 +8,8 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.cps.smartcity.descriptions.SmartCityDescriptor;
+import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
@@ -74,7 +76,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 		super.shutdown();
 	}
 	
-	public void addEvent(String emitterURI, EventI event) {
+	public void addEvent(String emitterURI, EventI event) throws Exception {
 			
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
@@ -84,15 +86,9 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 
 
+	
 	@Override
-	public boolean inZone(String p) {
-		return false;
-	}
-
-
-
-	@Override
-	public boolean isEchelleDisponible() {
+	public boolean inZone(AbsolutePosition p) throws Exception {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -100,7 +96,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 
 	@Override
-	public void declancheAlarme() {
+	public void declancheFirstAlarme(AbsolutePosition position, TypeOfFirefightingResource type) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
@@ -108,7 +104,15 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 
 	@Override
-	public boolean isCamionDisponible() {
+	public void declancheSecondAlarme(AbsolutePosition position, TypeOfFirefightingResource type) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public boolean procheCaserneExiste() throws Exception {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -116,7 +120,23 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 
 	@Override
-	public boolean isNotEchelleDisponible() {
+	public void propagerEvent(EventI event) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public boolean isEchelleDisponible() throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	@Override
+	public boolean isCamionDisponible() throws Exception {
 		// TODO Auto-generated method stub
 		return false;
 	}

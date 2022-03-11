@@ -13,6 +13,7 @@ import fr.sorbonne_u.cps.smartcity.grid.Direction;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightNotificationImplI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 import gevite.actions.ActionI;
 import gevite.actions.SamuActions;
 import gevite.actions.TrafficLightActions;
@@ -33,7 +34,7 @@ import gevite.executeur.ActionExecutionInboundPort;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 @OfferedInterfaces(offered= {ActionExecutionCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
-public class Traffic extends AbstractComponent implements TrafficLightNotificationImplI{
+public class TrafficLight extends AbstractComponent implements TrafficLightNotificationImplI{
 	
 	protected IntersectionPosition					position;
 	protected String idTrafficLight; 
@@ -56,7 +57,7 @@ public class Traffic extends AbstractComponent implements TrafficLightNotificati
 	protected ActionExecutionInboundPort TrafficLightAeip;
 
 
-	protected Traffic(String registeEmitteurInboundPort,String registeExecuteurInboundPort,String sendInboundPort,String trafficInport,
+	protected TrafficLight(String registeEmitteurInboundPort,String registeExecuteurInboundPort,String sendInboundPort,String trafficInport,
 			IntersectionPosition position,String actionInboundPort,String id) throws Exception {
 		super(1,0);
 	//	this.sendEventOutboundPort_URI = sendOutport;
@@ -67,7 +68,7 @@ public class Traffic extends AbstractComponent implements TrafficLightNotificati
 		this.idTrafficLight=id;
 		this.actionInboundPort_URI = actionInboundPort;
 		this.TrafficLightAeip=new ActionExecutionInboundPort(actionInboundPort, this);
-		
+		this.TrafficLightAeip.publishPort();
 		
 		this.erop = new EmitterRegisterOutboundPort(this);
 		this.erop.publishPort();
@@ -172,15 +173,14 @@ public class Traffic extends AbstractComponent implements TrafficLightNotificati
 	
 	public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		assert a instanceof TrafficLightActions;
-		assert params != null && params.length == 3 && params[0] instanceof AbsolutePosition&&params[2] instanceof TypeOfSAMURessources;
-		AbsolutePosition position = (AbsolutePosition) params[0];
-		String personId=(String)params[1];
-		TypeOfSAMURessources type=(TypeOfSAMURessources)params[2];
+		TypeOfTrafficLightPriority priority=null;
+		if(params !=null) {
+			priority=(TypeOfTrafficLightPriority) params[0];
+		}
+		switch((TrafficLightActions)a) {
+		case changePriority:this.taop.changePriority(priority); break;
+		case returnToNormalMode:this.taop.returnToNormalMode();
 		
-		switch((TrafficLightActions)tf) {
-		case InterventionAmbulance:this.saop.triggerIntervention(position, personId, type); break;
-		case IntervetionMedcin:this.saop.triggerIntervention(position, personId, type);break;
-		case AppelMedcin:this.saop.triggerIntervention(position, personId, type);
 			
 		}
 	    ResponseI response=null;

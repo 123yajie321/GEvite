@@ -1,7 +1,5 @@
 package gevite.rule.pompier;
 
-import java.util.ArrayList;
-
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.PompierCorrelatorStateI;
@@ -10,10 +8,11 @@ import gevite.evenement.EventI;
 import gevite.evenement.atomique.pompier.AlarmFeu;
 import gevite.evenement.atomique.pompier.InterventionCauseFeu;
 import gevite.evenement.complexe.pompier.DemandeInterventionFeu;
-import gevite.evenement.complexe.pompier.PremiereAlarmFeu;
 import gevite.rule.RuleI;
 
-public class F3 implements RuleI{
+import java.util.ArrayList;
+
+public class F4 implements RuleI{
 
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb) {
@@ -21,7 +20,7 @@ public class F3 implements RuleI{
 		for (int i = 0 ; i < eb.numberOfEvents() && (af == null ) ; i++) {
 			EventI e = eb.getEvent(i);
 			if (e instanceof AlarmFeu && e.hasProperty("type")&& e.hasProperty("position")
-					&& e.getPropertyValue("type")== TypeOfFire.Building
+					&& e.getPropertyValue("type")== TypeOfFire.House
 			) {
 				af = e;
 			}
@@ -43,7 +42,7 @@ public class F3 implements RuleI{
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
-		return (!pompierCorrelatorState.isEchelleDisponible())&&pompierCorrelatorState.procheCaserneExiste();
+		return (!pompierCorrelatorState.isCamionDisponible())&&pompierCorrelatorState.procheCaserneExiste();
 	}
 
 	@Override

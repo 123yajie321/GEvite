@@ -10,9 +10,9 @@ import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
-import gevite.evenement.atomique.samu.InterventionCause;
+import gevite.evenement.atomique.samu.InterventionCausesSamu;
 import gevite.evenement.atomique.samu.SignaleManuel;
-import gevite.evenement.complexe.samu.DemandeIntervention;
+import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.rule.RuleI;
 
 public class S6 implements RuleI{
@@ -63,10 +63,10 @@ public class S6 implements RuleI{
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI cs)throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
-		EventI interventionCause=new InterventionCause();
+		EventI interventionCause=new InterventionCausesSamu();
 		ArrayList<EventI> eventComplex = matchedEvents; 
 		eventComplex.add(interventionCause);
-		DemandeIntervention dIntervention = new DemandeIntervention(eventComplex);
+		DemandeInterventionSamu dIntervention = new DemandeInterventionSamu(eventComplex);
 		samuState.propagerEvent(dIntervention);
 	}
 

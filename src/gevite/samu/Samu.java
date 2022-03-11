@@ -40,7 +40,7 @@ import gevite.evenement.atomique.samu.MedecinBusy;
 import gevite.evenement.atomique.samu.SignaleManuel;
 import gevite.executeur.ActionExecutionInboundPort;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
-import javassist.expr.NewArray;
+
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
@@ -75,6 +75,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 		this.samuId = samuId;
 		this.actionInboundPort_URI = actionInboundPort;
 		this.SAMUaeip=new ActionExecutionInboundPort(actionInboundPort, this);
+		this.SAMUaeip.publishPort();
 		
 		this.erop = new EmitterRegisterOutboundPort(this);
 		this.erop.publishPort();

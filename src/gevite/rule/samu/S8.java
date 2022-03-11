@@ -12,10 +12,10 @@ import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
-import gevite.evenement.atomique.samu.InterventionCause;
+import gevite.evenement.atomique.samu.InterventionCausesSamu;
 import gevite.evenement.atomique.samu.SignaleManuel;
 import gevite.evenement.complexe.samu.ConsciousFall;
-import gevite.evenement.complexe.samu.DemandeIntervention;
+import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.rule.RuleI;
 
 public class S8 implements RuleI{

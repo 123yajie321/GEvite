@@ -2,6 +2,10 @@ package gevite.rule.pompier;
 
 import java.util.ArrayList;
 
+import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.PompierCorrelatorStateI;
 import gevite.evenement.EventBaseI;
@@ -20,8 +24,8 @@ public class F1 implements RuleI{
 		for (int i = 0 ; i < eb.numberOfEvents() && (af == null ) ; i++) {
 			EventI e = eb.getEvent(i);
 			if (e instanceof AlarmFeu && e.hasProperty("type")&& e.hasProperty("position")
-					&& ((String)e.getPropertyValue("type")).equals("immeuble")
-					&&((String)e.getPropertyValue("position")).equals("p")) {
+					&& e.getPropertyValue("type")== TypeOfFire.Building
+					) {
 				af = e;
 			}
 		}	
@@ -42,23 +46,26 @@ public class F1 implements RuleI{
 	}
 
 	@Override
-	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
+	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
-		return pompierCorrelatorState.inZone("p") && pompierCorrelatorState.isEchelleDisponible();
+		EventI alarmFeu = matchedEvents.get(0);
+		return pompierCorrelatorState.inZone((AbsolutePosition)alarmFeu.getPropertyValue("position")) && pompierCorrelatorState.isEchelleDisponible();
 	}
 
 	@Override
-	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) {
+	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
-		pompierCorrelatorState.declancheAlarme();;		
+		EventI alarmFeu = matchedEvents.get(0);
+		pompierCorrelatorState.declancheFirstAlarme((AbsolutePosition) alarmFeu.getPropertyValue("position"),TypeOfFirefightingResource.HighLadderTruck);
 	}
 
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) {
-		AlarmeFeuCause alarmeFeuCause = new AlarmeFeuCause();
+		EventI alarmeFeuCause = new AlarmeFeuCause();
+		ArrayList<EventI> eventComplex = matchedEvents;
+		eventComplex.add(alarmeFeuCause);
 		eb.removeEvent(matchedEvents.get(0));
-		matchedEvents.add(alarmeFeuCause);
-		PremiereAlarmFeu premiereAlarmFeu = new PremiereAlarmFeu(matchedEvents);
+		PremiereAlarmFeu premiereAlarmFeu = new PremiereAlarmFeu(eventComplex);
 		eb.addEvent(premiereAlarmFeu);
 		
 	}
