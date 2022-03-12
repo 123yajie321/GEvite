@@ -133,7 +133,7 @@ public class CEPBus extends AbstractComponent{
 	}
 
 	public void recieveEvent(String emitterURI, EventI event) throws Exception {
-		System.out.println("reveive Event from :" + emitterURI);
+		System.out.println("Bus reveive Event from :" + emitterURI);
 		this.eventsRecu.put(new Pair<EventI, String>(event, emitterURI));
 		
 		
@@ -153,10 +153,9 @@ public class CEPBus extends AbstractComponent{
 	}
 	
 	public String getExecutorInboundPortURI(String uri)throws Exception{
-		System.out.println(uri+"");
-		String uriExecutoInboudPort =uriExecuteurs.get(uri);
-		
-		System.out.println(uri+" uriExecutoInboudPort: " +uriExecutoInboudPort);
+	
+		String uriExecutoInboudPort =uriExecuteurs.get(uri);	
+		System.out.println(uri+" geturiExecutoInboudPort: " +uriExecutoInboudPort);
 		 return uriExecutoInboudPort;
 		
 	}

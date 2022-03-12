@@ -1,4 +1,4 @@
-package gevite.fire;
+package gevite.fireStation;
 
 import java.io.Serializable;
 import java.time.LocalTime;

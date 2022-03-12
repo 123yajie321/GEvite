@@ -16,7 +16,7 @@ import gevite.correlateur.CorrelateurPompier;
 import gevite.correlateur.CorrelateurSamu;
 import gevite.correlateur.CorrelateurtTraffic;
 import gevite.emitteur.Emetteur;
-import gevite.fire.FireStation;
+import gevite.fireStation.FireStation;
 import gevite.rule.RuleBase;
 import gevite.rule.circulation.C1;
 import gevite.rule.pompier.F1;
@@ -119,6 +119,14 @@ public class CVM extends AbstractBasicSimCVM {
 		RuleBase ruleBaseTrafficLight = new RuleBase();
 		C1 c1 = new C1();
 		ruleBaseTrafficLight.addRule(c1);
+		
+		//stoker la liste des emitters que le correlateur traffic veut subscribe
+		ArrayList<String>abonnementCorrelateurTrafficLight=new ArrayList<String>();
+		
+		//stcoker id des TrafficLight
+		ArrayList<String> trafficLightIdList = new ArrayList<String>();
+		
+		
 
 		//create CEPBus
 		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {});
@@ -132,6 +140,7 @@ public class CVM extends AbstractBasicSimCVM {
 							BasicSimSmartCityDescriptor.createFireStationIdIterator();
 				while (fireStationIdsIterator.hasNext()) {
 					String fireStationId = fireStationIdsIterator.next();
+					abonnementCorrelateurTrafficLight.add(fireStationId);
 					String notificationInboundPortURI = AbstractPort.generatePortURI();
 					this.register(fireStationId, notificationInboundPortURI);
 					//pompier
@@ -162,6 +171,7 @@ public class CVM extends AbstractBasicSimCVM {
 							BasicSimSmartCityDescriptor.createSAMUStationIdIterator();
 				while (samuStationsIditerator.hasNext()) {
 					String samuStationId = samuStationsIditerator.next();
+					abonnementCorrelateurTrafficLight.add(samuStationId);
 					String notificationInboundPortURI = AbstractPort.generatePortURI();
 					this.register(samuStationId, notificationInboundPortURI);
 					//samu
@@ -186,7 +196,7 @@ public class CVM extends AbstractBasicSimCVM {
 									ruleBaseSamu
 							});
 				}
-				ArrayList<String> trafficLightIdList = new ArrayList<String>();
+				
 				Iterator<IntersectionPosition> trafficLightsIterator =
 							BasicSimSmartCityDescriptor.createTrafficLightPositionIterator();
 				while (trafficLightsIterator.hasNext()) {
@@ -195,6 +205,8 @@ public class CVM extends AbstractBasicSimCVM {
 					this.register(p.toString(), notificationInboundPortURI);
 					String trafficId = "trafficLight "+ trafficLightId;
 					trafficLightIdList.add(trafficId);
+					abonnementCorrelateurTrafficLight.add(trafficId);
+					
 					//trafficLight
 					AbstractComponent.createComponent(
 							TrafficLight.class.getCanonicalName(),
@@ -211,11 +223,13 @@ public class CVM extends AbstractBasicSimCVM {
 				String correlateurId="correlateurTrafficLight "+correlateurid;
 				correlateurid++;
 				//correlateur trafficLight
+			
+				
 				AbstractComponent.createComponent(CorrelateurtTraffic.class.getCanonicalName(), 
 						new Object[]{
 								correlateurId,
 								trafficLightIdList,
-								trafficLightIdList,
+								abonnementCorrelateurTrafficLight,
 								ruleBaseTrafficLight
 						});
 				
@@ -228,8 +242,8 @@ public class CVM extends AbstractBasicSimCVM {
 		
 		try {
 			CVM c = new CVM();
-			c.startStandardLifeCycle(10000L);
-			Thread.sleep(100000L);
+			c.startStandardLifeCycle(20000L);
+			Thread.sleep(200000L);
 			System.exit(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

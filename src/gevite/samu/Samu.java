@@ -177,15 +177,13 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	
 	
 public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
-	
-	System.out.println("recevie action ");
+
 	assert a instanceof SamuActions;
 	System.out.println("recevie action samu");
 	assert params != null && params.length == 3 && params[0] instanceof AbsolutePosition&&params[2] instanceof TypeOfSAMURessources;
 	AbsolutePosition position = (AbsolutePosition) params[0];
 	String personId=(String)params[1];
 	TypeOfSAMURessources type=(TypeOfSAMURessources)params[2];
-	System.out.println("parameters get");
 	switch((SamuActions)a) {
 	case InterventionAmbulance:this.saop.triggerIntervention(position, personId, type); this.traceMessage("Trigger ambulance intervention\n");break;
 	case IntervetionMedcin:this.saop.triggerIntervention(position, personId, type);this.traceMessage("Trigger medic intervention\n");break;

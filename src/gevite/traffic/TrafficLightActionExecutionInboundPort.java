@@ -10,7 +10,7 @@ import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.actions.ActionI;
 import gevite.cep.ActionExecutionCI;
 import gevite.cep.ResponseI;
-import gevite.fire.FireStation;
+import gevite.fireStation.FireStation;
 import gevite.samu.Samu;
 import gevite.traffic.TrafficLight;
 
