@@ -23,6 +23,8 @@ import gevite.connector.ConnectorCorrelateurSAMU;
 import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
+import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.evenement.atomique.samu.SignaleManuel;
 import gevite.rule.RuleBase;
 
 @OfferedInterfaces(offered = {EventReceptionCI.class})
@@ -34,7 +36,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	//public static final String CCROP_URI = "ccrop-uri";
 	//public static final String CESCOP_URI = "cescop-uri";
 	
-	protected CepEventRecieveCorrelateurInboundPort cercip;
+	protected CorrelateurRecieveEventInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
 	protected CorrelateurActionExecutionOutboundPort caeop;
 	protected CorrelateurSendCepOutboundPort cscop;
@@ -53,9 +55,9 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	
 	protected CorrelateurSamu(String correlateurId,ArrayList<String> executors,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
-		super(1,0);
+		super(2,0);
 		baseEvent =new EventBase();
-		this.cercip= new CepEventRecieveCorrelateurInboundPort(this);
+		this.cercip= new CorrelateurRecieveEventInboundPort(this);
 		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
 		this.caeop=new CorrelateurActionExecutionOutboundPort(this);
 		this.cscop=new CorrelateurSendCepOutboundPort(this);
@@ -107,6 +109,11 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	}
 	
 	public void addEvent(String emitterURI, EventI event) throws Exception {
+
+		if(event instanceof AlarmeSante ) {System.out.println(" CorrelateurSamu receive alarme sante :"+(event.getPropertyValue("personId") != null ?
+  				" form person " + event.getPropertyValue("personId") :	""));}
+		
+		if(event instanceof SignaleManuel  ) {System.out.println("CorrelateurSamu receive Signal Manuel from "+ event.getPropertyValue("personId"));}
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
 			baseRule.fireAllOn(baseEvent, this);

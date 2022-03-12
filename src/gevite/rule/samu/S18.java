@@ -15,7 +15,7 @@ import gevite.evenement.atomique.samu.AmbulancesBusy;
 import gevite.rule.RuleI;
 
 public class S18 implements RuleI {
-	public String tag="s18";
+
 
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb)throws Exception {
@@ -53,7 +53,7 @@ public class S18 implements RuleI {
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
 		samuState.setAmbulancesAvailable();
-		System.out.println(tag);
+	
 
 	}
 

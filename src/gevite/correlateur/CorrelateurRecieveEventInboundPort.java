@@ -6,16 +6,16 @@ import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
 import gevite.evenement.EventI;
 
-public class CepEventRecieveCorrelateurInboundPort extends AbstractInboundPort implements EventReceptionCI {
+public class CorrelateurRecieveEventInboundPort extends AbstractInboundPort implements EventReceptionCI {
 
 	private static final long serialVersionUID = 1L;
 
-	public CepEventRecieveCorrelateurInboundPort(ComponentI owner)
+	public CorrelateurRecieveEventInboundPort(ComponentI owner)
 			throws Exception {
 		super(EventEmissionCI.class,owner);
 	}
 	
-	public CepEventRecieveCorrelateurInboundPort(String uri,ComponentI owner)
+	public CorrelateurRecieveEventInboundPort(String uri,ComponentI owner)
 			throws Exception {
 		super(uri,EventEmissionCI.class, owner);
 	}

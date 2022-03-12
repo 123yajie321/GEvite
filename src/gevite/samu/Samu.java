@@ -72,7 +72,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
 	//String sendInboundPort,
 	protected Samu(String samuInport,String samuId,String actionInboundPort) throws Exception {
-		super(4,0);
+		super(2,0);
 		//this.sendEventOutboundPort_URI = sendOutport;
 		//this.registeEmInboundPort_URI = registeEmitteurInboundPort;
 		//this.registeExInboundPort_URI = registeExecuteurInboundPort;

@@ -16,41 +16,50 @@ import gevite.evenement.atomique.samu.SignaleManuel;
 import gevite.rule.RuleI;
 
 public class S7 implements RuleI{
-	@Override
 	public ArrayList<EventI> match(EventBaseI eb)throws Exception {
-		//System.out.println("S7 match");
-		EventI he = null; EventI s = null;
-	    for (int i = 0 ; i < eb.numberOfEvents() && (he == null || s == null) ; i++) {
-	    	EventI e = eb.getEvent(i);
-	    	if (e instanceof AlarmeSante && e.hasProperty("type")
-	    			&& e.getPropertyValue("type")==TypeOfHealthAlarm.TRACKING) {
-	    		he = e;
-	    	}
-	    	if (e instanceof SignaleManuel ) { s = e; }
-	    }
-	    if (he != null && s != null) {
-	    	
-	        ArrayList<EventI> matchedEvents = new ArrayList<>();
-	        matchedEvents.add(he);
-	        matchedEvents.add(s);
-	    	//System.out.println("S7 fin match");
-	        return matchedEvents;
-	    } else {
-	        return null;
-	    } 
-	    
-	}
+       
+        ArrayList<EventI> aSantes = new ArrayList<EventI>();
+        ArrayList<EventI> sManuel = new ArrayList<EventI>();
+        ArrayList<EventI> matchedEvents = new ArrayList<>();
+        EventI he = null; EventI s = null;
+
+
+        for(int i = 0;i < eb.numberOfEvents();i++){
+            EventI e = eb.getEvent(i);
+            if (e instanceof AlarmeSante && e.hasProperty("type")
+                    && e.getPropertyValue("type")==TypeOfHealthAlarm.TRACKING) {
+                aSantes.add(e);
+            }
+        }
+
+        for(int i = 0;i < eb.numberOfEvents();i++){
+            EventI e = eb.getEvent(i);
+            if (e instanceof SignaleManuel) {
+                sManuel.add(e);
+            }
+        }
+
+        for (int i = 0 ; i < aSantes.size() ; i++) {
+            for(int j = 0 ; j < sManuel.size() ; j++ ){
+                if(aSantes.get(i).getPropertyValue("personId").equals
+                    (sManuel.get(j).getPropertyValue("personId"))){
+                    he = aSantes.get(i);
+                    s = sManuel.get(j);
+                    matchedEvents.add(he);
+                    matchedEvents.add(s);
+                    //System.out.println("S7 match");
+                    return matchedEvents;
+                }
+            }
+
+        }return null;
+}
 			
 		
 
 	@Override
 	public boolean correlate(ArrayList<EventI> matchedEvents)throws Exception {
-		if (matchedEvents.get(0).hasProperty("personId")) {
-			System.out.println(matchedEvents.get(0).getPropertyValue("personId"));
-		}
-		if (matchedEvents.get(1).hasProperty("personId")) {
-			System.out.println(matchedEvents.get(1).getPropertyValue("personId"));
-		}
+		
 	
 		return matchedEvents.get(0).hasProperty("personId") &&
 		           matchedEvents.get(1).hasProperty("personId") &&
@@ -74,7 +83,7 @@ public class S7 implements RuleI{
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
 		
-		
+		//System.out.println("S7 act");
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI) cs;
 		EventI alarmSante=matchedEvents.get(0);
 		samuState.triggerMedicCall((AbsolutePosition) alarmSante.getPropertyValue("position"),(String)matchedEvents.get(0).getPropertyValue("personId"),

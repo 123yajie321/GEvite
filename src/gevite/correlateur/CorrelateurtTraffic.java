@@ -23,6 +23,7 @@ import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.connector.ConnectorCorrelateurTrafficLight;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
+import gevite.evenement.atomique.circulation.DemandePriorite;
 import gevite.rule.RuleBase;
 
 @OfferedInterfaces(offered = {EventReceptionCI.class})
@@ -34,7 +35,7 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	//public static final String CCROP_URI = "ccrop-uri";
 	//public static final String CESCOP_URI = "cescop-uri";
 	
-	protected CepEventRecieveCorrelateurInboundPort cercip;
+	protected CorrelateurRecieveEventInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
 	protected CorrelateurActionExecutionOutboundPort caeop;
 	protected CorrelateurSendCepOutboundPort cscop;
@@ -45,12 +46,14 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	protected String correlateurId;
 	protected ArrayList<String>executors;
 	protected String sendEventInboundPort;
+	
+	//l'ensemble des emitters (ou correlateur ) abonné
 	protected ArrayList<String>emitters;
 	
 	protected CorrelateurtTraffic(String correlateurId,ArrayList<String> executors,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
-		super(1,0);
+		super(2,0);
 		baseEvent =new EventBase();
-		this.cercip= new CepEventRecieveCorrelateurInboundPort(this);
+		this.cercip= new CorrelateurRecieveEventInboundPort(this);
 		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
 		this.caeop=new CorrelateurActionExecutionOutboundPort(this);
 		this.cscop=new CorrelateurSendCepOutboundPort(this);
@@ -100,10 +103,10 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	}
 	
 	public void addEvent(String emitterURI, EventI event) throws Exception {
+		if(event instanceof DemandePriorite) {System.out.println("receive Event DemandPriorite");}
 		this.baseEvent.addEvent(event);
+		baseRule.fireAllOn(baseEvent, this);
 		//this.eventEmitter.put(event, emitterURI);
-		System.out.println("size of baseRuleTraffic: "+baseRule.sizeofrules());
-		baseRule.fireFirstOn(baseEvent, this);
 	}
 	/*
 

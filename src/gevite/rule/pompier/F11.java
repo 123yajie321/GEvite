@@ -25,7 +25,6 @@ public class F11 implements RuleI{
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb) {
 		
-		System.out.println("F11 ");
 		EventI fa=null; EventI sa=null;
 		for (int i = 0 ; i < eb.numberOfEvents() && (fa == null || sa==null ) ; i++) {
 			EventI e = eb.getEvent(i);
@@ -69,13 +68,16 @@ public class F11 implements RuleI{
 		System.out.println("F11 filter");
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
 		return pompierCorrelatorState.isCamionDisponible();
+		
 	}
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
+		System.out.println("F11 act");
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
 		EventI alarmFeu = matchedEvents.get(0);
 		pompierCorrelatorState.declancheSecondAlarme((AbsolutePosition) alarmFeu.getPropertyValue("position"));
+		System.out.println("F11 act finished");
 	}
 
 	@Override

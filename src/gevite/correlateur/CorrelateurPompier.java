@@ -35,7 +35,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	//public static final String CCROP_URI = "ccrop-uri";
 	//public static final String CESCOP_URI = "cescop-uri";
 	
-	protected CepEventRecieveCorrelateurInboundPort cercip;
+	protected CorrelateurRecieveEventInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
 	protected CorrelateurActionExecutionOutboundPort caeop;
 	protected CorrelateurSendCepOutboundPort cscop;
@@ -52,9 +52,9 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	protected boolean camionAvailable=true;
 	
 	protected CorrelateurPompier(String correlateurId,ArrayList<String> executors,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
-		super(1,0);
+		super(2,0);
 		baseEvent =new EventBase();
-		this.cercip= new CepEventRecieveCorrelateurInboundPort(this);
+		this.cercip= new CorrelateurRecieveEventInboundPort(this);
 		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
 		this.caeop=new CorrelateurActionExecutionOutboundPort(this);
 		this.cscop=new CorrelateurSendCepOutboundPort(this);
@@ -88,7 +88,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 		super.execute();
 		for(String emitter: emitters) {
 			this.ccrop.subscribe(correlateurId, emitter);
-			//System.out.println(correlateurId+ " try subscribte : "+emitter);
+		
 		}
 	}
 	
@@ -109,8 +109,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
-			System.out.println("size of baseRulePompier: "+baseRule.sizeofrules());
-			baseRule.fireFirstOn(baseEvent, this);
+			baseRule.fireAllOn(baseEvent, this);
 	}
 
 
@@ -189,6 +188,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 	@Override
 	public void setHighLadderTrucksAvailable() throws Exception {
+		
 		this.echelleAvailable = true;
 		
 	}
@@ -196,6 +196,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 	@Override
 	public void setStandardTRucksAvailable() throws Exception {
+		
 		this.camionAvailable = true;
 		
 	}

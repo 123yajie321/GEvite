@@ -62,7 +62,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
 	//String sendInboundPort
 	protected TrafficLight(String trafficInport,IntersectionPosition position,String actionInboundPort,String id) throws Exception {
-		super(4,0);
+		super(2,0);
 		//this.sendEventOutboundPort_URI = sendOutport;
 		//this.registeEmInboundPort_URI = registeEmitteurInboundPort;
 		//this.registeExInboundPort_URI = registeExecuteurInboundPort;
@@ -186,8 +186,8 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 			priority=(TypeOfTrafficLightPriority) params[0];
 		}
 		switch((TrafficLightActions)a) {
-		case changePriority:this.taop.changePriority(priority); break;
-		case returnToNormalMode:this.taop.returnToNormalMode();
+		case changePriority:this.taop.changePriority(priority);this.traceMessage("Change priority \n"); break;
+		case returnToNormalMode:this.taop.returnToNormalMode();	this.traceMessage("Return to normal mode\n");
 		
 			
 		}
