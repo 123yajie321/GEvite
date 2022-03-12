@@ -153,6 +153,8 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 			this.exrop.unpublishPort();
 			this.esop.unpublishPort();
 			this.taop.unpublishPort();
+			this.tnip.unpublishPort();
+			
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e) ;
 		}

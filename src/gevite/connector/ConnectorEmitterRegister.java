@@ -11,8 +11,8 @@ public class ConnectorEmitterRegister extends AbstractConnector implements CEPBu
 	}
 
 	@Override
-	public void unregisterEmitter(String uri) {
-		// TODO Auto-generated method stub
+	public void unregisterEmitter(String uri) throws Exception {
+		((CEPBusManagementCI)this.offering).unregisterEmitter(uri);
 
 	}
 

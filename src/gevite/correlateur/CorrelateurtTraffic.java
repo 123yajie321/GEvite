@@ -102,14 +102,26 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
-		super.shutdown();
-	}
+			
+			try {
+				this.ccrop.unpublishPort();
+				this.caeop.unpublishPort();
+				this.cscop.unpublishPort();
+				this.cercip.unpublishPort();
+				
+			} catch (Exception e) {
+				throw new ComponentShutdownException(e) ;
+			}
+			
+			
+			super.shutdown();
+		}
 	
 	public void addEvent(String emitterURI, EventI event) throws Exception {
-		if(event instanceof DemandePriorite) {System.out.println("receive Event DemandPriorite");}
+		//if(event instanceof DemandePriorite) {System.out.println("receive Event DemandPriorite");}
 		this.baseEvent.addEvent(event);
 		baseRule.fireAllOn(baseEvent, this);
-		//this.eventEmitter.put(event, emitterURI);
+	
 	}
 	/*
 

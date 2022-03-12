@@ -105,17 +105,29 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
-		super.shutdown();
-	}
+			
+			try {
+				this.ccrop.unpublishPort();
+				this.caeop.unpublishPort();
+				this.cscop.unpublishPort();
+				this.cercip.unpublishPort();
+				
+			} catch (Exception e) {
+				throw new ComponentShutdownException(e) ;
+			}
+			
+			
+			super.shutdown();
+		}
 	
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 
-		if(event instanceof AlarmeSante ) {System.out.println(" CorrelateurSamu receive alarme sante :"+(event.getPropertyValue("personId") != null ?
+		/*if(event instanceof AlarmeSante ) {System.out.println(" CorrelateurSamu receive alarme sante :"+(event.getPropertyValue("personId") != null ?
   				" form person " + event.getPropertyValue("personId") :	""));}
 		
-		if(event instanceof SignaleManuel  ) {System.out.println("CorrelateurSamu receive Signal Manuel from "+ event.getPropertyValue("personId"));}
-			this.baseEvent.addEvent(event);
-			//this.eventEmitter.put(event, emitterURI);
+		if(event instanceof SignaleManuel  ) {System.out.println("CorrelateurSamu receive Signal Manuel from "+ event.getPropertyValue("personId"));}*/
+			
+		this.baseEvent.addEvent(event);
 			baseRule.fireAllOn(baseEvent, this);
 	}
 

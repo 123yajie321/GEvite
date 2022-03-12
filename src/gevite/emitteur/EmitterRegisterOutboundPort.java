@@ -27,8 +27,8 @@ public class EmitterRegisterOutboundPort extends AbstractOutboundPort implements
 	}
 
 	@Override
-	public void unregisterEmitter(String uri) {
-		// TODO Auto-generated method stub
+	public void unregisterEmitter(String uri) throws Exception {
+		((CEPBusManagementCI)this.getConnector()).unregisterEmitter(uri);
 
 	}
 

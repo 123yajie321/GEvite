@@ -162,6 +162,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 			this.exrop.unpublishPort();
 			this.esop.unpublishPort();
 			this.saop.unpublishPort();
+			this.snip.unpublishPort();
 		} catch (Exception e) {
 			throw new ComponentShutdownException(e) ;
 		}
@@ -179,7 +180,6 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 
 	assert a instanceof SamuActions;
-	System.out.println("recevie action samu");
 	assert params != null && params.length == 3 && params[0] instanceof AbsolutePosition&&params[2] instanceof TypeOfSAMURessources;
 	AbsolutePosition position = (AbsolutePosition) params[0];
 	String personId=(String)params[1];

@@ -158,6 +158,8 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 				this.exrop.unpublishPort();
 				this.esop.unpublishPort();
 				this.faop.unpublishPort();
+				this.fnip.unpublishPort();
+				
 			} catch (Exception e) {
 				throw new ComponentShutdownException(e) ;
 			}

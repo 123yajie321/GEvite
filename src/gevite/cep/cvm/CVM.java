@@ -15,7 +15,6 @@ import gevite.connector.ConnectorEmitterRegister;
 import gevite.correlateur.CorrelateurPompier;
 import gevite.correlateur.CorrelateurSamu;
 import gevite.correlateur.CorrelateurtTraffic;
-import gevite.emitteur.Emetteur;
 import gevite.fireStation.FireStation;
 import gevite.rule.RuleBase;
 import gevite.rule.circulation.C1;
@@ -242,8 +241,8 @@ public class CVM extends AbstractBasicSimCVM {
 		
 		try {
 			CVM c = new CVM();
-			c.startStandardLifeCycle(20000L);
-			Thread.sleep(200000L);
+			c.startStandardLifeCycle(10000L);
+			Thread.sleep(100000L);
 			System.exit(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);

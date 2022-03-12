@@ -56,8 +56,8 @@ public class ExecuteurRegisterOutboundPort extends AbstractOutboundPort implemen
 	}
 
 	@Override
-	public void unregisterExecutor(String uri) {
-		// TODO Auto-generated method stub
+	public void unregisterExecutor(String uri) throws Exception {
+		((CEPBusManagementCI)this.getConnector()).unregisterExecutor(uri);
 
 	}
 

@@ -30,8 +30,9 @@ public class CepServicesInboundPort extends AbstractInboundPort implements CEPBu
 
 	@Override
 	public void unregisterEmitter(String uri) throws Exception{
-		// TODO Auto-generated method stub
-
+		this.getOwner().handleRequest(
+				cep-> ((CEPBus)cep).unregisterEmitter(uri)
+						);
 	}
 
 	@Override
@@ -43,8 +44,9 @@ public class CepServicesInboundPort extends AbstractInboundPort implements CEPBu
 
 	@Override
 	public void unregisterCorrelator(String uri)throws Exception {
-		// TODO Auto-generated method stub
-
+		this.getOwner().handleRequest(
+				cep-> ((CEPBus)cep).unregisterCorrelator(uri)
+						);
 	}
 
 	@Override
@@ -65,7 +67,9 @@ public class CepServicesInboundPort extends AbstractInboundPort implements CEPBu
 
 	@Override
 	public void unregisterExecutor(String uri)throws Exception {
-		// TODO Auto-generated method stub
+		this.getOwner().handleRequest(
+				cep-> ((CEPBus)cep).unregisterExecutor(uri)
+						);
 
 	}
 

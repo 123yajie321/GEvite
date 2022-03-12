@@ -95,16 +95,28 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	@Override
 	public synchronized void finalise() throws Exception {		
 		this.doPortDisconnection(this.ccrop.getPortURI());
-
 		this.doPortDisconnection(this.caeop.getPortURI());
 		this.doPortDisconnection(this.cscop.getPortURI());
 		super.finalise();
 	}
 	
+	
 	@Override
 	public synchronized void shutdown() throws ComponentShutdownException {
-		super.shutdown();
-	}
+			
+			try {
+				this.ccrop.unpublishPort();
+				this.caeop.unpublishPort();
+				this.cscop.unpublishPort();
+				this.cercip.unpublishPort();
+				
+			} catch (Exception e) {
+				throw new ComponentShutdownException(e) ;
+			}
+			
+			
+			super.shutdown();
+		}
 	
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 			this.baseEvent.addEvent(event);

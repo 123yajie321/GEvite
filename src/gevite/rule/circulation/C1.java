@@ -32,7 +32,7 @@ public class C1 implements RuleI{
 			if(dp != null ) {
 				ArrayList<EventI> matchedEvents = new ArrayList<>();
 				matchedEvents.add(dp);
-				System.out.println("c1 matched");
+				
 				return matchedEvents;
 			} else {
 				return null;
@@ -54,7 +54,7 @@ public class C1 implements RuleI{
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		CirculationCorrelatorStateI circulationState = (CirculationCorrelatorStateI)c;
 		circulationState.changePriority((TypeOfTrafficLightPriority) matchedEvents.get(0).getPropertyValue("priority"),(IntersectionPosition)matchedEvents.get(0).getPropertyValue("interPosition"));
-		System.out.println("c1 acted");
+		
 	}
 
 	@Override

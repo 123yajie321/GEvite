@@ -120,17 +120,6 @@ public class CEPBus extends AbstractComponent{
 	
 	
 	
-	@Override
-	public synchronized void shutdown() throws ComponentShutdownException {
-		try {
-			this.csip.unpublishPort();
-			
-		} catch (Exception e) {
-			throw new ComponentShutdownException(e);		
-		}
-		super.shutdown();
-	}
-
 	public void recieveEvent(String emitterURI, EventI event) throws Exception {
 		System.out.println("Bus reveive Event from : " + emitterURI);
 		this.eventsRecu.put(new Pair<EventI, String>(event, emitterURI));
@@ -159,6 +148,52 @@ public class CEPBus extends AbstractComponent{
 		
 	}
 	
+	public String unregisterEmitter(String uri) throws Exception{
+		 uriEmitters.remove(uri);
+		
+		
+		return null;
+	}
+	
+	public String unregisterCorrelator(String uri)throws Exception {
+		
+		 uriCorrelateurs.remove(uri);
+		 uriSubscription.remove(uri);
+		
+		return null;
+	}
+	
+	public String unregisterExecutor(String uri)throws Exception {
+		
+		 uriExecuteurs.remove(uri);
+		
+		return null;
+	}
+	
+	@Override
+	public synchronized void finalise() throws Exception {		
+		
+		this.doPortDisconnection(this.cescop.getPortURI());
+		
+		super.finalise();
+	}
+	
+	
+	@Override
+	public synchronized void shutdown() throws ComponentShutdownException {
+			
+			try {
+				this.cerip.unpublishPort();
+				this.cescop.unpublishPort();
+				this.csip.unpublishPort();
+				
+			} catch (Exception e) {
+				throw new ComponentShutdownException(e) ;
+			}
+			
+			
+			super.shutdown();
+		}
 
 
 }

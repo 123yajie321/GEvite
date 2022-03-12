@@ -23,7 +23,7 @@ public class ConnectorCorrelateurCepServices extends AbstractConnector implement
 
 	@Override
 	public void unregisterCorrelator(String uri)throws Exception {
-		// TODO Auto-generated method stub
+		((CEPBusManagementCI)this.offering).unregisterCorrelator(uri);
 
 	}
 
