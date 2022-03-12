@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
+import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
+import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
@@ -35,9 +38,10 @@ public class C1Test {
 		DemandePriorite dPriorite = new DemandePriorite();
 		CorrelatorStateI bouchonCorrelateur = (CorrelatorStateI) new BouchonCirculationCorrelateur();
 
-		dPriorite.putProperty("priorite", "p");
-		dPriorite.putProperty("vehicule", "v");
-		dPriorite.putProperty("destinationF", "df");
+		dPriorite.putProperty("priority", TypeOfTrafficLightPriority.EMERGENCY);
+		dPriorite.putProperty("vehicleId", "1");
+		dPriorite.putProperty("interPosition", new IntersectionPosition(1.0,1.0));
+		dPriorite.putProperty("destination", new AbsolutePosition(1,2));
 		
 		base.addEvent(dPriorite);
 		
@@ -46,17 +50,19 @@ public class C1Test {
 		
 		assertTrue(result.get(0) instanceof DemandePriorite);
 		
-		assertEquals("p", result.get(0).getPropertyValue("priorite"));
-		assertEquals("v", result.get(0).getPropertyValue("vehicule"));
-		assertEquals("df", result.get(0).getPropertyValue("destinationF"));
+		assertEquals(TypeOfTrafficLightPriority.EMERGENCY, result.get(0).getPropertyValue("priority"));
+		assertEquals("1", result.get(0).getPropertyValue("vehicleId"));
+		assertEquals(new AbsolutePosition(1,2), result.get(0).getPropertyValue("destination"));
+		assertEquals(new IntersectionPosition(1.0,1.0), result.get(0).getPropertyValue("interPosition"));
 
 
 		assertTrue(c1.correlate(result));
 		assertTrue(c1.filter(result, bouchonCorrelateur));
 		
-		
-		PassageVehicule pVehicule = new PassageVehicule();
-		result.add(pVehicule);
+		AttentePassage ap = new AttentePassage();
+		//PassageVehicule pVehicule = new PassageVehicule();
+		//base.removeEvent(dPriorite);
+		result.add(ap);
 		AttentePassageComplexe attentePassageComplexe = new AttentePassageComplexe(result);
 		base.addEvent(attentePassageComplexe);
 		c1.update(result, base);

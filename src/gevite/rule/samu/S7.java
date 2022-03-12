@@ -47,7 +47,6 @@ public class S7 implements RuleI{
                     s = sManuel.get(j);
                     matchedEvents.add(he);
                     matchedEvents.add(s);
-                    //System.out.println("S7 match");
                     return matchedEvents;
                 }
             }

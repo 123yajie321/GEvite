@@ -2,12 +2,13 @@ package gevite.correlateur;
 
 import java.io.Serializable;
 
+import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 
 public interface CirculationCorrelatorStateI extends CorrelatorStateI{
 	
 	/*c1*/
-	public void changePriority(TypeOfTrafficLightPriority p) throws Exception;
+	public void changePriority(TypeOfTrafficLightPriority p,IntersectionPosition position) throws Exception;
 	
 	/*c2*/
 	/*

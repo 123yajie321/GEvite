@@ -2,40 +2,20 @@ package gevite.tests;
 
 import java.io.Serializable;
 
+import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 import gevite.correlateur.CirculationCorrelatorStateI;
 
 
 public class BouchonCirculationCorrelateur implements CirculationCorrelatorStateI{
 
 	@Override
-	public void passerIntersectionP(Serializable p) {
+	public void changePriority(TypeOfTrafficLightPriority p, IntersectionPosition position) throws Exception {
 		// TODO Auto-generated method stub
+		
 	}
 
-
-	@Override
-	public boolean estAvantDestination(Serializable destination) {
-		if(destination.equals("df")) {
-			return true;
-		}else {
-			return false;
-		}
-	}
 	
-	@Override
-	public void passerIntersectionN(Serializable p) {
-		// TODO Auto-generated method stub
-	}
-
-
-	@Override
-	public boolean estApresDestination(Serializable destination) {
-		if(destination.equals("df")) {
-			return true;
-		}else {
-			return false;
-		}
-	}
 
 
 

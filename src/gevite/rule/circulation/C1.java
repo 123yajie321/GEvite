@@ -2,6 +2,7 @@ package gevite.rule.circulation;
 
 import java.util.ArrayList;
 
+import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;
@@ -52,7 +53,7 @@ public class C1 implements RuleI{
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		CirculationCorrelatorStateI circulationState = (CirculationCorrelatorStateI)c;
-		circulationState.changePriority((TypeOfTrafficLightPriority) matchedEvents.get(0).getPropertyValue("priority"));
+		circulationState.changePriority((TypeOfTrafficLightPriority) matchedEvents.get(0).getPropertyValue("priority"),(IntersectionPosition)matchedEvents.get(0).getPropertyValue("interPosition"));
 		System.out.println("c1 acted");
 	}
 

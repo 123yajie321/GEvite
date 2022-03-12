@@ -3,12 +3,15 @@ package gevite.correlateur;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import fr.sorbonne_u.cps.smartcity.BasicSimSmartCityDescriptor;
+import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightActionCI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 import gevite.actions.SamuActions;
@@ -134,9 +137,18 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	*/
 
 	@Override
-	public void changePriority(TypeOfTrafficLightPriority p) throws Exception {
+	public void changePriority(TypeOfTrafficLightPriority p,IntersectionPosition position) throws Exception {
+		int index = 0;
+		Iterator<IntersectionPosition> trafficLightsIterator =
+				BasicSimSmartCityDescriptor.createTrafficLightPositionIterator();
+		while (trafficLightsIterator.hasNext()) {
+			if(trafficLightsIterator.next().equals(position)) {
+				break;
+			}
+			index++;
+		}
 		TrafficLightActions traffic=TrafficLightActions.changePriority;
-		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
+		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(index));
 		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurTrafficLight.class.getCanonicalName());
 		this.caeop.execute(traffic, new Serializable[] {p}); 
 		

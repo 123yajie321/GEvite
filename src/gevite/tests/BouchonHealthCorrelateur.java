@@ -12,13 +12,13 @@ public class BouchonHealthCorrelateur implements SamuCorrelatorStateI{
 	@Override
 	public boolean inZone(AbsolutePosition p) throws Exception {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isAmbulanceAvailable() throws Exception {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class BouchonHealthCorrelateur implements SamuCorrelatorStateI{
 	@Override
 	public boolean procheSamuExiste() throws Exception {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class BouchonHealthCorrelateur implements SamuCorrelatorStateI{
 	@Override
 	public boolean isMedicAvailable() throws Exception {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
