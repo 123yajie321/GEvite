@@ -5,6 +5,7 @@ import java.util.concurrent.RejectedExecutionException;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
+import fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI;
 import gevite.cep.EventEmissionCI;
 import gevite.correlateur.CorrelateurSamu;
 import gevite.evenement.EventI;
@@ -25,16 +26,17 @@ public class CepEventRecieveInboundPort extends AbstractInboundPort implements E
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	
+	
 	@Override
 	public void sendEvent(String emitterURI, EventI event) throws Exception {
 		
-		this.getOwner().runTask(cep-> {
-			try {
-				((CEPBus)cep).recieveEvent(emitterURI, event);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+		this.getOwner().handleRequest(
+				cep -> {	((CEPBus)cep).
+									recieveEvent(emitterURI, event);;
+						return null;
+					 });
 	}
 
 	@Override

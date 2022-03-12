@@ -53,6 +53,7 @@ public class S18 implements RuleI {
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
 		samuState.setAmbulancesAvailable();
+		System.out.println(tag);
 
 	}
 

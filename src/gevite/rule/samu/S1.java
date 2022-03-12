@@ -54,6 +54,7 @@ public class S1 implements RuleI {
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
+		System.out.println("S1!!!!!!!!");
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
 		EventI alarmSante=matchedEvents.get(0);
 		samuState.intervanetionAmbulance((AbsolutePosition) alarmSante.getPropertyValue("position"),null,TypeOfSAMURessources.AMBULANCE);

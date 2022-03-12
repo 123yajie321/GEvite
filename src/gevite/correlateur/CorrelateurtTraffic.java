@@ -20,6 +20,7 @@ import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.connector.ConnectorCorrelateurExecutor;
 import gevite.connector.ConnectorCorrelateurSendCep;
+import gevite.connector.ConnectorCorrelateurTrafficLight;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.rule.RuleBase;
@@ -88,7 +89,6 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	@Override
 	public synchronized void finalise() throws Exception {		
 		this.doPortDisconnection(this.ccrop.getPortURI());
-		this.doPortDisconnection(this.cercip.getPortURI());
 		this.doPortDisconnection(this.caeop.getPortURI());
 		this.doPortDisconnection(this.cscop.getPortURI());
 		super.finalise();
@@ -134,7 +134,7 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	public void changePriority(TypeOfTrafficLightPriority p) throws Exception {
 		TrafficLightActions traffic=TrafficLightActions.changePriority;
 		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurTrafficLight.class.getCanonicalName());
 		this.caeop.execute(traffic, new Serializable[] {p}); 
 		
 	}

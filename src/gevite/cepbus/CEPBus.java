@@ -153,8 +153,11 @@ public class CEPBus extends AbstractComponent{
 	}
 	
 	public String getExecutorInboundPortURI(String uri)throws Exception{
+		System.out.println(uri+"");
+		String uriExecutoInboudPort =uriExecuteurs.get(uri);
 		
-		return uriExecuteurs.get(uri);
+		System.out.println(uri+" uriExecutoInboudPort: " +uriExecutoInboudPort);
+		 return uriExecutoInboudPort;
 		
 	}
 	

@@ -41,7 +41,7 @@ import fr.sorbonne_u.cps.smartcity.connections.SAMUNotificationInboundPort;
 import gevite.evenement.atomique.samu.MedecinAvailable;
 import gevite.evenement.atomique.samu.MedecinBusy;
 import gevite.evenement.atomique.samu.SignaleManuel;
-import gevite.executeur.ActionExecutionInboundPort;
+
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 
 
@@ -65,19 +65,24 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	
 	protected SAMUNotificationInboundPort snip;
 	protected SAMUActionOutboundPort saop;
-	protected ActionExecutionInboundPort SAMUaeip;
+	
+	//receive avtion from correlateur
+	protected SAMUActionExecutionInboundPort SAMUaeip;
 	
 	//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
 	//String sendInboundPort,
 	protected Samu(String samuInport,String samuId,String actionInboundPort) throws Exception {
-		super(2,0);
+		super(4,0);
 		//this.sendEventOutboundPort_URI = sendOutport;
 		//this.registeEmInboundPort_URI = registeEmitteurInboundPort;
 		//this.registeExInboundPort_URI = registeExecuteurInboundPort;
 		this.SAMUReceiveNotifyInboundPort_URI = samuInport;
 		this.samuId = samuId;
+		
+		//The uri inboudport of samuProxy
 		this.actionInboundPort_URI = actionInboundPort;
-		this.SAMUaeip=new ActionExecutionInboundPort(actionInboundPort, this);
+		
+		this.SAMUaeip=new SAMUActionExecutionInboundPort( this);
 		this.SAMUaeip.publishPort();
 		
 		this.erop = new EmitterRegisterOutboundPort(this);
@@ -133,7 +138,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		this.exrop.registerExecutor(this.samuId, actionInboundPort_URI);
+		this.exrop.registerExecutor(this.samuId, this.SAMUaeip.getPortURI());
 		
 		
 	}
@@ -172,16 +177,19 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	
 	
 public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
+	
+	System.out.println("recevie action ");
 	assert a instanceof SamuActions;
+	System.out.println("recevie action samu");
 	assert params != null && params.length == 3 && params[0] instanceof AbsolutePosition&&params[2] instanceof TypeOfSAMURessources;
 	AbsolutePosition position = (AbsolutePosition) params[0];
 	String personId=(String)params[1];
 	TypeOfSAMURessources type=(TypeOfSAMURessources)params[2];
-	
+	System.out.println("parameters get");
 	switch((SamuActions)a) {
-	case InterventionAmbulance:this.saop.triggerIntervention(position, personId, type); break;
-	case IntervetionMedcin:this.saop.triggerIntervention(position, personId, type);break;
-	case AppelMedcin:this.saop.triggerIntervention(position, personId, type);
+	case InterventionAmbulance:this.saop.triggerIntervention(position, personId, type); this.traceMessage("Trigger ambulance intervention\n");break;
+	case IntervetionMedcin:this.saop.triggerIntervention(position, personId, type);this.traceMessage("Trigger medic intervention\n");break;
+	case AppelMedcin:this.saop.triggerIntervention(position, personId, type);this.traceMessage("Trigger medic call\n");
 		
 	}
     ResponseI response=null;

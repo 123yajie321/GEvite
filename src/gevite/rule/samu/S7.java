@@ -18,6 +18,7 @@ import gevite.rule.RuleI;
 public class S7 implements RuleI{
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb)throws Exception {
+		System.out.println("S7 match");
 		EventI he = null; EventI s = null;
 	    for (int i = 0 ; i < eb.numberOfEvents() && (he == null || s == null) ; i++) {
 	    	EventI e = eb.getEvent(i);
@@ -32,7 +33,7 @@ public class S7 implements RuleI{
 	        ArrayList<EventI> matchedEvents = new ArrayList<>();
 	        matchedEvents.add(he);
 	        matchedEvents.add(s);
-	        
+	    	System.out.println("S7 fin match");
 	        return matchedEvents;
 	    } else {
 	        return null;
@@ -44,7 +45,7 @@ public class S7 implements RuleI{
 
 	@Override
 	public boolean correlate(ArrayList<EventI> matchedEvents)throws Exception {
-		
+		System.out.println("S7 correlate");
 		return matchedEvents.get(0).hasProperty("personId") &&
 		           matchedEvents.get(1).hasProperty("personId") &&
 		           matchedEvents.get(0).getPropertyValue("personId").equals(
@@ -54,20 +55,25 @@ public class S7 implements RuleI{
 		           matchedEvents.get(0).getTimeStamp().plus(
 		                       Duration.of(10, ChronoUnit.MINUTES)).isAfter(
 		                                        matchedEvents.get(1).getTimeStamp());
+		
 	}
 
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
+		System.out.println("S7 filter");
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
 		return samuState.isMedicAvailable();
 	}
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
+		
+		
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI) cs;
 		EventI alarmSante=matchedEvents.get(0);
 		samuState.triggerMedicCall((AbsolutePosition) alarmSante.getPropertyValue("position"),(String)matchedEvents.get(0).getPropertyValue("personId"),
-	    		TypeOfSAMURessources.MEDIC);
+	    		TypeOfSAMURessources.TELEMEDIC);
+		System.out.println("S7 declancher fin");
 
 	}
 

@@ -33,7 +33,7 @@ import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.emitteur.EmitterSendOutboundPort;
 import gevite.evenement.atomique.circulation.DemandePriorite;
 import gevite.evenement.atomique.circulation.PassageVehicule;
-import gevite.executeur.ActionExecutionInboundPort;
+
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 @OfferedInterfaces(offered= {ActionExecutionCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
@@ -57,7 +57,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	
 	protected TrafficLightNotificationInboundPort tnip;
 	protected TrafficLightActionOutboundPort taop;
-	protected ActionExecutionInboundPort TrafficLightAeip;
+	protected TrafficLightActionExecutionInboundPort TrafficLightAeip;
 
 	//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
 	//String sendInboundPort
@@ -70,7 +70,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 		this.position = position;
 		this.idTrafficLight=id;
 		this.actionInboundPort_URI = actionInboundPort;
-		this.TrafficLightAeip=new ActionExecutionInboundPort(actionInboundPort, this);
+		this.TrafficLightAeip=new TrafficLightActionExecutionInboundPort( this);
 		this.TrafficLightAeip.publishPort();
 		
 		this.erop = new EmitterRegisterOutboundPort(this);
@@ -129,7 +129,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		this.exrop.registerExecutor(this.idTrafficLight, actionInboundPort_URI);
+		this.exrop.registerExecutor(this.idTrafficLight,this.TrafficLightAeip.getPortURI());
 		
 		
 	}

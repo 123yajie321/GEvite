@@ -1,6 +1,7 @@
 package gevite.rule.samu;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
@@ -50,10 +51,10 @@ public class S5 implements RuleI{
 		
        return
          matchedEvents.get(0).getTimeStamp().isBefore(
-                                      matchedEvents.get(1).getTimeStamp()) &&
+                                      LocalTime.now()) &&
          matchedEvents.get(0).getTimeStamp().plus(
                      Duration.of(10, ChronoUnit.MINUTES)).isBefore(
-                                      matchedEvents.get(1).getTimeStamp())&& samuState.isMedicAvailable();
+                                    LocalTime.now())&& samuState.isMedicAvailable();
 		
 		
 		 

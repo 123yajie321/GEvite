@@ -43,7 +43,7 @@ import gevite.evenement.atomique.pompier.HighLadderTrucksBusy;
 import gevite.evenement.atomique.pompier.StandardTrucksAvailable;
 import gevite.evenement.atomique.pompier.StandardTrucksBusy;
 import gevite.evenement.atomique.samu.MedecinAvailable;
-import gevite.executeur.ActionExecutionInboundPort;
+
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class})
@@ -66,7 +66,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		
 		protected FireStationNotificationInboundPort fnip;
 		protected FireStationActionOutboundPort faop;
-		protected ActionExecutionInboundPort FSaeip;
+		protected PompierActionExecutionInboundPort FSaeip;
 		
 		//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
 		//String sendInboundPort
@@ -78,7 +78,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			this.FIREReceiveNotifyInboundPort_URI = fireInport; 
 			this.fireStationId = fireStationId;
 			this.actionInboundPort_URI = actionInboundPort;
-			this.FSaeip=new ActionExecutionInboundPort(actionInboundPort, this);
+			this.FSaeip=new PompierActionExecutionInboundPort(this);
 			this.FSaeip.publishPort();
 			
 			
@@ -134,7 +134,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		@Override
 		public synchronized void execute() throws Exception {
 			super.execute();
-			this.exrop.registerExecutor(this.fireStationId, actionInboundPort_URI);
+			this.exrop.registerExecutor(this.fireStationId, this.FSaeip.getPortURI());
 			
 			
 		}

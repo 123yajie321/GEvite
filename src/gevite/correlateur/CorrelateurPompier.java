@@ -20,6 +20,7 @@ import gevite.cep.EventReceptionCI;
 import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.connector.ConnectorCorrelateurExecutor;
+import gevite.connector.ConnectorCorrelateurPompier;
 import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
@@ -94,7 +95,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	@Override
 	public synchronized void finalise() throws Exception {		
 		this.doPortDisconnection(this.ccrop.getPortURI());
-		this.doPortDisconnection(this.cercip.getPortURI());
+
 		this.doPortDisconnection(this.caeop.getPortURI());
 		this.doPortDisconnection(this.cscop.getPortURI());
 		super.finalise();
@@ -130,7 +131,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	public void declancheFirstAlarme(AbsolutePosition position, TypeOfFirefightingResource type) throws Exception {
 		FireStationActions firstAlarmActions = FireStationActions.FirstAlarme;
 		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurPompier.class.getCanonicalName());
 		this.caeop.execute(firstAlarmActions, new Serializable[] {position,type}); 			
 	}
 
@@ -140,7 +141,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	public void declancheSecondAlarme(AbsolutePosition position) throws Exception {
 		FireStationActions secondAlarmActions = FireStationActions.FirstAlarme;
 		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurPompier.class.getCanonicalName());
 		this.caeop.execute(secondAlarmActions, new Serializable[] {position}); 			
 	}		
 

@@ -19,6 +19,7 @@ import gevite.cep.EventReceptionCI;
 import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.connector.ConnectorCorrelateurExecutor;
+import gevite.connector.ConnectorCorrelateurSAMU;
 import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
@@ -95,7 +96,6 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	@Override
 	public synchronized void finalise() throws Exception {		
 		this.doPortDisconnection(this.ccrop.getPortURI());
-		this.doPortDisconnection(this.cercip.getPortURI());
 		this.doPortDisconnection(this.caeop.getPortURI());
 		this.doPortDisconnection(this.cscop.getPortURI());
 		super.finalise();
@@ -109,7 +109,6 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
-			System.out.println("size of baseRuleSamu: "+baseRule.sizeofrules());
 			baseRule.fireFirstOn(baseEvent, this);
 	}
 
@@ -162,10 +161,12 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 
 	@Override
 	public void intervanetionAmbulance(AbsolutePosition position,String personId,TypeOfSAMURessources type) throws Exception {
+		
 		SamuActions	intervention=  SamuActions.InterventionAmbulance;
 		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurSAMU.class.getCanonicalName());
 		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
+		System.out.println("intervanetionAmbulance finished");
 	
 	}
 
@@ -175,7 +176,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 			throws Exception {
 		SamuActions intervention=SamuActions.AppelMedcin;
 		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurExecutor.class.getCanonicalName());
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurSAMU.class.getCanonicalName());
 		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
 		
 	}

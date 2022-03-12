@@ -1,4 +1,4 @@
-package gevite.executeur;
+package gevite.samu;
 
 import java.io.Serializable;
 
@@ -10,17 +10,20 @@ import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.actions.ActionI;
 import gevite.cep.ActionExecutionCI;
 import gevite.cep.ResponseI;
+import gevite.fire.FireStation;
+import gevite.samu.Samu;
+import gevite.traffic.TrafficLight;
 
-public class ActionExecutionInboundPort extends AbstractInboundPort implements ActionExecutionCI {
+public class SAMUActionExecutionInboundPort extends AbstractInboundPort implements ActionExecutionCI {
 
 	private static final long serialVersionUID = 1L;
 
-	public ActionExecutionInboundPort( ComponentI owner) throws Exception {
+	public SAMUActionExecutionInboundPort( ComponentI owner) throws Exception {
 		super(ActionExecutionCI.class, owner);
 		
 	}
 	
-	public ActionExecutionInboundPort(String uri, ComponentI owner) throws Exception {
+	public SAMUActionExecutionInboundPort(String uri, ComponentI owner) throws Exception {
 		super(uri,ActionExecutionCI.class, owner);
 		
 	}
@@ -28,7 +31,8 @@ public class ActionExecutionInboundPort extends AbstractInboundPort implements A
 	@Override
 	public ResponseI execute(ActionI a, Serializable[] params) throws  Exception {
 		
-		return	this.getOwner().handleRequest(ae -> ((ActionExecutionCI)ae).execute(a, params));
+		return	this.getOwner().handleRequest(samu -> ((Samu)samu).execute(a, params));
+		
 		
 	
 	
