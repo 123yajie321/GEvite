@@ -19,6 +19,11 @@ public class RuleBase {
 		rules.add(r);
 		
 	}
+	
+	public int sizeofrules() {
+		return rules.size();
+	}
+	
 	public boolean fireFirstOn(EventBaseI eb,CorrelatorStateI c) throws Exception {
 		
 		for(RuleI rule: rules) {

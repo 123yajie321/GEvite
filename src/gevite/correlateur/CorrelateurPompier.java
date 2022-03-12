@@ -108,6 +108,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
+			System.out.println("size of baseRulePompier: "+baseRule.sizeofrules());
 			baseRule.fireFirstOn(baseEvent, this);
 	}
 

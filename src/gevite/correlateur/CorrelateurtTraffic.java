@@ -102,6 +102,7 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 		this.baseEvent.addEvent(event);
 		//this.eventEmitter.put(event, emitterURI);
+		System.out.println("size of baseRuleTraffic: "+baseRule.sizeofrules());
 		baseRule.fireFirstOn(baseEvent, this);
 	}
 	/*

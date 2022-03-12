@@ -109,6 +109,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
+			System.out.println("size of baseRuleSamu: "+baseRule.sizeofrules());
 			baseRule.fireFirstOn(baseEvent, this);
 	}
 

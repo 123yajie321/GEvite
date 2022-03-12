@@ -15,6 +15,7 @@ import gevite.evenement.atomique.samu.AmbulancesBusy;
 import gevite.rule.RuleI;
 
 public class S18 implements RuleI {
+	public String tag="s18";
 
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb)throws Exception {

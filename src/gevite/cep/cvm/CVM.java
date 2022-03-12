@@ -14,6 +14,7 @@ import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.correlateur.CorrelateurPompier;
 import gevite.correlateur.CorrelateurSamu;
+import gevite.correlateur.CorrelateurtTraffic;
 import gevite.emitteur.Emetteur;
 import gevite.fire.FireStation;
 import gevite.rule.RuleBase;
@@ -177,7 +178,7 @@ public class CVM extends AbstractBasicSimCVM {
 					ArrayList<String> executorEmitteurList = new ArrayList<String>();
 					executorEmitteurList.add(samuStationId);
 					//correlateur samu
-					AbstractComponent.createComponent(CorrelateurPompier.class.getCanonicalName(), 
+					AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), 
 							new Object[]{
 									correlateurId,
 									executorEmitteurList,
@@ -210,7 +211,7 @@ public class CVM extends AbstractBasicSimCVM {
 				String correlateurId="correlateurTrafficLight "+correlateurid;
 				correlateurid++;
 				//correlateur trafficLight
-				AbstractComponent.createComponent(CorrelateurPompier.class.getCanonicalName(), 
+				AbstractComponent.createComponent(CorrelateurtTraffic.class.getCanonicalName(), 
 						new Object[]{
 								correlateurId,
 								trafficLightIdList,

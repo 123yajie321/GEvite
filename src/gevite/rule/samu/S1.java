@@ -2,6 +2,8 @@ package gevite.rule.samu;
 
 import java.util.ArrayList;
 
+import javax.swing.text.html.HTML.Tag;
+
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
@@ -13,6 +15,7 @@ import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.rule.RuleI;
 
 public class S1 implements RuleI {
+	public String tag="S1";
 
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb)throws Exception {
