@@ -13,7 +13,9 @@ import fr.sorbonne_u.cps.smartcity.connections.FireStationActionOutboundPort;
 import fr.sorbonne_u.cps.smartcity.connections.FireStationNotificationInboundPort;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.FireStationActionCI;
 import fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationImplI;
+import fr.sorbonne_u.cps.smartcity.interfaces.FireStationNotificationCI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
@@ -46,8 +48,8 @@ import gevite.evenement.atomique.samu.MedecinAvailable;
 
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 
-@OfferedInterfaces(offered= {ActionExecutionCI.class})
-@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
+@OfferedInterfaces(offered= {ActionExecutionCI.class,FireStationNotificationCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,FireStationActionCI.class})
 public class FireStation extends AbstractComponent implements FireStationNotificationImplI{
 
 		//protected String sendEventOutboundPort_URI;
@@ -117,15 +119,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 				this.doPortConnection(
 						this.faop.getPortURI(),
 						this.actionInboundPort_URI,
-						FireStationActionConnector.class.getCanonicalName());
-				
-				String SendEventInbound_URI=this.erop.registerEmitter(fireStationId);
-				this.doPortConnection(
-						this.esop.getPortURI(),
-						SendEventInbound_URI,
-						ConnectorEmitterSend.class.getCanonicalName());
-				
-				
+						FireStationActionConnector.class.getCanonicalName());	
 			} catch (Exception e) {
 				throw new ComponentStartException(e) ;
 			}
@@ -134,6 +128,11 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		@Override
 		public synchronized void execute() throws Exception {
 			super.execute();
+			String SendEventInbound_URI=this.erop.registerEmitter(fireStationId);
+			this.doPortConnection(
+					this.esop.getPortURI(),
+					SendEventInbound_URI,
+					ConnectorEmitterSend.class.getCanonicalName());
 			this.exrop.registerExecutor(this.fireStationId, this.FSaeip.getPortURI());
 			
 			

@@ -11,6 +11,8 @@ import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.cps.smartcity.descriptions.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.SAMUActionCI;
+import fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationCI;
 import fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
@@ -43,11 +45,15 @@ import gevite.evenement.atomique.samu.MedecinBusy;
 import gevite.evenement.atomique.samu.SignaleManuel;
 
 import gevite.executeur.ExecuteurRegisterOutboundPort;
+import gevite.plugin.PluginEmissionIn;
+import gevite.plugin.PluginEmissionOut;
 
 
-@OfferedInterfaces(offered= {ActionExecutionCI.class})
-@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
+@OfferedInterfaces(offered= {ActionExecutionCI.class,SAMUNotificationCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,SAMUActionCI.class})
 public class Samu extends AbstractComponent implements SAMUNotificationImplI{
+	//EmitteurOutboundPort
+	protected EventEmissionCI sendOutRef;
 	
 	//protected String sendEventOutboundPort_URI;
 	protected String registeEmInboundPort_URI;
@@ -61,7 +67,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	protected EmitterRegisterOutboundPort erop;
 	protected ExecuteurRegisterOutboundPort exrop;
 
-	protected EmitterSendOutboundPort esop;
+	//protected EmitterSendOutboundPort esop;
 	
 	protected SAMUNotificationInboundPort snip;
 	protected SAMUActionOutboundPort saop;
@@ -89,8 +95,8 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 		this.erop.publishPort();
 		this.exrop = new ExecuteurRegisterOutboundPort(this);
 		this.exrop.publishPort();
-		this.esop = new EmitterSendOutboundPort(this);
-		this.esop.publishPort();
+		//this.esop = new EmitterSendOutboundPort(this);
+		//this.esop.publishPort();
 		this.snip = new SAMUNotificationInboundPort(SAMUReceiveNotifyInboundPort_URI, this);
 		this.snip.publishPort();
 		this.saop = new SAMUActionOutboundPort(this);
@@ -122,13 +128,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 					this.saop.getPortURI(),
 					this.actionInboundPort_URI,
 					SAMUActionConnector.class.getCanonicalName());
-			
-			String SendEventInbound_URI=this.erop.registerEmitter(samuId);
-			this.doPortConnection(
-					this.esop.getPortURI(),
-					SendEventInbound_URI,
-					ConnectorEmitterSend.class.getCanonicalName());
-			
+
 		} catch (Exception e) {
 		}
 	}
@@ -138,7 +138,20 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
+		String SendEventInbound_URI=this.erop.registerEmitter(samuId);
+		/*this.doPortConnection(
+				this.esop.getPortURI(),
+				SendEventInbound_URI,
+				ConnectorEmitterSend.class.getCanonicalName());
+				*/
+		
 		this.exrop.registerExecutor(this.samuId, this.SAMUaeip.getPortURI());
+		PluginEmissionOut pluginOut = new PluginEmissionOut();
+		pluginOut.setInboundPortUri(SendEventInbound_URI);
+		pluginOut.setPluginURI("SamupluginOut");
+		this.installPlugin(pluginOut);
+		
+		sendOutRef = pluginOut.getEmissionService();
 		
 		
 	}
@@ -148,7 +161,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 		
 		this.doPortDisconnection(erop.getPortURI());
 		this.doPortDisconnection(exrop.getPortURI());
-		this.doPortDisconnection(esop.getPortURI());
+		//this.doPortDisconnection(esop.getPortURI());
 		this.doPortDisconnection(saop.getPortURI());
 
 		super.finalise();
@@ -160,7 +173,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 		try {
 			this.erop.unpublishPort();
 			this.exrop.unpublishPort();
-			this.esop.unpublishPort();
+			//this.esop.unpublishPort();
 			this.saop.unpublishPort();
 			this.snip.unpublishPort();
 		} catch (Exception e) {
@@ -216,7 +229,9 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		aSante.putProperty("type", type);
 		aSante.putProperty("position", position);
 		
-		this.esop.sendEvent(samuId, aSante);
+		this.sendOutRef.sendEvent(samuId, aSante);
+		System.out.println("samu send");
+		
 		
 	}
 
@@ -242,7 +257,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		aSante.putProperty("position", position);
 		aSante.putProperty("personId", personId);
 
-		this.esop.sendEvent(samuId, aSante);
+		this.sendOutRef.sendEvent(samuId, aSante);
 	
 	
 	}
@@ -263,7 +278,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		SignaleManuel sManuel = new SignaleManuel(occurrence);
 		sManuel.putProperty("personId", personId);
 		
-		this.esop.sendEvent(samuId, sManuel);
+		this.sendOutRef.sendEvent(samuId, sManuel);
 	}
 
 	@Override
@@ -285,7 +300,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		dPriorite.putProperty("vehicleId", vehicleId);
 		dPriorite.putProperty("destination", destination);
 		
-		this.esop.sendEvent(samuId, dPriorite);
+		this.sendOutRef.sendEvent(samuId, dPriorite);
 	}
 
 
@@ -298,7 +313,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		AtDestination atDestination = new AtDestination(occurrence);
 		atDestination.putProperty("vehicleId", vehicleId);
 		
-		this.esop.sendEvent(samuId, atDestination);
+		this.sendOutRef.sendEvent(samuId, atDestination);
 	}
 
 
@@ -311,7 +326,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		AtStation atStation =  new AtStation(occurrence);
 		atStation.putProperty("vehicleId", atStation);
 		
-		this.esop.sendEvent(samuId, atStation);
+		this.sendOutRef.sendEvent(samuId, atStation);
 	}
 
 	@Override
@@ -325,7 +340,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 															occurrence + "\n");
 		
 		MedecinAvailable medecinAvailable = new MedecinAvailable(occurrence);
-		this.esop.sendEvent(samuId, medecinAvailable);
+		this.sendOutRef.sendEvent(samuId, medecinAvailable);
 	}
 
 	@Override
@@ -338,7 +353,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 				"Notification that no medic are available received at " +
 															occurrence + "\n");
 		MedecinBusy medecinBusy = new MedecinBusy(occurrence);
-		this.esop.sendEvent(samuId, medecinBusy);
+		this.sendOutRef.sendEvent(samuId, medecinBusy);
 	}
 
 
@@ -352,7 +367,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 				"Notification that ambulances are available received at " +
 															occurrence + "\n");
 		AmbulancesAvailable ambulancesAvailable = new AmbulancesAvailable(occurrence);
-		this.esop.sendEvent(samuId, ambulancesAvailable);
+		this.sendOutRef.sendEvent(samuId, ambulancesAvailable);
 	
 	}
 
@@ -366,7 +381,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 				"Notification that no ambulance are available received at " +
 															occurrence + "\n");
 		AmbulancesBusy ambulancesBusy = new AmbulancesBusy(occurrence);
-		this.esop.sendEvent(samuId, ambulancesBusy);
+		this.sendOutRef.sendEvent(samuId, ambulancesBusy);
 	
 	}
 

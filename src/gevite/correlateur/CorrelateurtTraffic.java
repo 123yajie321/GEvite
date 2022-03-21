@@ -16,6 +16,7 @@ import fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightActionCI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 import gevite.actions.SamuActions;
 import gevite.actions.TrafficLightActions;
+import gevite.cep.ActionExecutionCI;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
@@ -30,7 +31,7 @@ import gevite.evenement.atomique.circulation.DemandePriorite;
 import gevite.rule.RuleBase;
 
 @OfferedInterfaces(offered = {EventReceptionCI.class})
-@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,ActionExecutionCI.class})
 
 public class CorrelateurtTraffic extends AbstractComponent implements CirculationCorrelatorStateI{
 	
@@ -73,9 +74,8 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	@Override
 	public synchronized void start()throws ComponentStartException{
 		try {
+			super.start();
 			this.doPortConnection(this.ccrop.getPortURI(), CEPBus.CSIP_URI,ConnectorCorrelateurCepServices.class.getCanonicalName() );
-			sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
-			this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -87,6 +87,11 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
+		sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
+		this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
+		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));// à modifier
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurTrafficLight.class.getCanonicalName());
+		
 		for(String emitter: emitters) {
 			this.ccrop.subscribe(correlateurId, emitter);
 		}
@@ -153,15 +158,15 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 		int index = 0;
 		Iterator<IntersectionPosition> trafficLightsIterator =
 				BasicSimSmartCityDescriptor.createTrafficLightPositionIterator();
+		/*
 		while (trafficLightsIterator.hasNext()) {
 			if(trafficLightsIterator.next().equals(position)) {
 				break;
 			}
 			index++;
 		}
+		*/
 		TrafficLightActions traffic=TrafficLightActions.changePriority;
-		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(index));
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurTrafficLight.class.getCanonicalName());
 		this.caeop.execute(traffic, new Serializable[] {p}); 
 		
 	}

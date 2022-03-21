@@ -12,12 +12,12 @@ public class CorrelateurRecieveEventInboundPort extends AbstractInboundPort impl
 
 	public CorrelateurRecieveEventInboundPort(ComponentI owner)
 			throws Exception {
-		super(EventEmissionCI.class,owner);
+		super(EventReceptionCI.class,owner);
 	}
 	
 	public CorrelateurRecieveEventInboundPort(String uri,ComponentI owner)
 			throws Exception {
-		super(uri,EventEmissionCI.class, owner);
+		super(uri,EventReceptionCI.class, owner);
 	}
 
 	@Override

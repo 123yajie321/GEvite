@@ -15,13 +15,13 @@ public class CorrelateurSendCepOutboundPort extends AbstractOutboundPort impleme
 
 	public CorrelateurSendCepOutboundPort( ComponentI owner)
 			throws Exception {
-		super(EventReceptionCI.class, owner);
+		super(EventEmissionCI.class, owner);
 		
 	}
 
 	
 	public CorrelateurSendCepOutboundPort(String uri,ComponentI owner) throws Exception{
-		super(uri, EventReceptionCI.class, owner);
+		super(uri, EventEmissionCI.class, owner);
 	
 	}
 

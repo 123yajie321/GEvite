@@ -14,6 +14,7 @@ import fr.sorbonne_u.cps.smartcity.connections.TrafficLightNotificationInboundPo
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.Direction;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
+import fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightActionCI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightNotificationImplI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
@@ -28,15 +29,15 @@ import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
 import gevite.connector.ConnectorExcuteurRegister;
-
+import fr.sorbonne_u.cps.smartcity.interfaces.TrafficLightNotificationCI;
 import gevite.emitteur.EmitterRegisterOutboundPort;
 import gevite.emitteur.EmitterSendOutboundPort;
 import gevite.evenement.atomique.circulation.DemandePriorite;
 import gevite.evenement.atomique.circulation.PassageVehicule;
 
 import gevite.executeur.ExecuteurRegisterOutboundPort;
-@OfferedInterfaces(offered= {ActionExecutionCI.class})
-@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
+@OfferedInterfaces(offered= {ActionExecutionCI.class,TrafficLightNotificationCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,TrafficLightActionCI.class})
 public class TrafficLight extends AbstractComponent implements TrafficLightNotificationImplI{
 	
 	protected IntersectionPosition					position;
@@ -108,16 +109,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 			this.doPortConnection(
 					this.taop.getPortURI(),
 					this.actionInboundPort_URI,
-					TrafficLightActionConnector.class.getCanonicalName());
-			
-			
-			String SendEventInbound_URI=this.erop.registerEmitter(idTrafficLight);
-			this.doPortConnection(
-					this.esop.getPortURI(),
-					SendEventInbound_URI,
-					ConnectorEmitterSend.class.getCanonicalName());
-			
-			
+					TrafficLightActionConnector.class.getCanonicalName());	
 			
 		} catch (Exception e) {
 			throw new ComponentStartException(e) ;
@@ -129,6 +121,11 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
+		String SendEventInbound_URI=this.erop.registerEmitter(idTrafficLight);
+		this.doPortConnection(
+				this.esop.getPortURI(),
+				SendEventInbound_URI,
+				ConnectorEmitterSend.class.getCanonicalName());
 		this.exrop.registerExecutor(this.idTrafficLight,this.TrafficLightAeip.getPortURI());
 		
 		

@@ -12,18 +12,23 @@ import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
+import fr.sorbonne_u.components.exceptions.ComponentStartException;
+import fr.sorbonne_u.cps.smartcity.connections.SAMUActionConnector;
 import fr.sorbonne_u.utils.Pair;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
 import gevite.connector.ConnectorCepSendCorrelateur;
+import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
+import gevite.connector.ConnectorExcuteurRegister;
 import gevite.evenement.EventI;
+import gevite.plugin.PluginEmissionIn;
 
 @OfferedInterfaces(offered = {CEPBusManagementCI.class,EventEmissionCI.class})
 @RequiredInterfaces(required = {EventReceptionCI.class})
 
-public class CEPBus extends AbstractComponent{
+public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	
 	public static final String CSIP_URI = "csip-uri";		//register
 	public static final String CERIP_URI = "cerip-uri";	//event recieve form emitter or correlateur
@@ -44,7 +49,7 @@ public class CEPBus extends AbstractComponent{
 
 	
 	protected CepServicesInboundPort csip;
-	protected CepEventRecieveInboundPort cerip;
+	//protected CepEventRecieveInboundPort cerip;
 	protected CepEventSendCorrelateurOutboundPort cescop;
 
 
@@ -57,15 +62,23 @@ public class CEPBus extends AbstractComponent{
 		eventsRecu=new LinkedBlockingQueue<Pair<EventI,String>>();
 		this.uriExecuteurs=new HashMap<String,String>();
 		this.csip = new CepServicesInboundPort(CSIP_URI,this); 
-		this.cerip = new CepEventRecieveInboundPort(CERIP_URI,this);
+		//this.cerip = new CepEventRecieveInboundPort(CERIP_URI,this);
 		this.cescop = new CepEventSendCorrelateurOutboundPort(CESCOP_URI, this);
 		this.csip.publishPort();
-		this.cerip.publishPort();
+		//this.cerip.publishPort();
 		this.cescop.publishPort();
+		PluginEmissionIn pluginEmissionIn=new PluginEmissionIn(CERIP_URI);
+		pluginEmissionIn.setPluginURI("plugin_in");
+		this.installPlugin(pluginEmissionIn);
+		
 
 	}
 	
-	
+	@Override
+	public synchronized void	start() throws ComponentStartException
+	{
+		super.start();
+	}
 	
 	
 	
@@ -74,6 +87,7 @@ public class CEPBus extends AbstractComponent{
 		System.out.println("Emetteur : "+ uri +" registed");
 		uriEmitters.add(uri);
 		return this.CERIP_URI;
+	
 	}
 	
 	public String registerCorrelator(String uri, String inboundPortURI) throws Exception{
@@ -183,7 +197,7 @@ public class CEPBus extends AbstractComponent{
 	public synchronized void shutdown() throws ComponentShutdownException {
 			
 			try {
-				this.cerip.unpublishPort();
+				//this.cerip.unpublishPort();
 				this.cescop.unpublishPort();
 				this.csip.unpublishPort();
 				
@@ -194,6 +208,19 @@ public class CEPBus extends AbstractComponent{
 			
 			super.shutdown();
 		}
+
+	@Override
+	public void sendEvent(String emitterURI, EventI event) throws Exception {
+		System.out.println("Bus reveive Event from : " + emitterURI);
+		this.eventsRecu.put(new Pair<EventI, String>(event, emitterURI));
+		
+	}
+
+	@Override
+	public void sendEvents(String emitterURI, EventI[] events) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

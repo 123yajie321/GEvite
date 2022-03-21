@@ -14,6 +14,7 @@ import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
 import gevite.actions.FireStationActions;
 import gevite.actions.SamuActions;
+import gevite.cep.ActionExecutionCI;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
@@ -27,7 +28,7 @@ import gevite.evenement.EventI;
 import gevite.rule.RuleBase;
 
 @OfferedInterfaces(offered = {EventReceptionCI.class})
-@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,ActionExecutionCI.class})
 
 public class CorrelateurPompier extends AbstractComponent implements PompierCorrelatorStateI  {
 	
@@ -72,10 +73,8 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	@Override
 	public synchronized void start()throws ComponentStartException{
 		try {
+			super.start();
 			this.doPortConnection(this.ccrop.getPortURI(), CEPBus.CSIP_URI,ConnectorCorrelateurCepServices.class.getCanonicalName() );
-			
-			sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
-			this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -86,10 +85,15 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
+		sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
+		this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
+		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
+		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurPompier.class.getCanonicalName());
 		for(String emitter: emitters) {
 			this.ccrop.subscribe(correlateurId, emitter);
 		
 		}
+		
 	}
 	
 	@Override
@@ -141,8 +145,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	@Override
 	public void declancheFirstAlarme(AbsolutePosition position, TypeOfFirefightingResource type) throws Exception {
 		FireStationActions firstAlarmActions = FireStationActions.FirstAlarme;
-		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurPompier.class.getCanonicalName());
+		
 		this.caeop.execute(firstAlarmActions, new Serializable[] {position,type}); 			
 	}
 
@@ -151,8 +154,6 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	@Override
 	public void declancheSecondAlarme(AbsolutePosition position) throws Exception {
 		FireStationActions secondAlarmActions = FireStationActions.FirstAlarme;
-		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurPompier.class.getCanonicalName());
 		this.caeop.execute(secondAlarmActions, new Serializable[] {position}); 			
 	}		
 
