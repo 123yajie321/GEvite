@@ -34,6 +34,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	public static final String CERIP_URI = "cerip-uri";	//event recieve form emitter or correlateur
 	
 	public static final String CESCOP_URI = "cescop-uri";	//event send
+	private static int pluginId=0;
 
 	
   
@@ -68,7 +69,8 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 		//this.cerip.publishPort();
 		this.cescop.publishPort();
 		PluginEmissionIn pluginEmissionIn=new PluginEmissionIn(CERIP_URI);
-		pluginEmissionIn.setPluginURI("plugin_in");
+		pluginEmissionIn.setPluginURI("pluginEmission_in"+pluginId);
+		pluginId++;
 		this.installPlugin(pluginEmissionIn);
 		
 

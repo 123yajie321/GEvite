@@ -26,6 +26,8 @@ import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.atomique.samu.SignaleManuel;
+import gevite.plugin.PluginActionExecuteOut;
+import gevite.plugin.PluginEmissionOut;
 import gevite.rule.RuleBase;
 
 @OfferedInterfaces(offered = {EventReceptionCI.class})
@@ -37,10 +39,16 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	//public static final String CCROP_URI = "ccrop-uri";
 	//public static final String CESCOP_URI = "cescop-uri";
 	
+	//EmitteurOutboundPort
+	protected EventEmissionCI cscop;
+	//protected ActionExecutionCI caeop;
+	
+	protected ArrayList<ActionExecutionCI> list_caeop;
+		
 	protected CorrelateurRecieveEventInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
-	protected CorrelateurActionExecutionOutboundPort caeop;
-	protected CorrelateurSendCepOutboundPort cscop;
+	//protected CorrelateurActionExecutionOutboundPort caeop;
+	//protected CorrelateurSendCepOutboundPort cscop;
 	
 	protected EventBase baseEvent;
 	//protected HashMap<EventI, String>eventEmitter;
@@ -60,16 +68,17 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		baseEvent =new EventBase();
 		this.cercip= new CorrelateurRecieveEventInboundPort(this);
 		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
-		this.caeop=new CorrelateurActionExecutionOutboundPort(this);
-		this.cscop=new CorrelateurSendCepOutboundPort(this);
-		this.caeop.publishPort();
+		//this.caeop=new CorrelateurActionExecutionOutboundPort(this);
+		//this.cscop=new CorrelateurSendCepOutboundPort(this);
+		//this.caeop.publishPort();
 		this.ccrop.publishPort();
 		this.cercip.publishPort();
-		this.cscop.publishPort();
+		//this.cscop.publishPort();
 		this.correlateurId= correlateurId;
 		this.executors=executors;
 		this.emitters=emitters;
 		this.baseRule=ruleBase;
+		list_caeop = new ArrayList<ActionExecutionCI>();
 	}
 	
 
@@ -92,20 +101,38 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	public synchronized void execute() throws Exception {
 		super.execute();
 		sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
-		this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
-		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurSAMU.class.getCanonicalName());
+		//this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
+		//String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
+		//this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurSAMU.class.getCanonicalName());
 		
 		for(String emitter: emitters) {
 			this.ccrop.subscribe(correlateurId, emitter);
+		}
+		
+		PluginEmissionOut pluginSendOut = new PluginEmissionOut();
+		pluginSendOut.setInboundPortUri(sendEventInboundPort);
+		pluginSendOut.setPluginURI("CorrelateurSamuEmissionPluginOut_"+correlateurId);
+		this.installPlugin(pluginSendOut);
+		
+		cscop = pluginSendOut.getEmissionService();
+		
+		
+		for(int i = 0; i < executors.size(); i++) {
+			PluginActionExecuteOut pluginExecuteOut = new PluginActionExecuteOut();
+			String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(i));
+			pluginExecuteOut.setInboundPortUri(ActionExecutionInboundPort);
+			pluginExecuteOut.setPluginURI("CorrelateurSamuActionExecutePluginOut_"+correlateurId);
+			this.installPlugin(pluginExecuteOut);
+			
+			list_caeop.add(pluginExecuteOut.getActionEecutionService());
 		}
 	}
 	
 	@Override
 	public synchronized void finalise() throws Exception {		
 		this.doPortDisconnection(this.ccrop.getPortURI());
-		this.doPortDisconnection(this.caeop.getPortURI());
-		this.doPortDisconnection(this.cscop.getPortURI());
+		//this.doPortDisconnection(this.caeop.getPortURI());
+		//this.doPortDisconnection(this.cscop.getPortURI());
 		super.finalise();
 	}
 	
@@ -114,8 +141,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 			
 			try {
 				this.ccrop.unpublishPort();
-				this.caeop.unpublishPort();
-				this.cscop.unpublishPort();
+				//this.caeop.unpublishPort();
+				//this.cscop.unpublishPort();
 				this.cercip.unpublishPort();
 				
 			} catch (Exception e) {
@@ -188,7 +215,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	public void intervanetionAmbulance(AbsolutePosition position,String personId,TypeOfSAMURessources type) throws Exception {
 		
 		SamuActions	intervention=  SamuActions.InterventionAmbulance;
-		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
+		this.list_caeop.get(0).execute(intervention, new Serializable[] {position,personId,type}); 
 		System.out.println("intervanetionAmbulance finished");
 	
 	}
@@ -198,7 +225,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	public void triggerMedicCall(AbsolutePosition position, String personId, TypeOfSAMURessources type)
 			throws Exception {
 		SamuActions intervention=SamuActions.AppelMedcin;
-		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
+		this.list_caeop.get(0).execute(intervention, new Serializable[] {position,personId,type}); 
 		
 	}
 	

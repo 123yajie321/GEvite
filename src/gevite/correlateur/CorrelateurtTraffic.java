@@ -28,6 +28,8 @@ import gevite.connector.ConnectorCorrelateurTrafficLight;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.circulation.DemandePriorite;
+import gevite.plugin.PluginActionExecuteOut;
+import gevite.plugin.PluginEmissionOut;
 import gevite.rule.RuleBase;
 
 @OfferedInterfaces(offered = {EventReceptionCI.class})
@@ -39,10 +41,17 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	//public static final String CCROP_URI = "ccrop-uri";
 	//public static final String CESCOP_URI = "cescop-uri";
 	
+	
+	//EmitteurOutboundPort
+	protected EventEmissionCI cscop;
+	
+	protected ArrayList<ActionExecutionCI> list_caeop;
+
+		
 	protected CorrelateurRecieveEventInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
-	protected CorrelateurActionExecutionOutboundPort caeop;
-	protected CorrelateurSendCepOutboundPort cscop;
+	//protected CorrelateurActionExecutionOutboundPort caeop;
+	//protected CorrelateurSendCepOutboundPort cscop;
 	
 	protected EventBase baseEvent;
 	//protected HashMap<EventI, String>eventEmitter;
@@ -59,16 +68,18 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 		baseEvent =new EventBase();
 		this.cercip= new CorrelateurRecieveEventInboundPort(this);
 		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
-		this.caeop=new CorrelateurActionExecutionOutboundPort(this);
-		this.cscop=new CorrelateurSendCepOutboundPort(this);
-		this.caeop.publishPort();
+		//this.caeop=new CorrelateurActionExecutionOutboundPort(this);
+		//this.cscop=new CorrelateurSendCepOutboundPort(this);
+		//this.caeop.publishPort();
 		this.ccrop.publishPort();
 		this.cercip.publishPort();
-		this.cscop.publishPort();
+		//this.cscop.publishPort();
 		this.correlateurId= correlateurId;
 		this.executors=executors;
 		this.emitters=emitters;
 		this.baseRule=ruleBase;
+		list_caeop = new ArrayList<ActionExecutionCI>();
+
 	}
 	
 	@Override
@@ -88,20 +99,36 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	public synchronized void execute() throws Exception {
 		super.execute();
 		sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
-		this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
-		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));// à modifier
-		this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurTrafficLight.class.getCanonicalName());
+		//this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
+		//String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));// à modifier
+		//this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurTrafficLight.class.getCanonicalName());
 		
 		for(String emitter: emitters) {
 			this.ccrop.subscribe(correlateurId, emitter);
+		}
+		
+		PluginEmissionOut pluginOut = new PluginEmissionOut();
+		pluginOut.setInboundPortUri(sendEventInboundPort);
+		pluginOut.setPluginURI("CorrelateurTrafficLightEmissionPluginOut_"+correlateurId);
+		this.installPlugin(pluginOut);
+		
+		cscop = pluginOut.getEmissionService();
+		
+		for(int i = 0; i < executors.size(); i++) {
+			PluginActionExecuteOut pluginExecuteOut = new PluginActionExecuteOut();
+			String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(i));
+			pluginExecuteOut.setInboundPortUri(ActionExecutionInboundPort);
+			pluginExecuteOut.setPluginURI("CorrelateurTrafficLightActionExecutePluginOut_"+correlateurId);
+			this.installPlugin(pluginExecuteOut);
+			list_caeop.add(pluginExecuteOut.getActionEecutionService());
 		}
 	}
 	
 	@Override
 	public synchronized void finalise() throws Exception {		
 		this.doPortDisconnection(this.ccrop.getPortURI());
-		this.doPortDisconnection(this.caeop.getPortURI());
-		this.doPortDisconnection(this.cscop.getPortURI());
+		//this.doPortDisconnection(this.caeop.getPortURI());
+		//this.doPortDisconnection(this.cscop.getPortURI());
 		super.finalise();
 	}
 	
@@ -110,8 +137,8 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 			
 			try {
 				this.ccrop.unpublishPort();
-				this.caeop.unpublishPort();
-				this.cscop.unpublishPort();
+				//this.caeop.unpublishPort();
+				//this.cscop.unpublishPort();
 				this.cercip.unpublishPort();
 				
 			} catch (Exception e) {
@@ -167,7 +194,7 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 		}
 		*/
 		TrafficLightActions traffic=TrafficLightActions.changePriority;
-		this.caeop.execute(traffic, new Serializable[] {p}); 
+		this.list_caeop.get(0).execute(traffic, new Serializable[] {p}); 
 		
 	}
 

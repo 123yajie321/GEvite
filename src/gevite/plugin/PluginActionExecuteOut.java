@@ -2,26 +2,28 @@ package gevite.plugin;
 
 import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
+import gevite.cep.ActionExecutionCI;
 import gevite.cep.EventEmissionCI;
+import gevite.connector.ConnectorCorrelateurExecuteurPlugin;
 import gevite.connector.ConnectorEmitterSend;
 import gevite.connector.ConnectorEmitterSendPlugin;
+import gevite.correlateur.CorrelateurActionExecutionOutboundPort;
 import gevite.emitteur.EmitterSendOutboundPort;
-import gevite.evenement.EventI;
 
-public class PluginEmissionOut extends AbstractPlugin{
+public class PluginActionExecuteOut extends AbstractPlugin{
 	
 	private static final long serialVersionUID=1L;
 	protected String inboundPortUri;
 
-	protected EmitterSendOutboundPort emitterSendOutboundPort;
+	protected CorrelateurActionExecutionOutboundPort caeop;
 	
 	@Override
 	public void	installOn(ComponentI owner) throws Exception{
 		super.installOn(owner);
 		
-		this.addRequiredInterface(EventEmissionCI.class);
-		this.emitterSendOutboundPort = new EmitterSendOutboundPort(this.getOwner());
-		this.emitterSendOutboundPort.publishPort();
+		this.addRequiredInterface(ActionExecutionCI.class);
+		this.caeop = new CorrelateurActionExecutionOutboundPort(this.getOwner());
+		this.caeop.publishPort();
 		System.out.println(" out install");
 	}
 	
@@ -34,9 +36,9 @@ public class PluginEmissionOut extends AbstractPlugin{
 		//this.addRequiredInterface(ReflectionCI.class);
 		//ReflectionOutboundPort  rop= new ReflectionOutboundPort(this.getOwner());
 		this.getOwner().doPortConnection(
-				this.emitterSendOutboundPort.getPortURI(),
+				this.caeop.getPortURI(),
 				this.inboundPortUri, 
-				ConnectorEmitterSendPlugin.class.getCanonicalName());
+				ConnectorCorrelateurExecuteurPlugin.class.getCanonicalName());
 		
 		System.out.println(" COnnected");
 		super.initialise();
@@ -44,22 +46,20 @@ public class PluginEmissionOut extends AbstractPlugin{
 	
 	@Override
 	public void finalise() throws Exception {		
-		this.getOwner().doPortDisconnection(emitterSendOutboundPort.getPortURI());
+		this.getOwner().doPortDisconnection(caeop.getPortURI());
 		//super.finalise();
 	}
 	
 	@Override
 	public void uninstall() throws Exception {
-		this.emitterSendOutboundPort.unpublishPort();
-		this.emitterSendOutboundPort.destroyPort();
-		this.removeRequiredInterface(EventEmissionCI.class);
+		this.caeop.unpublishPort();
+		this.caeop.destroyPort();
+		this.removeRequiredInterface(ActionExecutionCI.class);
 	}
 	
-	public EventEmissionCI getEmissionService() {
-		return this.emitterSendOutboundPort;
+	public ActionExecutionCI getActionEecutionService() {
+		return this.caeop;
 	}
-
-
 
 	
 

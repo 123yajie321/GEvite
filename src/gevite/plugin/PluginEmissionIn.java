@@ -37,7 +37,7 @@ public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 	public void uninstall() throws Exception {
 		this.receivePluginInboundPort.unpublishPort();
 		this.receivePluginInboundPort.destroyPort();
-		this.removeRequiredInterface(CepEventRecieveInboundPort.class);
+		this.removeRequiredInterface(EventEmissionCI.class);
 	}
 	
 	@Override

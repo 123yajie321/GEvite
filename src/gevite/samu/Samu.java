@@ -45,6 +45,7 @@ import gevite.evenement.atomique.samu.MedecinBusy;
 import gevite.evenement.atomique.samu.SignaleManuel;
 
 import gevite.executeur.ExecuteurRegisterOutboundPort;
+import gevite.plugin.PluginActionExecuteIn;
 import gevite.plugin.PluginEmissionIn;
 import gevite.plugin.PluginEmissionOut;
 
@@ -73,7 +74,9 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 	protected SAMUActionOutboundPort saop;
 	
 	//receive avtion from correlateur
-	protected SAMUActionExecutionInboundPort SAMUaeip;
+	//protected SAMUActionExecutionInboundPort SAMUaeip;
+	
+	protected ActionExecutionCI SAMUaeip;
 	
 	//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
 	//String sendInboundPort,
@@ -88,8 +91,8 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 		//The uri inboudport of samuProxy
 		this.actionInboundPort_URI = actionInboundPort;
 		
-		this.SAMUaeip=new SAMUActionExecutionInboundPort( this);
-		this.SAMUaeip.publishPort();
+		//this.SAMUaeip=new SAMUActionExecutionInboundPort( this);
+		//this.SAMUaeip.publishPort();
 		
 		this.erop = new EmitterRegisterOutboundPort(this);
 		this.erop.publishPort();
@@ -101,6 +104,10 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 		this.snip.publishPort();
 		this.saop = new SAMUActionOutboundPort(this);
 		this.saop.publishPort();
+		
+		PluginActionExecuteIn pluginActionExecuteIn=new PluginActionExecuteIn();
+		pluginActionExecuteIn.setPluginURI("pluginSamuActionExecute_in"+samuId);
+		this.installPlugin(pluginActionExecuteIn);
 		
 		this.getTracer().setTitle("SAMUStation");
 		this.getTracer().setRelativePosition(1, 0);
@@ -144,11 +151,11 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 				SendEventInbound_URI,
 				ConnectorEmitterSend.class.getCanonicalName());
 				*/
-		
-		this.exrop.registerExecutor(this.samuId, this.SAMUaeip.getPortURI());
+		String port_uriString=((PluginActionExecuteIn)this.getPlugin("pluginSamuActionExecute_in"+samuId)).getActionEecutionService();
+		this.exrop.registerExecutor(this.samuId,port_uriString );
 		PluginEmissionOut pluginOut = new PluginEmissionOut();
 		pluginOut.setInboundPortUri(SendEventInbound_URI);
-		pluginOut.setPluginURI("SamupluginOut");
+		pluginOut.setPluginURI("SamuPluginOut_"+samuId);
 		this.installPlugin(pluginOut);
 		
 		sendOutRef = pluginOut.getEmissionService();
