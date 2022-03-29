@@ -40,7 +40,7 @@ import gevite.plugin.PluginActionExecuteIn;
 import gevite.plugin.PluginEmissionOut;
 @OfferedInterfaces(offered= {ActionExecutionCI.class,TrafficLightNotificationCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,TrafficLightActionCI.class})
-public class TrafficLight extends AbstractComponent implements TrafficLightNotificationImplI{
+public class TrafficLight extends AbstractComponent implements TrafficLightNotificationImplI,ActionExecutionCI{
 	//EmitteurOutboundPort
 	protected EventEmissionCI sendOutRef;
 	
@@ -198,7 +198,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 		this.sendOutRef.sendEvent(idTrafficLight, pVehicule);
 
 	}
-	
+	@Override
 	public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		assert a instanceof TrafficLightActions;
 		TypeOfTrafficLightPriority priority=null;

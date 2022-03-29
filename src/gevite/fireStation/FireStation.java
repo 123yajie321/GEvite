@@ -52,7 +52,7 @@ import gevite.plugin.PluginEmissionOut;
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class,FireStationNotificationCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,FireStationActionCI.class})
-public class FireStation extends AbstractComponent implements FireStationNotificationImplI{
+public class FireStation extends AbstractComponent implements FireStationNotificationImplI,ActionExecutionCI{
 
 		//EmitteurOutboundPort
 		protected EventEmissionCI sendOutRef;
@@ -185,6 +185,8 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			
 			super.shutdown();
 		}
+		
+		@Override
 		public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 			assert a instanceof FireStationActions;
 			assert params != null &&params[0] instanceof AbsolutePosition;

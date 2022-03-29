@@ -52,7 +52,7 @@ import gevite.plugin.PluginEmissionOut;
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class,SAMUNotificationCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,SAMUActionCI.class})
-public class Samu extends AbstractComponent implements SAMUNotificationImplI{
+public class Samu extends AbstractComponent implements SAMUNotificationImplI,ActionExecutionCI{
 	//EmitteurOutboundPort
 	protected EventEmissionCI sendOutRef;
 	
@@ -196,7 +196,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI{
 
 	
 	
-	
+	@Override
 public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 
 	assert a instanceof SamuActions;

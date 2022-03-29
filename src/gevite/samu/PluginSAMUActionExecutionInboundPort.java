@@ -16,13 +16,13 @@ public class PluginSAMUActionExecutionInboundPort extends AbstractInboundPort im
 
 	private static final long serialVersionUID = 1L;
 
-	public PluginSAMUActionExecutionInboundPort( ComponentI owner) throws Exception {
-		super(ActionExecutionCI.class, owner);
+	public PluginSAMUActionExecutionInboundPort(String pluginURI, ComponentI owner) throws Exception {
+		super(ActionExecutionCI.class, owner,pluginURI,null);
 		
 	}
 	
-	public PluginSAMUActionExecutionInboundPort(String uri, ComponentI owner) throws Exception {
-		super(uri,ActionExecutionCI.class, owner);
+	public PluginSAMUActionExecutionInboundPort(String uri,String pluginURI, ComponentI owner) throws Exception {
+		super(uri,ActionExecutionCI.class, owner,pluginURI,null);
 		
 	}
 

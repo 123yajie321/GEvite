@@ -215,6 +215,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	public void intervanetionAmbulance(AbsolutePosition position,String personId,TypeOfSAMURessources type) throws Exception {
 		
 		SamuActions	intervention=  SamuActions.InterventionAmbulance;
+		String uri=((CorrelateurActionExecutionOutboundPort) list_caeop.get(0)).getPortURI();
+		System.out.println("the action Port : "+uri);
 		this.list_caeop.get(0).execute(intervention, new Serializable[] {position,personId,type}); 
 		System.out.println("intervanetionAmbulance finished");
 	
