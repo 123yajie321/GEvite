@@ -45,9 +45,10 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
     //stoker les event recu et leur emitter
     protected LinkedBlockingQueue<Pair<EventI,String>> eventsRecu;
 
-	protected HashSet<String> uriEmitters;
-	protected ConcurrentHashMap<String, CepEventSendCorrelateurOutboundPort > uriCorrelateurs;
-	protected HashMap<String,String> uriExecuteurs;
+	//protected HashSet<String> uriEmitters;
+	protected LinkedBlockingQueue<String > uriEmitters;
+    protected ConcurrentHashMap<String, CepEventSendCorrelateurOutboundPort > uriCorrelateurs;
+	protected ConcurrentHashMap<String,String> uriExecuteurs;
 
 	protected ConcurrentHashMap<String,ArrayList<String>> uriSubscription;
 	protected ThreadPoolExecutor sendExecutor;
@@ -64,7 +65,8 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	protected CEPBus()throws Exception {
 		super(2, 0);
 		
-		uriEmitters = new HashSet<String>();
+		//uriEmitters = new HashSet<String>();
+		uriEmitters=new LinkedBlockingQueue<String>();
 		uriCorrelateurs = new ConcurrentHashMap<String, CepEventSendCorrelateurOutboundPort >();
 		uriSubscription = new ConcurrentHashMap<String,ArrayList<String>>();
 		eventsRecu=new LinkedBlockingQueue<Pair<EventI,String>>();
@@ -75,7 +77,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 		registerCorrelateurExecutor=new ThreadPoolExecutor(N, N, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
 		registerCorrelateurExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 		
-		this.uriExecuteurs=new HashMap<String,String>();
+		this.uriExecuteurs=new ConcurrentHashMap<String,String>();
 		this.csip = new CepServicesInboundPort(CSIP_URI,this); 
 		//this.cerip = new CepEventRecieveInboundPort(CERIP_URI,this);
 		//this.cescop = new CepEventSendCorrelateurOutboundPort(CESCOP_URI, this);
