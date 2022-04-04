@@ -1,13 +1,15 @@
 package gevite.cep.cvm;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.AbstractPort;
-import fr.sorbonne_u.cps.smartcity.AbstractBasicSimCVM;
-import fr.sorbonne_u.cps.smartcity.BasicSimSmartCityDescriptor;
+import fr.sorbonne_u.cps.smartcity.AbstractSmartCityCVM;
+import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
+import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cepbus.CEPBus;
 import gevite.connector.ConnectorCorrelateurCepServices;
@@ -42,7 +44,7 @@ import gevite.rule.samu.S8;
 import gevite.samu.Samu;
 import gevite.traffic.TrafficLight;
 
-public class CVM extends AbstractBasicSimCVM {
+public class CVM extends AbstractSmartCityCVM {
 	static int correlateurid=0;
 	static int trafficLightId=0;
 	
@@ -136,7 +138,7 @@ public class CVM extends AbstractBasicSimCVM {
 		
 
 				Iterator<String> fireStationIdsIterator =
-							BasicSimSmartCityDescriptor.createFireStationIdIterator();
+							SmartCityDescriptor.createFireStationIdIterator();
 				while (fireStationIdsIterator.hasNext()) {
 					String fireStationId = fireStationIdsIterator.next();
 					abonnementCorrelateurTrafficLight.add(fireStationId);
@@ -148,7 +150,7 @@ public class CVM extends AbstractBasicSimCVM {
 						new Object[]{
 								notificationInboundPortURI,
 								fireStationId,
-								BasicSimSmartCityDescriptor.
+								SmartCityDescriptor.
 												getActionInboundPortURI(fireStationId)
 								});
 					
@@ -167,7 +169,7 @@ public class CVM extends AbstractBasicSimCVM {
 				}
 
 				Iterator<String> samuStationsIditerator =
-							BasicSimSmartCityDescriptor.createSAMUStationIdIterator();
+							SmartCityDescriptor.createSAMUStationIdIterator();
 				while (samuStationsIditerator.hasNext()) {
 					String samuStationId = samuStationsIditerator.next();
 					abonnementCorrelateurTrafficLight.add(samuStationId);
@@ -179,7 +181,7 @@ public class CVM extends AbstractBasicSimCVM {
 							new Object[]{
 									notificationInboundPortURI,
 									samuStationId,
-									BasicSimSmartCityDescriptor.
+									SmartCityDescriptor.
 												getActionInboundPortURI(samuStationId)
 									});
 					String correlateurId="correlateurSamu"+correlateurid;
@@ -197,7 +199,7 @@ public class CVM extends AbstractBasicSimCVM {
 				}
 				
 				Iterator<IntersectionPosition> trafficLightsIterator =
-							BasicSimSmartCityDescriptor.createTrafficLightPositionIterator();
+							SmartCityDescriptor.createTrafficLightPositionIterator();
 				while (trafficLightsIterator.hasNext()) {
 					IntersectionPosition p = trafficLightsIterator.next();
 					String notificationInboundPortURI = AbstractPort.generatePortURI();
@@ -212,7 +214,7 @@ public class CVM extends AbstractBasicSimCVM {
 							new Object[]{
 									notificationInboundPortURI,
 									p,
-									BasicSimSmartCityDescriptor.
+									SmartCityDescriptor.
 														getActionInboundPortURI(p),
 									trafficId
 									});
@@ -240,10 +242,25 @@ public class CVM extends AbstractBasicSimCVM {
 	public static void main(String[] args){
 		
 		try {
-			CVM c = new CVM();
-			c.startStandardLifeCycle(10000L);
-			Thread.sleep(100000L);
-			System.exit(0);
+			// start time, in the logical time view; the choice is arbitrary
+						simulatedStartTime = LocalTime.of(12, 0);
+						// end time, in the logical time view; the chosen value must allow
+						// the whole test scenario to be executed within the logical time
+						// period between the start and the end times; the actual duration
+						// of the program execution also depends upon the acceleration
+						// factor defined in the class TimeManager
+						simulatedEndTime = LocalTime.of(12, 0).plusMinutes(30);
+						CVM c = new CVM();
+						// start the program execution which duration includes a simulation
+						// start delay to allow for the interconnection of components and
+						// then the duration of the simulation itself computed from the
+						// start time, the end time and the acceleration factor
+						c.startStandardLifeCycle(
+								START_DELAY + TimeManager.get().computeExecutionDuration());
+						// delay after the execution during which the widows opened by
+						// components remain visible
+						Thread.sleep(10000L);
+						System.exit(0);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

@@ -6,7 +6,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -24,6 +27,7 @@ import gevite.connector.ConnectorEmitterSend;
 import gevite.connector.ConnectorExcuteurRegister;
 import gevite.evenement.EventI;
 import gevite.plugin.PluginEmissionIn;
+import javassist.expr.NewArray;
 
 @OfferedInterfaces(offered = {CEPBusManagementCI.class,EventEmissionCI.class})
 @RequiredInterfaces(required = {EventReceptionCI.class})
@@ -42,10 +46,13 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
     protected LinkedBlockingQueue<Pair<EventI,String>> eventsRecu;
 
 	protected HashSet<String> uriEmitters;
-	protected HashMap<String,String> uriCorrelateurs;
+	protected ConcurrentHashMap<String, CepEventSendCorrelateurOutboundPort > uriCorrelateurs;
 	protected HashMap<String,String> uriExecuteurs;
 
-	protected HashMap<String,ArrayList<String>> uriSubscription;
+	protected ConcurrentHashMap<String,ArrayList<String>> uriSubscription;
+	protected ThreadPoolExecutor sendExecutor;
+	protected ThreadPoolExecutor registerCorrelateurExecutor;
+
 
 
 	
@@ -58,16 +65,23 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 		super(2, 0);
 		
 		uriEmitters = new HashSet<String>();
-		uriCorrelateurs = new HashMap<String,String>();
-		uriSubscription = new HashMap<String,ArrayList<String>>();
+		uriCorrelateurs = new ConcurrentHashMap<String, CepEventSendCorrelateurOutboundPort >();
+		uriSubscription = new ConcurrentHashMap<String,ArrayList<String>>();
 		eventsRecu=new LinkedBlockingQueue<Pair<EventI,String>>();
+		int  N=3;
+		sendExecutor=new ThreadPoolExecutor(N, N, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+		sendExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+		
+		registerCorrelateurExecutor=new ThreadPoolExecutor(N, N, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+		registerCorrelateurExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+		
 		this.uriExecuteurs=new HashMap<String,String>();
 		this.csip = new CepServicesInboundPort(CSIP_URI,this); 
 		//this.cerip = new CepEventRecieveInboundPort(CERIP_URI,this);
-		this.cescop = new CepEventSendCorrelateurOutboundPort(CESCOP_URI, this);
+		//this.cescop = new CepEventSendCorrelateurOutboundPort(CESCOP_URI, this);
 		this.csip.publishPort();
 		//this.cerip.publishPort();
-		this.cescop.publishPort();
+		//this.cescop.publishPort();
 		PluginEmissionIn pluginEmissionIn=new PluginEmissionIn(CERIP_URI);
 		pluginEmissionIn.setPluginURI("pluginEmission_in"+pluginId);
 		pluginId++;
@@ -93,8 +107,23 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	}
 	
 	public String registerCorrelator(String uri, String inboundPortURI) throws Exception{
-		uriCorrelateurs.put(uri,inboundPortURI);
-		System.out.println(" Correlateur: " + uri+ "  register");
+		Runnable RegisterTask=()->{
+			CepEventSendCorrelateurOutboundPort cescop;
+			try {
+				cescop = new CepEventSendCorrelateurOutboundPort(this);
+				cescop.publishPort();
+				this.doPortConnection(cescop.getPortURI(), inboundPortURI, ConnectorCepSendCorrelateur.class.getCanonicalName());
+				uriCorrelateurs.put(uri,cescop);
+				System.out.println(" Correlateur: " + uri+ "  register");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		};
+		
+		registerCorrelateurExecutor.submit(RegisterTask);
+		
 		return this.CERIP_URI;// le port pour recevoir le event depuis correlateur
 	}
 	
@@ -109,25 +138,32 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 		super.execute();
 		//envoyer les evenemet recu aux correlateurs
 		while(true) {
-			
-			Pair<EventI, String> pair=eventsRecu.take();
-			
-			Iterator<Entry<String, ArrayList<String>>> iterator=uriSubscription.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Map.Entry<String,ArrayList<String>> entry = (Map.Entry<String,ArrayList<String>> )iterator.next();
-				ArrayList<String> emitters= entry.getValue();
-					if(emitters.contains(pair.getSecond())) {
-						
-						String uri_correlateur= entry.getKey();
-						String receiveEventInboundPort=uriCorrelateurs.get(uri_correlateur);
-						this.doPortConnection(CESCOP_URI, receiveEventInboundPort, ConnectorCepSendCorrelateur.class.getCanonicalName());
-						this.cescop.receiveEvent(pair.getSecond(), pair.getFirst());
-						System.out.println("BUS send  "+ uri_correlateur+" a event");
-						
-						
-						
+
+			Runnable SendTask=()->{
+				Pair<EventI, String> pair;
+				try {
+						pair = eventsRecu.take();
+						Iterator<Entry<String, ArrayList<String>>> iterator=uriSubscription.entrySet().iterator();
+						while (iterator.hasNext()) {
+							Map.Entry<String,ArrayList<String>> entry = (Map.Entry<String,ArrayList<String>> )iterator.next();
+							ArrayList<String> emitters= entry.getValue();
+								if(emitters.contains(pair.getSecond())) {
+									
+									String uri_correlateur= entry.getKey();
+									CepEventSendCorrelateurOutboundPort cepscop=uriCorrelateurs.get(uri_correlateur);
+									//this.doPortConnection(CESCOP_URI, receiveEventInboundPort, ConnectorCepSendCorrelateur.class.getCanonicalName());
+									cepscop.receiveEvent(pair.getSecond(), pair.getFirst());
+									System.out.println("BUS send  "+ uri_correlateur+" a event");
+								}
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-			}
+				
+			};
+			sendExecutor.submit(SendTask);
+		
 		
 		}
 		
@@ -188,9 +224,13 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	
 	@Override
 	public synchronized void finalise() throws Exception {		
-		
-		this.doPortDisconnection(this.cescop.getPortURI());
-		
+		//this.doPortDisconnection(this.cescop.getPortURI());
+		Iterator<Entry<String,CepEventSendCorrelateurOutboundPort >> iterator=uriCorrelateurs.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String,CepEventSendCorrelateurOutboundPort> entry = (Map.Entry<String,CepEventSendCorrelateurOutboundPort> )iterator.next();
+			CepEventSendCorrelateurOutboundPort outPort= entry.getValue();
+			outPort.doDisconnection();
+		}
 		super.finalise();
 	}
 	
@@ -200,8 +240,17 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 			
 			try {
 				//this.cerip.unpublishPort();
-				this.cescop.unpublishPort();
+				//this.cescop.unpublishPort();
 				this.csip.unpublishPort();
+				
+				Iterator<Entry<String,CepEventSendCorrelateurOutboundPort >> iterator=uriCorrelateurs.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Map.Entry<String,CepEventSendCorrelateurOutboundPort> entry = (Map.Entry<String,CepEventSendCorrelateurOutboundPort> )iterator.next();
+					CepEventSendCorrelateurOutboundPort outPort= entry.getValue();
+					outPort.unpublishPort();
+				}
+				sendExecutor.shutdown();
+				registerCorrelateurExecutor.shutdown();
 				
 			} catch (Exception e) {
 				throw new ComponentShutdownException(e) ;

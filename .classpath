@@ -11,6 +11,10 @@
 	<classpathentry kind="lib" path="javassist.jar"/>
 	<classpathentry kind="lib" path="jing.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="SmartCitySimulator-17022022.jar"/>
+	<classpathentry kind="lib" path="SmartCityCommons-21032022.jar"/>
+	<classpathentry kind="lib" path="/users/nfs/Etu0/21108900/Bureau/CPS/CPS-SmartCity-04042022/BCM4Java-CyPhy-12102021.jar"/>
+	<classpathentry kind="lib" path="/users/nfs/Etu0/21108900/Bureau/CPS/CPS-SmartCity-04042022/Simulation-21032022.jar"/>
+	<classpathentry kind="lib" path="Simulation-21032022.jar"/>
+	<classpathentry kind="lib" path="SmartCitySmall-21032022.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

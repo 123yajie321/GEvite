@@ -9,7 +9,8 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import fr.sorbonne_u.cps.smartcity.descriptions.SmartCityDescriptor;
+import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
+import fr.sorbonne_u.cps.smartcity.descriptions.AbstractSmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import gevite.actions.SamuActions;
@@ -194,7 +195,9 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	@Override
 	public boolean inZone(AbsolutePosition p) {
 		for(String e:executors) {
-			if(SmartCityDescriptor.dependsUpon(p,e))
+			if(	SmartCityDescriptor.dependsUpon(p,e))
+				
+				
 				return true;
 		}
 		return false;

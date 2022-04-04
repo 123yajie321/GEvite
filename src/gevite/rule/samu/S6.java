@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
+import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
@@ -52,10 +53,10 @@ public class S6 implements RuleI{
 			
 	       return
 	         matchedEvents.get(0).getTimeStamp().isBefore(
-	                                      LocalTime.now()) &&
+	        		  TimeManager.get().getCurrentLocalTime()) &&
 	         matchedEvents.get(0).getTimeStamp().plus(
 	                     Duration.of(10, ChronoUnit.MINUTES)).isBefore(
-	                    		 LocalTime.now())&& !samuState.isMedicAvailable()&&samuState.procheSamuExiste();
+	                    		  TimeManager.get().getCurrentLocalTime())&& !samuState.isMedicAvailable()&&samuState.procheSamuExiste();
 			
 			
 			 

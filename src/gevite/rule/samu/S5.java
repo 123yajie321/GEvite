@@ -4,8 +4,10 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
+import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
@@ -48,17 +50,26 @@ public class S5 implements RuleI{
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
 		 SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs; 
 		 
-		
+//        TimeManager.get().getCurrentLocalTime();
+//        long nanotime1 = TimeManager.get().localTime2nanoDelay(matchedEvents.get(0).getTimeStamp());
+//        long nanotime2 = TimeManager.get().localTime2nanoDelay(matchedEvents.get(0).getTimeStamp());
+//       
+       // long delai=TimeManager.get().localTime2nanoDelay(matchedEvents.get(0).getTimeStamp().plusMinutes(10));
+       /* if(nanotime2-nanotime1 < 10/TimeManager.ACCELERATION_FACTOR) {
+        	return false;
+        }*/
+        
+        
        return
          matchedEvents.get(0).getTimeStamp().isBefore(
-                                      LocalTime.now()) &&
+                                      TimeManager.get().getCurrentLocalTime()) &&
+        
+       
          matchedEvents.get(0).getTimeStamp().plus(
-                     Duration.of(10, ChronoUnit.MINUTES)).isBefore(
-                                    LocalTime.now())&& samuState.isMedicAvailable();
+                     Duration.of( 10, ChronoUnit.MINUTES)).isBefore(
+                    		 TimeManager.get().getCurrentLocalTime())&& samuState.isMedicAvailable();
 		
-		
-		 
-		 
+
 	}
 
 	@Override

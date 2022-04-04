@@ -8,7 +8,6 @@ import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import fr.sorbonne_u.cps.smartcity.descriptions.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.SAMUActionCI;
@@ -17,6 +16,8 @@ import fr.sorbonne_u.cps.smartcity.interfaces.SAMUNotificationImplI;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
+import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
+
 import gevite.actions.ActionI;
 import gevite.actions.SamuActions;
 import gevite.cep.ActionExecutionCI;
