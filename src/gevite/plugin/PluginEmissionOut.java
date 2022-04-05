@@ -22,7 +22,7 @@ public class PluginEmissionOut extends AbstractPlugin{
 		this.addRequiredInterface(EventEmissionCI.class);
 		this.emitterSendOutboundPort = new EmitterSendOutboundPort(this.getOwner());
 		this.emitterSendOutboundPort.publishPort();
-		System.out.println(" out install");
+	
 	}
 	
 	public void setInboundPortUri(String uri) throws Exception {

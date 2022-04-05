@@ -22,7 +22,7 @@ public class PluginCepEventRecieveInboundPort extends AbstractInboundPort implem
 
 	@Override
 	public void sendEvent(String emitterURI, EventI event) throws Exception {
-		System.out.println("begin Send port");
+	
 		this.getOwner().handleRequest(
 				new AbstractComponent.AbstractService<Void>(this.getPluginURI()) {
 					@Override
@@ -33,7 +33,7 @@ public class PluginCepEventRecieveInboundPort extends AbstractInboundPort implem
 						return null;
 					}
 				});
-		System.out.println("fin Send port");
+		
 	}
 
 	@Override

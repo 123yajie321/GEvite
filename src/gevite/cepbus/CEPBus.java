@@ -69,7 +69,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 		//uriEmitters = new HashSet<String>();
 		uriEmitters=new LinkedBlockingQueue<String>();
 		uriCorrelateurs = new ConcurrentHashMap<String, CepEventSendCorrelateurOutboundPort >();
-		uriSubscription = new ConcurrentHashMap<String,ArrayList<String>>();
+		uriSubscription = new ConcurrentHashMap<String,Vector<String>>();
 		eventsRecu=new LinkedBlockingQueue<Pair<EventI,String>>();
 		int  N=3;
 		sendExecutor=new ThreadPoolExecutor(N, N, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
@@ -181,8 +181,8 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 					pair = eventsRecu.poll();
 					Iterator<Entry<String, Vector<String>>> iterator=uriSubscription.entrySet().iterator();
 					while (iterator.hasNext()) {
-						Map.Entry<String,Vec<String>> entry = (Map.Entry<String,ArrayList<String>> )iterator.next();
-						ArrayList<String> emitters= entry.getValue();
+						Map.Entry<String,Vector<String>> entry = (Map.Entry<String,Vector<String>> )iterator.next();
+						Vector<String> emitters= entry.getValue();
 							if(emitters.contains(pair.getSecond())) {
 								
 								String uri_correlateur= entry.getKey();
@@ -210,9 +210,9 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 		
 		
 			
-			ArrayList<String> emitters=uriSubscription.get(subscriberURI);
+			Vector<String> emitters=uriSubscription.get(subscriberURI);
 			if(emitters==null) {
-				emitters=new ArrayList<String>();
+				emitters=new Vector<String>();
 				uriSubscription.put(subscriberURI, emitters);
 			}
 			uriSubscription.get(subscriberURI).add(emitterURI);
