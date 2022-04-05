@@ -148,7 +148,7 @@ public class CorrelateurtTraffic extends AbstractComponent implements Circulatio
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 		//if(event instanceof DemandePriorite) {System.out.println("receive Event DemandPriorite");}
 		this.baseEvent.addEvent(event);
-		baseRule.fireAllOn(baseEvent, this);
+		baseRule.fireFirstOn(baseEvent, this);
 	
 	}
 	/*

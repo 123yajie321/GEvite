@@ -42,7 +42,7 @@ public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 	
 	@Override
 	public void sendEvent(String emitterURI, EventI event) throws Exception {
-		System.out.println("begin Send PLugin in");
+	
 		/*
 		this.getOwner().handleRequest(
 				cep -> {	((CEPBus)cep).
@@ -51,7 +51,7 @@ public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 					 });
 					 */
 		((EventEmissionCI)this.getOwner()).sendEvent(emitterURI, event);;
-		System.out.println("fin Send PLugin in");
+	
 	}
 
 	@Override

@@ -150,7 +150,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 			this.baseEvent.addEvent(event);
 			//this.eventEmitter.put(event, emitterURI);
-			baseRule.fireAllOn(baseEvent, this);
+			baseRule.fireFirstOn(baseEvent, this);
 	}
 
 

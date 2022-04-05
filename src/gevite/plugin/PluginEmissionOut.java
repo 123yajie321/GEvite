@@ -37,8 +37,6 @@ public class PluginEmissionOut extends AbstractPlugin{
 				this.emitterSendOutboundPort.getPortURI(),
 				this.inboundPortUri, 
 				ConnectorEmitterSendPlugin.class.getCanonicalName());
-		
-		System.out.println(" COnnected");
 		super.initialise();
 	}
 	

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -50,7 +51,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
     protected ConcurrentHashMap<String, CepEventSendCorrelateurOutboundPort > uriCorrelateurs;
 	protected ConcurrentHashMap<String,String> uriExecuteurs;
 
-	protected ConcurrentHashMap<String,ArrayList<String>> uriSubscription;
+	protected ConcurrentHashMap<String,Vector<String>> uriSubscription;
 	protected ThreadPoolExecutor sendExecutor;
 	protected ThreadPoolExecutor registerCorrelateurExecutor;
 
@@ -59,7 +60,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	
 	protected CepServicesInboundPort csip;
 	//protected CepEventRecieveInboundPort cerip;
-	protected CepEventSendCorrelateurOutboundPort cescop;
+	//protected CepEventSendCorrelateurOutboundPort cescop;
 
 
 	protected CEPBus()throws Exception {
@@ -139,12 +140,11 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	public synchronized void execute() throws Exception {
 		super.execute();
 		//envoyer les evenemet recu aux correlateurs
-		while(true) {
-
+		/*while(true) {
 			Runnable SendTask=()->{
 				Pair<EventI, String> pair;
 				try {
-						pair = eventsRecu.take();
+						pair = eventsRecu.poll();
 						Iterator<Entry<String, ArrayList<String>>> iterator=uriSubscription.entrySet().iterator();
 						while (iterator.hasNext()) {
 							Map.Entry<String,ArrayList<String>> entry = (Map.Entry<String,ArrayList<String>> )iterator.next();
@@ -164,10 +164,8 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 					}
 				
 			};
-			sendExecutor.submit(SendTask);
-		
-		
-		}
+			sendExecutor.submit(SendTask);	
+		}*/
 		
 	}
 	
@@ -177,6 +175,32 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	public void recieveEvent(String emitterURI, EventI event) throws Exception {
 		System.out.println("Bus reveive Event from : " + emitterURI);
 		this.eventsRecu.put(new Pair<EventI, String>(event, emitterURI));
+		Runnable SendTask=()->{
+			Pair<EventI, String> pair;
+			try {
+					pair = eventsRecu.poll();
+					Iterator<Entry<String, Vector<String>>> iterator=uriSubscription.entrySet().iterator();
+					while (iterator.hasNext()) {
+						Map.Entry<String,Vec<String>> entry = (Map.Entry<String,ArrayList<String>> )iterator.next();
+						ArrayList<String> emitters= entry.getValue();
+							if(emitters.contains(pair.getSecond())) {
+								
+								String uri_correlateur= entry.getKey();
+								CepEventSendCorrelateurOutboundPort cepscop=uriCorrelateurs.get(uri_correlateur);
+								//this.doPortConnection(CESCOP_URI, receiveEventInboundPort, ConnectorCepSendCorrelateur.class.getCanonicalName());
+								cepscop.receiveEvent(pair.getSecond(), pair.getFirst());
+								System.out.println("BUS send  "+ uri_correlateur+" a event");
+							}
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+		};
+		sendExecutor.submit(SendTask);
+	
+	
 		
 		
 }
@@ -184,14 +208,19 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 
 	public boolean subscribe(String subscriberURI, String emitterURI) throws Exception {
 		
-		ArrayList<String> emitters=uriSubscription.get(subscriberURI);
-		if(emitters==null) {
-			emitters=new ArrayList<String>();
-			uriSubscription.put(subscriberURI, emitters);
-		}
-		uriSubscription.get(subscriberURI).add(emitterURI);
-		System.out.println(subscriberURI+ " subscribe : "+emitterURI);
-		return true;
+		
+			
+			ArrayList<String> emitters=uriSubscription.get(subscriberURI);
+			if(emitters==null) {
+				emitters=new ArrayList<String>();
+				uriSubscription.put(subscriberURI, emitters);
+			}
+			uriSubscription.get(subscriberURI).add(emitterURI);
+			System.out.println(subscriberURI+ " subscribe : "+emitterURI);
+			return true;
+			
+		
+		
 	}
 	
 	public String getExecutorInboundPortURI(String uri)throws Exception{

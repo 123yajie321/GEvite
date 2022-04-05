@@ -12,7 +12,7 @@ public class ConnectorEmitterSendPlugin extends AbstractConnector implements Eve
 	@Override
 	public void sendEvent(String emitterURI, EventI event) throws Exception {
 		((EventEmissionCI)this.offering).sendEvent(emitterURI, event);
-		System.out.println("Conetor Send");
+		
 		
 	}
 

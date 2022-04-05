@@ -24,7 +24,7 @@ public class PluginActionExecuteOut extends AbstractPlugin{
 		this.addRequiredInterface(ActionExecutionCI.class);
 		this.caeop = new CorrelateurActionExecutionOutboundPort(this.getOwner());
 		this.caeop.publishPort();
-		System.out.println(" out install");
+		
 	}
 	
 	public void setInboundPortUri(String uri) throws Exception {
@@ -40,7 +40,6 @@ public class PluginActionExecuteOut extends AbstractPlugin{
 				this.inboundPortUri, 
 				ConnectorCorrelateurExecuteurPlugin.class.getCanonicalName());
 		
-		System.out.println(" COnnected");
 		super.initialise();
 	}
 	

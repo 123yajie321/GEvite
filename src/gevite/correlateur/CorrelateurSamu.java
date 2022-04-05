@@ -3,6 +3,7 @@ package gevite.correlateur;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -59,8 +60,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	protected String sendEventInboundPort;
 	protected ArrayList<String>emitters;
 	
-	protected boolean ambulancesAvailable=true;
-	protected boolean medicsAvailable=true;
+	protected AtomicBoolean ambulancesAvailable;
+	protected AtomicBoolean medicsAvailable;
 	
 	
 	
@@ -80,6 +81,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		this.emitters=emitters;
 		this.baseRule=ruleBase;
 		list_caeop = new ArrayList<ActionExecutionCI>();
+		this.ambulancesAvailable=new AtomicBoolean(true);
+		this.medicsAvailable=new AtomicBoolean(true);
 	}
 	
 
@@ -162,7 +165,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		if(event instanceof SignaleManuel  ) {System.out.println("CorrelateurSamu receive Signal Manuel from "+ event.getPropertyValue("personId"));}*/
 			
 		this.baseEvent.addEvent(event);
-			baseRule.fireAllOn(baseEvent, this);
+			baseRule.fireFirstOn(baseEvent, this);
 	}
 
 
@@ -170,25 +173,25 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	/*S16*/
     public void setAmbulancesNoAvailable() throws Exception {
-    			this.ambulancesAvailable=false;
+    			this.ambulancesAvailable.compareAndExchange(true, false);
     }
 	
 	
 	/*S17*/
     public void setMedcinNoAvailable() throws Exception{
-    	this.medicsAvailable=false;
+    	this.medicsAvailable.compareAndExchange(true, false);
     }
 	
 	
 	/*S18*/
     public void setAmbulancesAvailable() throws Exception{
-    	this.ambulancesAvailable=true;
+    	this.ambulancesAvailable.compareAndExchange(false, true);
     }
 	
 	
 	/*S19*/
     public void setMedcinAvailable() throws Exception{
-    	this.medicsAvailable=true;
+    	this.medicsAvailable.compareAndExchange(false, true);
     	
     }	
 
@@ -208,8 +211,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 
 	@Override
 	public boolean isAmbulanceAvailable() {
-		
-		return ambulancesAvailable;
+	
+		return this.ambulancesAvailable.get();
 	}
 
 
@@ -241,7 +244,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 
 	@Override
 	public boolean isMedicAvailable() {
-		return medicsAvailable;
+		
+		return this.medicsAvailable.get();
 	}
 
 	@Override
