@@ -83,8 +83,9 @@ public class CepServicesInboundPort extends AbstractInboundPort implements CEPBu
 
 	@Override
 	public void unsubscribe(String subscriberURI, String emitterURI)throws Exception {
-		// TODO Auto-generated method stub
-
+		this.getOwner().handleRequest(
+				cep-> ((CEPBus)cep).unsubscribe(subscriberURI, emitterURI)
+						);
 	}
 
 }

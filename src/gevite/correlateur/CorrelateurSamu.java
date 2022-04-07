@@ -3,6 +3,7 @@ package gevite.correlateur;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import fr.sorbonne_u.components.AbstractComponent;
@@ -60,8 +61,11 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	protected String sendEventInboundPort;
 	protected ArrayList<String>emitters;
 	
-	protected AtomicBoolean ambulancesAvailable;
-	protected AtomicBoolean medicsAvailable;
+	
+	protected Vector<AtomicBoolean>ambulancesAvailable;
+	protected Vector<AtomicBoolean> medicsAvailable;
+	//protected AtomicBoolean ambulancesAvailable;
+	//protected AtomicBoolean medicsAvailable;
 	
 	
 	
@@ -81,8 +85,10 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		this.emitters=emitters;
 		this.baseRule=ruleBase;
 		list_caeop = new ArrayList<ActionExecutionCI>();
-		this.ambulancesAvailable=new AtomicBoolean(true);
-		this.medicsAvailable=new AtomicBoolean(true);
+		//this.ambulancesAvailable=new AtomicBoolean(true);
+		//this.medicsAvailable=new AtomicBoolean(true);
+		this.ambulancesAvailable=new Vector<AtomicBoolean>();
+		this.medicsAvailable=new Vector<AtomicBoolean>();
 	}
 	
 
@@ -173,6 +179,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	/*S16*/
     public void setAmbulancesNoAvailable() throws Exception {
+    	
+    	
     			this.ambulancesAvailable.compareAndExchange(true, false);
     }
 	

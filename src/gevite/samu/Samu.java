@@ -236,7 +236,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		AlarmeSante aSante = new AlarmeSante(occurrence);
 		aSante.putProperty("type", type);
 		aSante.putProperty("position", position);
-		
+	    aSante.putProperty("samuId", this.samuId);
 		this.sendOutRef.sendEvent(samuId, aSante);
 		System.out.println("samu send");
 		
@@ -264,6 +264,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		aSante.putProperty("type", TypeOfHealthAlarm.TRACKING);
 		aSante.putProperty("position", position);
 		aSante.putProperty("personId", personId);
+		aSante.putProperty("samuId", this.samuId);
 
 		this.sendOutRef.sendEvent(samuId, aSante);
 	

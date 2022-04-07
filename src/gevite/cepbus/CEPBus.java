@@ -207,14 +207,14 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 
 
 	public boolean subscribe(String subscriberURI, String emitterURI) throws Exception {
-		
-		
 			
-			Vector<String> emitters=uriSubscription.get(subscriberURI);
+			/*Vector<String> emitters=uriSubscription.get(subscriberURI);
 			if(emitters==null) {
 				emitters=new Vector<String>();
 				uriSubscription.put(subscriberURI, emitters);
-			}
+			}*/
+			
+			uriSubscription.putIfAbsent(subscriberURI,new Vector<String>());
 			uriSubscription.get(subscriberURI).add(emitterURI);
 			System.out.println(subscriberURI+ " subscribe : "+emitterURI);
 			return true;
@@ -222,6 +222,15 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 		
 		
 	}
+	
+	
+	public boolean unsubscribe(String subscriberURI, String emitterURI)throws Exception{
+		
+		uriSubscription.get(subscriberURI).remove(emitterURI);
+		
+		return true;
+	}
+	
 	
 	public String getExecutorInboundPortURI(String uri)throws Exception{
 	
@@ -240,8 +249,9 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	
 	public String unregisterCorrelator(String uri)throws Exception {
 		
-		 uriCorrelateurs.remove(uri);
-		 uriSubscription.remove(uri);
+		uriSubscription.remove(uri); 
+		uriCorrelateurs.remove(uri);
+		 
 		
 		return null;
 	}

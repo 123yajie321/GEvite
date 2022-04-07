@@ -72,7 +72,7 @@ public class CorrelateurCepServicesOutboundPort extends AbstractOutboundPort imp
 
 	@Override
 	public void unsubscribe(String subscriberURI, String emitterURI) throws Exception {
-		// TODO Auto-generated method stub
+		((CEPBusManagementCI)this.getConnector()).unsubscribe(subscriberURI, emitterURI);
 
 	}
 
