@@ -80,6 +80,7 @@ public class S8 implements RuleI{
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb)throws Exception {
 		eb.removeEvent(matchedEvents.get(0));
 	    eb.removeEvent(matchedEvents.get(1));
+	    System.out.println("S8 \n");
 	}
 
 	

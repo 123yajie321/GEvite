@@ -86,7 +86,7 @@ public class S5 implements RuleI{
 	    ((AtomicEvent) event).putProperty("type",TypeOfHealthAlarm.MEDICAL);
 	   
 	    //System.out.println("S5!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		
+	    System.out.println("S5 \n");
 	   
 	}
 

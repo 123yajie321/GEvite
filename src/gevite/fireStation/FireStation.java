@@ -106,7 +106,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			pluginActionExecuteIn.setPluginURI("pluginFireStationActionExecute_in"+fireStationId);
 			this.installPlugin(pluginActionExecuteIn);
 			
-			this.getTracer().setTitle("FireStation");
+			this.getTracer().setTitle("FireStationFacade");
 			this.getTracer().setRelativePosition(1, 1);
 			this.toggleTracing();
 		}
@@ -312,6 +312,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 							  occurrence + "\n");
 			StandardTrucksBusy StandardTrucksBusy = new StandardTrucksBusy(occurrence);
 			//this.esop.sendEvent(fireStationId, StandardTrucksBusy);
+			StandardTrucksBusy.putProperty("fireStationId", fireStationId);
 			this.sendOutRef.sendEvent(fireStationId, StandardTrucksBusy);
 
 		}
@@ -324,6 +325,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			this.traceMessage("Standard trucks available received at " +
 							  occurrence + "\n");	
 			StandardTrucksAvailable StandardTrucksAvailable = new StandardTrucksAvailable(occurrence);
+			StandardTrucksAvailable.putProperty("fireStationId", fireStationId);
 			//this.esop.sendEvent(fireStationId, StandardTrucksAvailable);
 			this.sendOutRef.sendEvent(fireStationId, StandardTrucksAvailable);
 
@@ -338,6 +340,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 							  occurrence + "\n");
 			HighLadderTrucksBusy HighLadderTrucksBusy = new HighLadderTrucksBusy(occurrence);
 			//this.esop.sendEvent(fireStationId, HighLadderTrucksBusy);
+			HighLadderTrucksBusy.putProperty("fireStationId", fireStationId);
 			this.sendOutRef.sendEvent(fireStationId, HighLadderTrucksBusy);
 
 		}
@@ -351,6 +354,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 							  occurrence + "\n");
 			HighLadderTrucksAvailable HighLadderTrucksAvailable = new HighLadderTrucksAvailable(occurrence);
 			//this.esop.sendEvent(fireStationId, HighLadderTrucksAvailable);
+			HighLadderTrucksAvailable.putProperty("fireStationId", fireStationId);
 			this.sendOutRef.sendEvent(fireStationId, HighLadderTrucksAvailable);
 		}
 		

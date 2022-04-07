@@ -110,7 +110,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 		pluginActionExecuteIn.setPluginURI("pluginSamuActionExecute_in"+samuId);
 		this.installPlugin(pluginActionExecuteIn);
 		
-		this.getTracer().setTitle("SAMUStation");
+		this.getTracer().setTitle("SAMUStationFacade");
 		this.getTracer().setRelativePosition(1, 0);
 		this.toggleTracing();
 	}
@@ -236,7 +236,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		AlarmeSante aSante = new AlarmeSante(occurrence);
 		aSante.putProperty("type", type);
 		aSante.putProperty("position", position);
-	    aSante.putProperty("samuId", this.samuId);
+	   // aSante.putProperty("samuId", this.samuId);
 		this.sendOutRef.sendEvent(samuId, aSante);
 		System.out.println("samu send");
 		
@@ -264,7 +264,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		aSante.putProperty("type", TypeOfHealthAlarm.TRACKING);
 		aSante.putProperty("position", position);
 		aSante.putProperty("personId", personId);
-		aSante.putProperty("samuId", this.samuId);
+		//aSante.putProperty("samuId", this.samuId);
 
 		this.sendOutRef.sendEvent(samuId, aSante);
 	
@@ -349,6 +349,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 															occurrence + "\n");
 		
 		MedecinAvailable medecinAvailable = new MedecinAvailable(occurrence);
+		medecinAvailable.putProperty("samuId", samuId);
 		this.sendOutRef.sendEvent(samuId, medecinAvailable);
 	}
 
@@ -362,6 +363,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 				"Notification that no medic are available received at " +
 															occurrence + "\n");
 		MedecinBusy medecinBusy = new MedecinBusy(occurrence);
+		medecinBusy.putProperty("samuId", samuId);
 		this.sendOutRef.sendEvent(samuId, medecinBusy);
 	}
 
@@ -376,6 +378,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 				"Notification that ambulances are available received at " +
 															occurrence + "\n");
 		AmbulancesAvailable ambulancesAvailable = new AmbulancesAvailable(occurrence);
+		ambulancesAvailable.putProperty("samuId", samuId);
 		this.sendOutRef.sendEvent(samuId, ambulancesAvailable);
 	
 	}
@@ -390,6 +393,7 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 				"Notification that no ambulance are available received at " +
 															occurrence + "\n");
 		AmbulancesBusy ambulancesBusy = new AmbulancesBusy(occurrence);
+		ambulancesBusy.putProperty("samuId", samuId);
 		this.sendOutRef.sendEvent(samuId, ambulancesBusy);
 	
 	}

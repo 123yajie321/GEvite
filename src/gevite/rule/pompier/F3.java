@@ -59,6 +59,7 @@ public class F3 implements RuleI{
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) {
 		eb.removeEvent(matchedEvents.get(0));
+		System.out.print(" F3 \n");
 	}
 	
 

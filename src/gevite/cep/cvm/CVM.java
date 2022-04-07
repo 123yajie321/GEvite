@@ -45,7 +45,9 @@ import gevite.samu.Samu;
 import gevite.traffic.TrafficLight;
 
 public class CVM extends AbstractSmartCityCVM {
-	static int correlateurid=0;
+	static int correlateurSamuid=1;
+	static int correlateurPompierid=1;
+	static int correlateurTrafficLight=1;
 	static int trafficLightId=0;
 	
 	
@@ -136,7 +138,7 @@ public class CVM extends AbstractSmartCityCVM {
 		//String correlateurURI = AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), new Object[] {});
 		
 		
-				ArrayList<String> 	correlateurFireStationExecutorEmitteurList = new ArrayList<String>();
+
 				Iterator<String> fireStationIdsIterator =
 							SmartCityDescriptor.createFireStationIdIterator();
 				while (fireStationIdsIterator.hasNext()) {
@@ -154,29 +156,19 @@ public class CVM extends AbstractSmartCityCVM {
 												getActionInboundPortURI(fireStationId)
 								});
 					
-					correlateurFireStationExecutorEmitteurList.add(fireStationId);
-					
+					String correlateurId="correlateurPompier"+correlateurPompierid;
+					correlateurPompierid++;
+					ArrayList<String> executorEmitteurList = new ArrayList<String>();
+					executorEmitteurList.add(fireStationId);
+					//correlateur pompier
+					AbstractComponent.createComponent(CorrelateurPompier.class.getCanonicalName(), 
+							new Object[]{
+									correlateurId,
+									executorEmitteurList,
+									executorEmitteurList,
+									ruleBasePompier
+							});
 				}
-				
-				
-				
-				String correlateurId="correlateurPompier"+correlateurid;
-				correlateurid++;
-			
-				//correlateur pompier
-				AbstractComponent.createComponent(CorrelateurPompier.class.getCanonicalName(), 
-						new Object[]{
-								correlateurId,
-								correlateurFireStationExecutorEmitteurList,
-								correlateurFireStationExecutorEmitteurList,
-								ruleBasePompier
-						});
-				
-				
-				
-				
-				ArrayList<String> correlateurSamuExecutorEmitteurList = new ArrayList<String>();
-				
 
 				Iterator<String> samuStationsIditerator =
 							SmartCityDescriptor.createSAMUStationIdIterator();
@@ -194,23 +186,19 @@ public class CVM extends AbstractSmartCityCVM {
 									SmartCityDescriptor.
 												getActionInboundPortURI(samuStationId)
 									});
-					correlateurSamuExecutorEmitteurList.add(samuStationId);
+					String correlateurId="correlateurSamu"+correlateurSamuid;
+					correlateurSamuid++;
+					ArrayList<String> executorEmitteurList = new ArrayList<String>();
+					executorEmitteurList.add(samuStationId);
+					//correlateur samu
+					AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), 
+							new Object[]{
+									correlateurId,
+									executorEmitteurList,
+									executorEmitteurList,
+									ruleBaseSamu
+							});
 				}
-				
-				
-				String correlateurId2="correlateurSamu"+correlateurid;
-				correlateurid++;
-				
-				//correlateur samu
-				AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), 
-						new Object[]{
-								correlateurId2,
-								correlateurSamuExecutorEmitteurList,
-								correlateurSamuExecutorEmitteurList,
-								ruleBaseSamu
-						});
-				
-				
 				
 				Iterator<IntersectionPosition> trafficLightsIterator =
 							SmartCityDescriptor.createTrafficLightPositionIterator();
@@ -235,19 +223,22 @@ public class CVM extends AbstractSmartCityCVM {
 					trafficLightId++;
 				}
 				
-				String correlateurId3="correlateurTrafficLight "+correlateurid;
-				correlateurid++;
-				//correlateur trafficLight
-			
 				
-				AbstractComponent.createComponent(CorrelateurtTraffic.class.getCanonicalName(), 
-						new Object[]{
-								correlateurId3,
-								trafficLightIdList,
-								abonnementCorrelateurTrafficLight,
-								ruleBaseTrafficLight
-						});
-				
+				for(int i=0;i<trafficLightId;i++) {
+					
+					String correlateurId="correlateurTrafficLight "+correlateurTrafficLight;
+					correlateurTrafficLight++;
+						
+					ArrayList<String>trafficLight=new ArrayList<String>();
+					trafficLight.add(trafficLightIdList.get(i));
+					AbstractComponent.createComponent(CorrelateurtTraffic.class.getCanonicalName(), 
+							new Object[]{
+									correlateurId,
+									trafficLight,
+									abonnementCorrelateurTrafficLight,
+									ruleBaseTrafficLight
+							});
+				}
 				super.deploy();
 		
 		

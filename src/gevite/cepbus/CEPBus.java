@@ -72,10 +72,10 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 		uriSubscription = new ConcurrentHashMap<String,Vector<String>>();
 		eventsRecu=new LinkedBlockingQueue<Pair<EventI,String>>();
 		int  N=3;
-		sendExecutor=new ThreadPoolExecutor(N, N, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+		sendExecutor=new ThreadPoolExecutor(N, N, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(20));
 		sendExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 		
-		registerCorrelateurExecutor=new ThreadPoolExecutor(N, N, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+		registerCorrelateurExecutor=new ThreadPoolExecutor(N, N, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(20));
 		registerCorrelateurExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 		
 		this.uriExecuteurs=new ConcurrentHashMap<String,String>();
@@ -172,13 +172,17 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	
 	
 	
-	public void recieveEvent(String emitterURI, EventI event) throws Exception {
-		System.out.println("Bus reveive Event from : " + emitterURI);
-		this.eventsRecu.put(new Pair<EventI, String>(event, emitterURI));
+/*	public void recieveEvent(String emitterURI, EventI event) throws Exception {
+		
+		
+		Pair<EventI, String> newpair=new Pair<EventI, String>(event, emitterURI);
+		
+		this.eventsRecu.add(newpair);
+		System.out.println("after add" );
 		Runnable SendTask=()->{
 			Pair<EventI, String> pair;
-			try {
-					pair = eventsRecu.poll();
+			try {  System.out.println("Pool thread strat");
+					pair = eventsRecu.take();
 					Iterator<Entry<String, Vector<String>>> iterator=uriSubscription.entrySet().iterator();
 					while (iterator.hasNext()) {
 						Map.Entry<String,Vector<String>> entry = (Map.Entry<String,Vector<String>> )iterator.next();
@@ -198,12 +202,8 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 				}
 			
 		};
-		sendExecutor.submit(SendTask);
-	
-	
-		
-		
-}
+		sendExecutor.submit(SendTask);	
+}*/
 
 
 	public boolean subscribe(String subscriberURI, String emitterURI) throws Exception {
@@ -304,7 +304,32 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 	@Override
 	public void sendEvent(String emitterURI, EventI event) throws Exception {
 		System.out.println("Bus reveive Event from : " + emitterURI);
-		this.eventsRecu.put(new Pair<EventI, String>(event, emitterURI));
+		this.eventsRecu.add(new Pair<EventI, String>(event, emitterURI));
+	
+		Runnable SendTask=()->{
+			Pair<EventI, String> pair;
+			try { 
+					pair = eventsRecu.take();
+					Iterator<Entry<String, Vector<String>>> iterator=uriSubscription.entrySet().iterator();
+					while (iterator.hasNext()) {
+						Map.Entry<String,Vector<String>> entry = (Map.Entry<String,Vector<String>> )iterator.next();
+						Vector<String> emitters= entry.getValue();
+							if(emitters.contains(pair.getSecond())) {
+								
+								String uri_correlateur= entry.getKey();
+								CepEventSendCorrelateurOutboundPort cepscop=uriCorrelateurs.get(uri_correlateur);
+								//this.doPortConnection(CESCOP_URI, receiveEventInboundPort, ConnectorCepSendCorrelateur.class.getCanonicalName());
+								cepscop.receiveEvent(pair.getSecond(), pair.getFirst());
+								System.out.println("BUS send  "+ uri_correlateur+" a event");
+							}
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+		};
+		sendExecutor.submit(SendTask);
 		
 	}
 

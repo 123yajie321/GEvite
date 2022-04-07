@@ -96,7 +96,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 		pluginActionExecuteIn.setPluginURI("pluginTrafficLightActionExecute_in"+idTrafficLight);
 		this.installPlugin(pluginActionExecuteIn);
 		
-		this.getTracer().setTitle("TrafficLight");
+		this.getTracer().setTitle("TrafficLightFacade");
 		this.getTracer().setRelativePosition(1, 2);
 		this.toggleTracing();
 	}

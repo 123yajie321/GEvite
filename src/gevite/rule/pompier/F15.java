@@ -58,6 +58,7 @@ public class F15 implements RuleI {
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) {
 		eb.removeEvent(matchedEvents.get(0));
+		System.out.print(" F15 \n");
 	}
 
 }

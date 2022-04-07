@@ -34,7 +34,7 @@ public class CepEventRecieveInboundPort extends AbstractInboundPort implements E
 		
 		this.getOwner().handleRequest(
 				cep -> {	((CEPBus)cep).
-									recieveEvent(emitterURI, event);;
+									sendEvent(emitterURI, event);
 						return null;
 					 });
 	}

@@ -62,6 +62,7 @@ public class S4 implements RuleI{
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) {
 		eb.removeEvent(matchedEvents.get(0));
+		System.out.println("S4 \n");
 		
 	}
 

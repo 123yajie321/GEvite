@@ -88,6 +88,7 @@ public class F11 implements RuleI{
 
 		SecondAlarmFeu secondAlarmFeu = new SecondAlarmFeu(eventComplex);
 		eb.addEvent(secondAlarmFeu);
+		System.out.print(" F11 \n");
 
 		
 	}

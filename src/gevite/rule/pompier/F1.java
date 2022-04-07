@@ -67,6 +67,7 @@ public class F1 implements RuleI{
 		eb.removeEvent(matchedEvents.get(0));
 		PremiereAlarmFeu premiereAlarmFeu = new PremiereAlarmFeu(eventComplex);
 		eb.addEvent(premiereAlarmFeu);
+		System.out.print(" F1 \n");
 		
 	}
 	

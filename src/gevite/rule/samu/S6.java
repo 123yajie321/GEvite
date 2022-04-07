@@ -75,6 +75,7 @@ public class S6 implements RuleI{
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) throws Exception{
 		eb.removeEvent(matchedEvents.get(0));
+		System.out.println("S6 \n");
 	   
 	}
 

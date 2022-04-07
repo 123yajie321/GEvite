@@ -87,7 +87,7 @@ public class S7 implements RuleI{
 		EventI alarmSante=matchedEvents.get(0);
 		samuState.triggerMedicCall((AbsolutePosition) alarmSante.getPropertyValue("position"),(String)matchedEvents.get(0).getPropertyValue("personId"),
 	    		TypeOfSAMURessources.TELEMEDIC);
-		System.out.println("S7 declancher fin");
+		//System.out.println("S7 declancher fin");
 
 	}
 
@@ -95,6 +95,7 @@ public class S7 implements RuleI{
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb)throws Exception {
 		eb.removeEvent(matchedEvents.get(0));
 	    eb.removeEvent(matchedEvents.get(1));
+	    System.out.println("S7 \n");
 	}
 
 	

@@ -1,4 +1,4 @@
-package gevite.samu;
+package gevite.plugin;
 
 import java.io.Serializable;
 
@@ -10,18 +10,17 @@ import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.actions.ActionI;
 import gevite.cep.ActionExecutionCI;
 import gevite.cep.ResponseI;
-import gevite.plugin.PluginActionExecuteIn;
 
-public class PluginSAMUActionExecutionInboundPort extends AbstractInboundPort implements ActionExecutionCI {
+public class PluginActionExecutionInboundPort extends AbstractInboundPort implements ActionExecutionCI {
 
 	private static final long serialVersionUID = 1L;
 
-	public PluginSAMUActionExecutionInboundPort(String pluginURI, ComponentI owner) throws Exception {
+	public PluginActionExecutionInboundPort(String pluginURI, ComponentI owner) throws Exception {
 		super(ActionExecutionCI.class, owner,pluginURI,null);
 		
 	}
 	
-	public PluginSAMUActionExecutionInboundPort(String uri,String pluginURI, ComponentI owner) throws Exception {
+	public PluginActionExecutionInboundPort(String uri,String pluginURI, ComponentI owner) throws Exception {
 		super(uri,ActionExecutionCI.class, owner,pluginURI,null);
 		
 	}
@@ -29,7 +28,6 @@ public class PluginSAMUActionExecutionInboundPort extends AbstractInboundPort im
 	@Override
 	public ResponseI execute(ActionI a, Serializable[] params) throws  Exception {
 		
-		System.out.println("begin Execute port");
 		return this.getOwner().handleRequest(
 				new AbstractComponent.AbstractService<ResponseI>(this.getPluginURI()) {
 					@Override

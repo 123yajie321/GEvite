@@ -12,12 +12,11 @@ import gevite.cepbus.CEPBus;
 import gevite.cepbus.CepEventRecieveInboundPort;
 import gevite.cepbus.PluginCepEventRecieveInboundPort;
 import gevite.evenement.EventI;
-import gevite.samu.PluginSAMUActionExecutionInboundPort;
 
 public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecutionCI{
 	private static final long serialVersionUID=1L;
 	
-	protected PluginSAMUActionExecutionInboundPort actionExecutionPluginInboundPort;
+	protected PluginActionExecutionInboundPort actionExecutionPluginInboundPort;
 	//protected String PortUri; 
 	
 	public PluginActionExecuteIn() {
@@ -36,7 +35,7 @@ public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecu
 		//ReflectionOutboundPort  rop= new ReflectionOutboundPort(this.getOwner());
 		super.initialise();
 		this.addOfferedInterface(ActionExecutionCI.class);
-		this.actionExecutionPluginInboundPort = new PluginSAMUActionExecutionInboundPort(this.getPluginURI(),this.getOwner());
+		this.actionExecutionPluginInboundPort = new PluginActionExecutionInboundPort(this.getPluginURI(),this.getOwner());
 		this.actionExecutionPluginInboundPort.publishPort();
 }
 	@Override
