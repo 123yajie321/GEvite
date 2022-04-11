@@ -56,7 +56,7 @@ public class S6 implements RuleI{
 	        		  TimeManager.get().getCurrentLocalTime()) &&
 	         matchedEvents.get(0).getTimeStamp().plus(
 	                     Duration.of(10, ChronoUnit.MINUTES)).isBefore(
-	                    		  TimeManager.get().getCurrentLocalTime())&& !samuState.isMedicAvailable()&&samuState.procheSamuExiste();
+	                    		  TimeManager.get().getCurrentLocalTime())&& !samuState.isMedicAvailable()&&samuState.samuNonSolliciteExiste(matchedEvents);
 			
 			
 			 

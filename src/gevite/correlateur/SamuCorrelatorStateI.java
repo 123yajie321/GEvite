@@ -1,6 +1,7 @@
 package gevite.correlateur;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
@@ -17,7 +18,7 @@ public interface SamuCorrelatorStateI extends CorrelatorStateI
 			TypeOfSAMURessources type)throws Exception;
 	
 	/*s2*/
-	public boolean procheSamuExiste()throws Exception;
+	public boolean samuNonSolliciteExiste(ArrayList<EventI>mathedEvents)throws Exception;
 	public void propagerEvent(EventI event) throws Exception;
 
 

@@ -45,7 +45,7 @@ public class F11 implements RuleI{
 			matchedEvents.add(fa);
 			matchedEvents.add(sa);
 			
-			System.out.println("F11 matched");
+			//System.out.println("F11 matched");
 			return matchedEvents;
 		} else {
 			return null;
@@ -54,7 +54,7 @@ public class F11 implements RuleI{
 
 	@Override
 	public boolean correlate(ArrayList<EventI> matchedEvents) {
-		System.out.println("F11 correlate");
+		//System.out.println("F11 correlate");
 		return ((AbsolutePosition)matchedEvents.get(0).getPropertyValue("position")).equalAbsolutePosition((AbsolutePosition)matchedEvents.get(1).getPropertyValue("position"))
 				&& matchedEvents.get(0).getTimeStamp().isBefore(
 		                                        matchedEvents.get(1).getTimeStamp()) &&
@@ -65,7 +65,7 @@ public class F11 implements RuleI{
 
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
-		System.out.println("F11 filter");
+		//System.out.println("F11 filter");
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
 		return pompierCorrelatorState.isCamionDisponible();
 		
@@ -73,11 +73,11 @@ public class F11 implements RuleI{
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
-		System.out.println("F11 act");
+		//System.out.println("F11 act");
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
 		EventI alarmFeu = matchedEvents.get(0);
 		pompierCorrelatorState.declancheSecondAlarme((AbsolutePosition) alarmFeu.getPropertyValue("position"));
-		System.out.println("F11 act finished");
+		//System.out.println("F11 act finished");
 	}
 
 	@Override

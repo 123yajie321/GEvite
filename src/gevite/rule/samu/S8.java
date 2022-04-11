@@ -62,7 +62,7 @@ public class S8 implements RuleI{
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
-		return samuState.isMedicAvailable()&&samuState.procheSamuExiste();
+		return samuState.isMedicAvailable()&&samuState.samuNonSolliciteExiste(matchedEvents);
 	}
 
 	@Override

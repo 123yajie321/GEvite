@@ -46,8 +46,9 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	protected EventEmissionCI cscop;
 	//protected ActionExecutionCI caeop;
 	
-	protected ArrayList<ActionExecutionCI> list_caeop;
-		
+	//protected ArrayList<ActionExecutionCI> list_caeop;
+	
+	protected ActionExecutionCI caeop;
 	protected CorrelateurRecieveEventInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
 	//protected CorrelateurActionExecutionOutboundPort caeop;
@@ -57,7 +58,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	//protected HashMap<EventI, String>eventEmitter;
 	protected RuleBase baseRule;
 	protected String correlateurId;
-	protected ArrayList<String>executors;
+	//protected ArrayList<String>executors;
+	protected String  executor;
 	protected String sendEventInboundPort;
 	protected ArrayList<String>emitters;
 	
@@ -69,7 +71,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	
 	
-	protected CorrelateurSamu(String correlateurId,ArrayList<String> executors,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
+	protected CorrelateurSamu(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
 		super(2,0);
 		baseEvent =new EventBase();
 		this.cercip= new CorrelateurRecieveEventInboundPort(this);
@@ -81,10 +83,10 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		this.cercip.publishPort();
 		//this.cscop.publishPort();
 		this.correlateurId= correlateurId;
-		this.executors=executors;
+		this.executor=executor;
 		this.emitters=emitters;
 		this.baseRule=ruleBase;
-		list_caeop = new ArrayList<ActionExecutionCI>();
+		//list_caeop = new ArrayList<ActionExecutionCI>();
 		this.ambulancesAvailable=new AtomicBoolean(true);
 		this.medicsAvailable=new AtomicBoolean(true);
 		//this.ambulancesAvailable=new Vector<AtomicBoolean>();
@@ -114,11 +116,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		//this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
 		//String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
 		//this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurSAMU.class.getCanonicalName());
-		
-		for(String emitter: emitters) {
-			this.ccrop.subscribe(correlateurId, emitter);
-		}
-		
+	
 		PluginEmissionOut pluginSendOut = new PluginEmissionOut();
 		pluginSendOut.setInboundPortUri(sendEventInboundPort);
 		pluginSendOut.setPluginURI("CorrelateurSamuEmissionPluginOut_"+correlateurId);
@@ -126,16 +124,28 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		
 		cscop = pluginSendOut.getEmissionService();
 		
+		PluginActionExecuteOut pluginExecuteOut = new PluginActionExecuteOut();
+		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executor);
+		pluginExecuteOut.setInboundPortUri(ActionExecutionInboundPort);
+		pluginExecuteOut.setPluginURI("CorrelateurSamuActionExecutePluginOut_"+correlateurId);
+		this.installPlugin(pluginExecuteOut);
+		this.caeop=pluginExecuteOut.getActionEecutionService();
 		
-		for(int i = 0; i < executors.size(); i++) {
+		
+		for(String emitter: emitters) {
+			this.ccrop.subscribe(correlateurId, emitter);
+		}
+		
+		
+		/*for(int i = 0; i < executors.size(); i++) {
 			PluginActionExecuteOut pluginExecuteOut = new PluginActionExecuteOut();
 			String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(i));
 			pluginExecuteOut.setInboundPortUri(ActionExecutionInboundPort);
-			pluginExecuteOut.setPluginURI("CorrelateurSamuActionExecutePluginOut_"+correlateurId);
-			this.installPlugin(pluginExecuteOut);
+			pluginExecuteOut.setPluginuURI("CorrelateurSamuActionExecutePluginOut_"+correlateurId);
+			this.installPlugin(pluginExecuteOt);
 			
 			list_caeop.add(pluginExecuteOut.getActionEecutionService());
-		}
+		}*/
 	}
 	
 	@Override
@@ -173,7 +183,10 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		
 		System.out.println("correlateur"+correlateurId+" receive event from "+emitterURI);
 		this.baseEvent.addEvent(event);
+		synchronized (this) {
 			baseRule.fireFirstOn(baseEvent, this);
+		}
+			
 	}
 
 
@@ -207,13 +220,13 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 
 	@Override
 	public boolean inZone(AbsolutePosition p) {
-		for(String e:executors) {
-			if(	SmartCityDescriptor.dependsUpon(p,e))
-				
-				
+		/*for(String e:executors) {
+			if(	SmartCityDescriptor.dependsUpon(p,this.executor))
+						
 				return true;
 		}
-		return false;
+		return false;*/
+		return SmartCityDescriptor.dependsUpon(p,this.executor);
 		
 		
 	}
@@ -231,9 +244,9 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	public void intervanetionAmbulance(AbsolutePosition position,String personId,TypeOfSAMURessources type) throws Exception {
 		
 		SamuActions	intervention=  SamuActions.InterventionAmbulance;
-		String uri=((CorrelateurActionExecutionOutboundPort) list_caeop.get(0)).getPortURI();
+		String uri=((CorrelateurActionExecutionOutboundPort) caeop).getPortURI();
 		System.out.println("the action Port : "+uri);
-		this.list_caeop.get(0).execute(intervention, new Serializable[] {position,personId,type}); 
+		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
 		System.out.println("intervanetionAmbulance finished");
 	
 	}
@@ -243,13 +256,13 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	public void triggerMedicCall(AbsolutePosition position, String personId, TypeOfSAMURessources type)
 			throws Exception {
 		SamuActions intervention=SamuActions.AppelMedcin;
-		this.list_caeop.get(0).execute(intervention, new Serializable[] {position,personId,type}); 
+		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
 		
 	}
 	
 	@Override
-	public boolean procheSamuExiste()throws Exception {
-		return false;
+	public boolean samuNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {
+		return true;
 	}
 
 	@Override

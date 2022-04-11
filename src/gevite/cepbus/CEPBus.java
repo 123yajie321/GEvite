@@ -320,7 +320,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionCI{
 								CepEventSendCorrelateurOutboundPort cepscop=uriCorrelateurs.get(uri_correlateur);
 								//this.doPortConnection(CESCOP_URI, receiveEventInboundPort, ConnectorCepSendCorrelateur.class.getCanonicalName());
 								cepscop.receiveEvent(pair.getSecond(), pair.getFirst());
-								System.out.println("BUS send  "+ uri_correlateur+" a event");
+								//System.out.println("BUS send  "+ uri_correlateur+" a event");
 							}
 					}
 				} catch (Exception e) {

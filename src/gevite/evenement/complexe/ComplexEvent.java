@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
 import gevite.evenement.EventI;
 
 public abstract class ComplexEvent implements ComplexEventI {
@@ -16,7 +17,7 @@ public abstract class ComplexEvent implements ComplexEventI {
 	@Override
 	public LocalTime getTimeStamp() {
 		
-		return LocalTime.now();
+		return TimeManager.get().getCurrentLocalTime();
 	}
 
 	@Override
