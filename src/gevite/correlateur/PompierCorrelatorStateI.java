@@ -1,5 +1,7 @@
 package gevite.correlateur;
 
+import java.util.ArrayList;
+
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
 import gevite.evenement.EventI;
@@ -15,8 +17,9 @@ public interface PompierCorrelatorStateI extends CorrelatorStateI{
 	/*f2*/
 	public boolean isCamionDisponible()throws Exception;
 	public void declancheSecondAlarme(AbsolutePosition position)throws Exception;
+
 	/*f3*/
-	public boolean procheCaserneExiste()throws Exception;
+	public boolean caserneNonSolliciteExiste(ArrayList<EventI>mathedEvents)throws Exception;
 	public void propagerEvent(EventI event) throws Exception;
 	
 	/*f15*/

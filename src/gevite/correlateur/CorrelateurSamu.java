@@ -273,6 +273,17 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		System.out.println("intervanetionAmbulance finished");
 	
 	}
+	
+	@Override
+	public void intervanetionMedecin(AbsolutePosition position,String personId,TypeOfSAMURessources type) throws Exception {
+		
+		SamuActions	intervention=  SamuActions.IntervetionMedcin;
+		String uri=((CorrelateurActionExecutionOutboundPort) caeop).getPortURI();
+		System.out.println("the action Port : "+uri);
+		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
+		System.out.println("intervanetionMedecin finished");
+	
+	}
 
 
 	@Override
@@ -285,7 +296,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	@Override
 	public boolean samuNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {
-		/*int nbsamu=0;
+		int nbsamu=0;
 		DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
 		ArrayList<EventI> correlateEvents=demandeInterventionSamu.getCorrelatedEvents();
 		
@@ -296,10 +307,8 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 			nbsamu++;
 			
 		}
-		if(nbsamu > correlateEvents.size())
-		*/
-		return true;
 		
+			return nbsamu > correlateEvents.size()-1;
 		
 	}
 

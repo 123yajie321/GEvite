@@ -2,15 +2,18 @@ package gevite.rule.samu;
 
 import java.util.ArrayList;
 
+import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
+import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
+import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.rule.RuleI;
 
-public class S10bis implements RuleI  {
+public class S11 implements RuleI {
 
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb) throws Exception {
@@ -18,7 +21,7 @@ public class S10bis implements RuleI  {
 		for (int i = 0 ; i < eb.numberOfEvents() && (dIntervention == null ) ; i++) {
 			EventI e = eb.getEvent(i);
 			if (e instanceof DemandeInterventionSamu && e.hasProperty("type")
-					&& e.getPropertyValue("type")==TypeOfHealthAlarm.EMERGENCY
+					&& e.getPropertyValue("type")==TypeOfHealthAlarm.MEDICAL
 					) {
 				dIntervention = e;
 			}
@@ -40,17 +43,21 @@ public class S10bis implements RuleI  {
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
-		return !samuState.isAmbulanceAvailable()&&!samuState.samuNonSolliciteExiste(matchedEvents);
+		return samuState.isMedicAvailable();
 	}
 
 	@Override
-	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {		
+	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
+		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
+		DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
+		AlarmeSante aSante = (AlarmeSante) (demandeInterventionSamu.getCorrelatedEvents().get(0));
+		samuState.intervanetionMedecin((AbsolutePosition)aSante.getPropertyValue("position"), 
+				null, TypeOfSAMURessources.MEDIC);
 	}
 
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) throws Exception {
 		eb.removeEvent(matchedEvents.get(0));
-		System.out.println("S10bis \n");		
-	}
+		System.out.println("S11 \n");	}
 
 }

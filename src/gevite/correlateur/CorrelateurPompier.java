@@ -3,6 +3,7 @@ package gevite.correlateur;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
@@ -25,6 +26,7 @@ import gevite.connector.ConnectorCorrelateurPompier;
 import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
+import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.plugin.PluginActionExecuteOut;
 import gevite.plugin.PluginEmissionOut;
 import gevite.rule.RuleBase;
@@ -182,15 +184,6 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 		this.list_caeop.get(0).execute(secondAlarmActions, new Serializable[] {position}); 			
 	}		
 
-
-
-	@Override
-	public boolean procheCaserneExiste() throws Exception {
-		return false;
-	}
-
-
-
 	@Override
 	public void propagerEvent(EventI event) throws Exception {
 		this.cscop.sendEvent(this.correlateurId, event);		
@@ -236,6 +229,23 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	public void setStandardTRucksAvailable() throws Exception {
 		
 		this.camionAvailable = true;
+		
+	}
+	
+	@Override
+	public boolean caserneNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {
+		int nbCaserne=0;
+		DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
+		ArrayList<EventI> correlateEvents=demandeInterventionSamu.getCorrelatedEvents();
+		
+		Iterator<String> fireStationsIditerator =
+				SmartCityDescriptor.createFireStationIdIterator();
+		while (fireStationsIditerator.hasNext()) {
+			String samuStationId = fireStationsIditerator.next();
+			nbCaserne++;
+			
+		}
+		return nbCaserne > correlateEvents.size()-1;
 		
 	}
 

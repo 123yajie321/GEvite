@@ -29,7 +29,10 @@ public interface SamuCorrelatorStateI extends CorrelatorStateI
 			String personId,
 			TypeOfSAMURessources type)throws Exception;
 	
-	
+	/*s11*/
+	public void intervanetionMedecin(	AbsolutePosition position,
+			String personId,
+			TypeOfSAMURessources type)throws Exception;
 
 	/*S16*/
     public void setAmbulancesNoAvailable() throws Exception;
