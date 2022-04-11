@@ -6,6 +6,7 @@ import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
 import gevite.actions.ActionI;
 import gevite.cep.ActionExecutionCI;
+import gevite.cep.ActionExecutionImplementationCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.ResponseI;
 import gevite.cepbus.CEPBus;
@@ -48,7 +49,7 @@ public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecu
 	@Override
 	public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 	
-		return ((ActionExecutionCI)this.getOwner()).execute(a, params);
+		return ((ActionExecutionImplementationCI)this.getOwner()).execute(a, params);
 		
 	
 	}

@@ -21,6 +21,7 @@ import fr.sorbonne_u.cps.smartcity.connections.SAMUActionConnector;
 import fr.sorbonne_u.utils.Pair;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
+import gevite.cep.EventEmissionImplementationCI;
 import gevite.cep.EventReceptionCI;
 import gevite.connector.ConnectorCepSendCorrelateur;
 import gevite.connector.ConnectorEmitterRegister;
@@ -33,7 +34,7 @@ import javassist.expr.NewArray;
 @OfferedInterfaces(offered = {CEPBusManagementCI.class,EventEmissionCI.class})
 @RequiredInterfaces(required = {EventReceptionCI.class})
 
-public class CEPBus extends AbstractComponent implements EventEmissionCI{
+public class CEPBus extends AbstractComponent implements EventEmissionImplementationCI{
 	
 	public static final String CSIP_URI = "csip-uri";		//register
 	public static final String CERIP_URI = "cerip-uri";	//event recieve form emitter or correlateur

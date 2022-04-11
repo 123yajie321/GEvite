@@ -21,6 +21,7 @@ import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
 import gevite.actions.ActionI;
 import gevite.actions.SamuActions;
 import gevite.cep.ActionExecutionCI;
+import gevite.cep.ActionExecutionImplementationCI;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.ResponseI;
@@ -53,7 +54,7 @@ import gevite.plugin.PluginEmissionOut;
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class,SAMUNotificationCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,SAMUActionCI.class})
-public class Samu extends AbstractComponent implements SAMUNotificationImplI,ActionExecutionCI{
+public class Samu extends AbstractComponent implements SAMUNotificationImplI,ActionExecutionImplementationCI{
 	//EmitteurOutboundPort
 	protected EventEmissionCI sendOutRef;
 	

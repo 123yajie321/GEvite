@@ -45,5 +45,8 @@ public interface SamuCorrelatorStateI extends CorrelatorStateI
 	
 	/*S19*/
     public void setMedcinAvailable() throws Exception;
+    
+    
+    public String getExecutorId() throws Exception;
 	
 }

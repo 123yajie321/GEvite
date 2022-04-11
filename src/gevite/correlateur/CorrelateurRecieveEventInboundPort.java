@@ -22,7 +22,7 @@ public class CorrelateurRecieveEventInboundPort extends AbstractInboundPort impl
 
 	@Override
 	public void receiveEvent(String emitterURI, EventI e) throws Exception {
-		this.getOwner().handleRequest(c-> {
+		this.getOwner().runTask( c-> {
 			try { 
 				if(c instanceof CorrelateurSamu) {((CorrelateurSamu)c).addEvent(emitterURI, e);}
 				else if(c instanceof CorrelateurPompier) {((CorrelateurPompier)c).addEvent(emitterURI, e);}
@@ -32,7 +32,7 @@ public class CorrelateurRecieveEventInboundPort extends AbstractInboundPort impl
 			
 				e1.printStackTrace();
 			}
-			return null;
+			
 		});		
 	}
 

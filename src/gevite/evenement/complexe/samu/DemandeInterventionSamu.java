@@ -9,18 +9,12 @@ import gevite.evenement.complexe.ComplexEvent;
 import gevite.evenement.complexe.ComplexEventI;
 
 public class DemandeInterventionSamu extends ComplexEvent implements ComplexEventI {
-	
-	private HashMap<String, Serializable> listPoperty;
-	private ArrayList<EventI> correlateEvents;
-	
-	public DemandeInterventionSamu(ArrayList<EventI> correlateEvents) {
-		this.correlateEvents = correlateEvents;
-	}
 
-	@Override
-	public ArrayList<EventI> getCorrelatedEvents() {
-		return this.correlateEvents;
+	public DemandeInterventionSamu(ArrayList<EventI> relatedEvents) {
+		super(relatedEvents);
+	
 	}
+	
 	
 
 }

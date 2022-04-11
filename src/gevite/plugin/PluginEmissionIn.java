@@ -3,6 +3,7 @@ package gevite.plugin;
 import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
 import gevite.cep.EventEmissionCI;
+import gevite.cep.EventEmissionImplementationCI;
 import gevite.cepbus.CEPBus;
 import gevite.cepbus.CepEventRecieveInboundPort;
 import gevite.cepbus.PluginCepEventRecieveInboundPort;
@@ -50,7 +51,7 @@ public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 						return null;
 					 });
 					 */
-		((EventEmissionCI)this.getOwner()).sendEvent(emitterURI, event);;
+		((EventEmissionImplementationCI)this.getOwner()).sendEvent(emitterURI, event);;
 	
 	}
 

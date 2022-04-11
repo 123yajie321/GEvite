@@ -1,9 +1,15 @@
 package gevite.correlateur;
 
 import java.io.Serializable;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
+import java.util.Map.Entry;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import fr.sorbonne_u.components.AbstractComponent;
@@ -15,12 +21,14 @@ import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.descriptions.AbstractSmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
+import fr.sorbonne_u.utils.Pair;
 import gevite.actions.SamuActions;
 import gevite.cep.ActionExecutionCI;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.EventReceptionCI;
 import gevite.cepbus.CEPBus;
+import gevite.cepbus.CepEventSendCorrelateurOutboundPort;
 import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.connector.ConnectorCorrelateurExecutor;
 import gevite.connector.ConnectorCorrelateurSAMU;
@@ -29,6 +37,7 @@ import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.atomique.samu.SignaleManuel;
+import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.plugin.PluginActionExecuteOut;
 import gevite.plugin.PluginEmissionOut;
 import gevite.rule.RuleBase;
@@ -62,13 +71,16 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	protected String  executor;
 	protected String sendEventInboundPort;
 	protected ArrayList<String>emitters;
-	
+	protected LinkedBlockingQueue<EventI>bufferEvents;
 	
 	//protected Vector<AtomicBoolean>ambulancesAvailable;
 	//protected Vector<AtomicBoolean> medicsAvailable;
 	protected AtomicBoolean ambulancesAvailable;
 	protected AtomicBoolean medicsAvailable;
 	
+	protected ThreadPoolExecutor recieveExecutor;
+	protected ThreadPoolExecutor actionExecutor;
+
 	
 	
 	protected CorrelateurSamu(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
@@ -179,14 +191,25 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
   				" form person " + event.getPropertyValue("personId") :	""));}
 		
 		if(event instanceof SignaleManuel  ) {System.out.println("CorrelateurSamu receive Signal Manuel from "+ event.getPropertyValue("personId"));}*/
-			
+		Runnable RecieveTask=()->{
+			bufferEvents.add(event);
+			System.out.println("correlateur"+correlateurId+" receive event from "+emitterURI);
+		};	
 		
-		System.out.println("correlateur"+correlateurId+" receive event from "+emitterURI);
-		this.baseEvent.addEvent(event);
-		synchronized (this) {
-			baseRule.fireFirstOn(baseEvent, this);
-		}
-			
+		recieveExecutor.submit(RecieveTask);
+		
+		Runnable ActionTask=()->{
+			try {
+				EventI e = bufferEvents.take();
+				this.baseEvent.addEvent(e);
+				baseRule.fireFirstOn(baseEvent, this);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		};	
+		
+		actionExecutor.submit(ActionTask);
 	}
 
 
@@ -196,7 +219,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
     public void setAmbulancesNoAvailable() throws Exception {
     	
     	
-    			this.ambulancesAvailable.compareAndExchange(true, false);
+    	this.ambulancesAvailable.compareAndExchange(true, false);
     }
 	
 	
@@ -262,7 +285,22 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	@Override
 	public boolean samuNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {
+		/*int nbsamu=0;
+		DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
+		ArrayList<EventI> correlateEvents=demandeInterventionSamu.getCorrelatedEvents();
+		
+		Iterator<String> samuStationsIditerator =
+				SmartCityDescriptor.createSAMUStationIdIterator();
+		while (samuStationsIditerator.hasNext()) {
+			String samuStationId = samuStationsIditerator.next();
+			nbsamu++;
+			
+		}
+		if(nbsamu > correlateEvents.size())
+		*/
 		return true;
+		
+		
 	}
 
 	@Override
@@ -276,6 +314,11 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		this.cscop.sendEvent(this.correlateurId, event);
 	}
 
+	@Override
+	public String getExecutorId() throws Exception {
+		
+		return this.executor;
+	}
 
 
 	

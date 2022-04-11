@@ -22,6 +22,7 @@ import gevite.actions.ActionI;
 import gevite.actions.SamuActions;
 import gevite.actions.TrafficLightActions;
 import gevite.cep.ActionExecutionCI;
+import gevite.cep.ActionExecutionImplementationCI;
 import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.ResponseI;
@@ -40,7 +41,7 @@ import gevite.plugin.PluginActionExecuteIn;
 import gevite.plugin.PluginEmissionOut;
 @OfferedInterfaces(offered= {ActionExecutionCI.class,TrafficLightNotificationCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,TrafficLightActionCI.class})
-public class TrafficLight extends AbstractComponent implements TrafficLightNotificationImplI,ActionExecutionCI{
+public class TrafficLight extends AbstractComponent implements TrafficLightNotificationImplI,ActionExecutionImplementationCI{
 	//EmitteurOutboundPort
 	protected EventEmissionCI sendOutRef;
 	

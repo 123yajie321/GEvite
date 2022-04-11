@@ -14,7 +14,7 @@ public class DemandeInterventionFeu extends ComplexEvent implements ComplexEvent
 	private ArrayList<EventI> correlateEvents;
 	
 	public DemandeInterventionFeu(ArrayList<EventI> correlateEvents) {
-		this.correlateEvents = correlateEvents;
+		super(correlateEvents);
 	}
 
 	@Override

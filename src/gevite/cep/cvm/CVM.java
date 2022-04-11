@@ -165,7 +165,7 @@ public class CVM extends AbstractSmartCityCVM {
 					correlateurPompierid++;
 					fireSationCorrelateursAbonnement.add(correlateurId);
 					fireStations.add(fireStationId);
-					fireSationCorrelateursAbonnement.add(fireStationId);
+					//fireSationCorrelateursAbonnement.add(fireStationId);
 					//correlateur pompier
 					
 				}
@@ -175,6 +175,10 @@ public class CVM extends AbstractSmartCityCVM {
 					String correlateurId="correlateurPompier"+id;
 					ArrayList<String>tmp=new ArrayList<>();
 					tmp.add(fireStations.get(i));
+					
+					 ArrayList<String> abonnement=new ArrayList<>();
+					   abonnement.addAll(fireSationCorrelateursAbonnement);
+					   abonnement.add(fireStations.get(i));
 					//correlateur pompier
 					AbstractComponent.createComponent(CorrelateurPompier.class.getCanonicalName(), 
 							new Object[]{
@@ -207,20 +211,22 @@ public class CVM extends AbstractSmartCityCVM {
 					correlateurSamuid++;
 					samus.add(samuStationId);
 					samuCorrelateurAbonnement.add(correlateurId);
-					samuCorrelateurAbonnement.add(samuStationId);
+					//samuCorrelateurAbonnement.add(samuStationId);
 				
 				}
 				
 				for(int i=0;i<correlateurSamuid-1;i++) {
 					int id=i+1;
 					String correlateurId="correlateurSamu"+id;
-
+				   ArrayList<String> abonnement=new ArrayList<>();
+				   abonnement.addAll(samuCorrelateurAbonnement);
+				   abonnement.add(samus.get(i));
 					//correlateur sa,u
 					AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), 
 							new Object[]{
 									correlateurId,
 									samus.get(i),
-									samuCorrelateurAbonnement,
+									abonnement,
 									ruleBaseSamu
 							});
 				}

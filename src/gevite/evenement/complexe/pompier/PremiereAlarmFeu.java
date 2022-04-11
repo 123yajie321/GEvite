@@ -14,7 +14,7 @@ public class PremiereAlarmFeu extends ComplexEvent implements ComplexEventI {
 	private ArrayList<EventI> correlateEvents;
 	
 	public PremiereAlarmFeu(ArrayList<EventI> correlateEvents) {
-		this.correlateEvents = correlateEvents;
+		super(correlateEvents);
 	}
 
 	@Override

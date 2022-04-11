@@ -13,11 +13,17 @@ public abstract class ComplexEvent implements ComplexEventI {
 
 	private HashMap<String, Serializable> listPoperty;
 	private ArrayList<EventI> relatedEvents;
+	protected LocalTime createtime;
+	
+	public ComplexEvent(ArrayList<EventI> relatedEvents) {
+		this.relatedEvents = relatedEvents;
+		createtime=TimeManager.get().getCurrentLocalTime();
+	}
 	
 	@Override
 	public LocalTime getTimeStamp() {
 		
-		return TimeManager.get().getCurrentLocalTime();
+		return createtime;
 	}
 
 	@Override

@@ -16,7 +16,7 @@ public class ConsciousFall  extends ComplexEvent implements ComplexEventI {
 	private ArrayList<EventI> correlateEvents;
 	
 	public ConsciousFall(ArrayList<EventI> correlateEvents) {
-		this.correlateEvents = correlateEvents;
+		super(correlateEvents);
 		
 	}
 
