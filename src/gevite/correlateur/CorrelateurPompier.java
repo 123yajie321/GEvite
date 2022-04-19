@@ -11,6 +11,7 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
+import fr.sorbonne_u.cps.smartcity.descriptions.AbstractSmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
 import gevite.actions.FireStationActions;
@@ -275,7 +276,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 
 
-
+	AbstractSmartCityDescriptor
 	
 	
 	

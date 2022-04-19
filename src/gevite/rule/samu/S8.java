@@ -18,6 +18,7 @@ import gevite.evenement.atomique.AtomicEvent;
 import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.atomique.samu.InterventionCausesSamu;
 import gevite.evenement.atomique.samu.SamuDejaSollicite;
+import gevite.evenement.atomique.samu.SamuPlusPres;
 import gevite.evenement.atomique.samu.SignaleManuel;
 import gevite.evenement.complexe.samu.ConsciousFall;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
@@ -71,45 +72,46 @@ public class S8 implements RuleI{
 	}
 
 	@Override
-	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI cs) throws Exception {
+	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		AlarmeSante alarmSante=(AlarmeSante)matchedEvents.get(0);
-		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
-		ArrayList<String> samuNonSol = new ArrayList<String>();
-		ArrayList<String> samuDejaSolId = (ArrayList<String>)matchedEvents.get(0).getPropertyValue("samuSolList");
+		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
+		ArrayList<String> samuNonSolId = new ArrayList<String>();
+		ArrayList<String> samuDejaSolId = new ArrayList<String>();
 		samuDejaSolId.add(samuState.getExecutorId());
 		
+		AtomicEvent samuDejaSol=new SamuDejaSollicite();
+		samuDejaSol.putProperty("samuId", samuState.getExecutorId() );
 		
 		Iterator<String> samuStationsIditerator =
 				SmartCityDescriptor.createSAMUStationIdIterator();
 		while (samuStationsIditerator.hasNext()) {
 			String samuStationId = samuStationsIditerator.next();
 			if(!samuDejaSolId.contains(samuStationId)) {
-				samuNonSol.add(samuStationId);
+				samuNonSolId.add(samuStationId);
 			}
 		}
-		double minDistance = AbstractSmartCityDescriptor.distance(samuState.getExecutorId(), samuNonSol.get(0)) ;
-		String plusPreStation = samuNonSol.get(0);
+		double minDistance = AbstractSmartCityDescriptor.distance(samuState.getExecutorId(), samuNonSolId.get(0)) ;
+		String plusPreStation = samuNonSolId.get(0);
 		
-		for(int i=1;i<samuNonSol.size();i++) {
-			double tempD = AbstractSmartCityDescriptor.distance(samuState.getExecutorId(), samuNonSol.get(i));
+		for(int i=1;i<samuNonSolId.size();i++) {
+			double tempD = AbstractSmartCityDescriptor.distance(samuState.getExecutorId(), samuNonSolId.get(i));
 			if(tempD < minDistance) {
 				minDistance = tempD;
-				plusPreStation = samuNonSol.get(i);
+				plusPreStation = samuNonSolId.get(i);
 			}
 		}
+		AtomicEvent samuPlusPres = new SamuPlusPres();
+		samuPlusPres.putProperty("pluspresStation", plusPreStation);
 		
-		alarmSante.putProperty("pluspresStation",plusPreStation);
-		alarmSante.putProperty("samuDejaSolId",samuDejaSolId);
-
-		AtomicEvent samuDejaSol=new SamuDejaSollicite();
-		samuDejaSol.putProperty("samuId", samuState.getExecutorId() );
 		ArrayList<EventI> eventComplex = new ArrayList<EventI>() ;
 		eventComplex.addAll(matchedEvents);
 		eventComplex.add(samuDejaSol);
+		eventComplex.add(samuPlusPres);	
+		
 		ConsciousFall fall = new ConsciousFall(eventComplex);
 		samuState.propagerEvent(fall);
 		/*
-		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)cs;
+		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
 		ConsciousFall fall = new ConsciousFall(matchedEvents);
 		samuState.propagerEvent(fall);
 		*/

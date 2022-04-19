@@ -10,6 +10,7 @@ import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.evenement.atomique.samu.SamuPlusPres;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.rule.RuleI;
 
@@ -43,7 +44,20 @@ public class S11 implements RuleI {
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
+		DemandeInterventionSamu dInterventionSamu = (DemandeInterventionSamu)matchedEvents.get(0);
+		ArrayList<EventI> correlateEvents = dInterventionSamu.getCorrelatedEvents();
+		for(int i = 0; i< correlateEvents.size();i++) {
+			if(correlateEvents.get(i) instanceof SamuPlusPres) {
+				if(correlateEvents.get(i).getPropertyValue("pluspresStation").equals(samuState.getExecutorId())) {
+					return samuState.isMedicAvailable();				}
+				
+			}
+		}
+		return false;
+		/*
+		SamuCorrelatorStateI samuState = (SamuCorrelatorStateI)c;
 		return samuState.isMedicAvailable();
+		*/
 	}
 
 	@Override
