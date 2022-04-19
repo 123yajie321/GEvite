@@ -297,6 +297,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	@Override
 	public boolean samuNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {
 		int nbsamu=0;
+		
 		DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
 		ArrayList<EventI> correlateEvents=demandeInterventionSamu.getCorrelatedEvents();
 		

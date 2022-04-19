@@ -31,6 +31,8 @@ public interface PompierCorrelatorStateI extends CorrelatorStateI{
 	/*f18*/
 	public void setStandardTRucksAvailable()throws Exception;
 
+    public String getExecutorId() throws Exception;
+
 	
 
 

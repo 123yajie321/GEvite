@@ -45,6 +45,8 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	
 	protected ArrayList<ActionExecutionCI> list_caeop;
 
+	protected ActionExecutionCI caeop;
+
 	protected CorrelateurRecieveEventInboundPort cercip;
 	protected CorrelateurCepServicesOutboundPort ccrop;
 	//protected CorrelateurActionExecutionOutboundPort caeop;
@@ -54,14 +56,14 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	//protected HashMap<EventI, String>eventEmitter;
 	protected RuleBase baseRule;
 	protected String correlateurId;
-	protected ArrayList<String>executors;
+	protected String executor;
 	protected String sendEventInboundPort;
 	protected ArrayList<String>emitters;
 	
 	protected boolean echelleAvailable=true;
 	protected boolean camionAvailable=true;
 	
-	protected CorrelateurPompier(String correlateurId,ArrayList<String> executors,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
+	protected CorrelateurPompier(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
 		super(2,0);
 		baseEvent =new EventBase();
 		this.cercip= new CorrelateurRecieveEventInboundPort(this);
@@ -73,7 +75,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 		this.cercip.publishPort();
 		//this.cscop.publishPort();
 		this.correlateurId= correlateurId;
-		this.executors=executors;
+		this.executor=executor;
 		this.emitters=emitters;
 		this.baseRule=ruleBase;
 		list_caeop = new ArrayList<ActionExecutionCI>();
@@ -112,7 +114,19 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 		
 		cscop = pluginOut.getEmissionService();
 		
-		for(int i = 0; i < executors.size(); i++) {
+		PluginActionExecuteOut pluginExecuteOut = new PluginActionExecuteOut();
+		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executor);
+		pluginExecuteOut.setInboundPortUri(ActionExecutionInboundPort);
+		pluginExecuteOut.setPluginURI("CorrelateurFireStationActionExecutePluginOut_"+correlateurId);
+		this.installPlugin(pluginExecuteOut);
+		this.caeop=pluginExecuteOut.getActionEecutionService();
+		
+		
+		for(String emitter: emitters) {
+			this.ccrop.subscribe(correlateurId, emitter);
+		}
+		
+		/*for(int i = 0; i < executors.size(); i++) {
 			PluginActionExecuteOut pluginExecuteOut = new PluginActionExecuteOut();
 			String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(i));
 			pluginExecuteOut.setInboundPortUri(ActionExecutionInboundPort);
@@ -120,7 +134,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 			this.installPlugin(pluginExecuteOut);
 			
 			list_caeop.add(pluginExecuteOut.getActionEecutionService());
-		}
+		}*/
 	}
 	
 	@Override
@@ -160,11 +174,15 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	
 	@Override
 	public boolean inZone(AbsolutePosition p) throws Exception {
+		/*
 		for(String e:executors) {
 			if(SmartCityDescriptor.dependsUpon(p,e))
 				return true;
 		}
 		return false;
+		*/
+		return SmartCityDescriptor.dependsUpon(p,this.executor);
+
 	}
 
 
@@ -247,6 +265,12 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 		}
 		return nbCaserne > correlateEvents.size()-1;
 		
+	}
+
+
+	@Override
+	public String getExecutorId() throws Exception {
+		return this.executor;
 	}
 
 
