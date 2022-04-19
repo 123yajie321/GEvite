@@ -36,6 +36,7 @@ import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.evenement.atomique.samu.SamuDejaSollicite;
 import gevite.evenement.atomique.samu.SignaleManuel;
 import gevite.evenement.complexe.samu.ConsciousFall;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
@@ -298,26 +299,30 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	@Override
 	public boolean samuNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {
 		int nbsamu=0;
-		ArrayList<EventI> correlateEvents = new ArrayList<EventI>();
-
-		if(matchedEvents.get(0) instanceof DemandeInterventionSamu) {
-			DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
-			correlateEvents = demandeInterventionSamu.getCorrelatedEvents();
-		}else if(matchedEvents.get(0) instanceof ConsciousFall){
-			ConsciousFall consciousFall = (ConsciousFall)matchedEvents.get(0);
-			correlateEvents = consciousFall.getCorrelatedEvents();
-		}else {
-			System.out.println("Unkown event instance");
-		}
+        ArrayList<String>samuList=new ArrayList<String>();
 		Iterator<String> samuStationsIditerator =
 				SmartCityDescriptor.createSAMUStationIdIterator();
 		while (samuStationsIditerator.hasNext()) {
 			String samuStationId = samuStationsIditerator.next();
 			nbsamu++;
+			samuList.add(samuStationId);
 		}
-		return nbsamu > correlateEvents.size()-1;
-		
-			
+		SamuDejaSollicite samusEvent=null;
+		for(EventI e:matchedEvents) {
+			if(e instanceof SamuDejaSollicite) {
+				samusEvent=(SamuDejaSollicite) e;
+				break;
+			}
+		}
+		if(samusEvent == null) {
+			return nbsamu > 1;
+		}else {
+			for(String s:samuList) {
+				if( !(((String) samusEvent.getPropertyValue("samuIdList")).contains(s)))
+					return true;
+			}
+		}
+		return false;		
 			
 		/*
 		int nbsamu=0;	

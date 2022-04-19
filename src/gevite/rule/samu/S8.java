@@ -80,7 +80,8 @@ public class S8 implements RuleI{
 		samuDejaSolId.add(samuState.getExecutorId());
 		
 		AtomicEvent samuDejaSol=new SamuDejaSollicite();
-		samuDejaSol.putProperty("samuId", samuState.getExecutorId() );
+		
+		samuDejaSol.putProperty("samuIdList", samuDejaSolId );
 		
 		Iterator<String> samuStationsIditerator =
 				SmartCityDescriptor.createSAMUStationIdIterator();

@@ -61,11 +61,16 @@ public class F2 implements RuleI{
 
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) {
+		/*
 		EventI alarmeFeuCause = new AlarmeFeuCause();
 		ArrayList<EventI> eventComplex = matchedEvents;
 		eventComplex.add(alarmeFeuCause);
 		eb.removeEvent(matchedEvents.get(0));
 		PremiereAlarmFeu premiereAlarmFeu = new PremiereAlarmFeu(eventComplex);
+		eb.addEvent(premiereAlarmFeu);
+		*/
+		eb.removeEvent(matchedEvents.get(0));
+		PremiereAlarmFeu premiereAlarmFeu = new PremiereAlarmFeu(matchedEvents);
 		eb.addEvent(premiereAlarmFeu);
 		System.out.print(" F2 \n");
 		

@@ -1,16 +1,22 @@
 package gevite.rule.pompier;
 
+import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
+import fr.sorbonne_u.cps.smartcity.descriptions.AbstractSmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire;
 import gevite.correlateur.CorrelatorStateI;
 import gevite.correlateur.PompierCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
+import gevite.evenement.atomique.AtomicEvent;
 import gevite.evenement.atomique.pompier.AlarmFeu;
 import gevite.evenement.atomique.pompier.InterventionCauseFeu;
+import gevite.evenement.atomique.pompier.PompierDejaSollicite;
+import gevite.evenement.atomique.pompier.PompierPlusPres;
 import gevite.evenement.complexe.pompier.DemandeInterventionFeu;
 import gevite.rule.RuleI;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class F4 implements RuleI{
 
@@ -42,17 +48,58 @@ public class F4 implements RuleI{
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
-		return (!pompierCorrelatorState.isCamionDisponible())&&pompierCorrelatorState.procheCaserneExiste();
+		return !pompierCorrelatorState.isCamionDisponible();
 	}
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
+		PompierCorrelatorStateI pompierState = (PompierCorrelatorStateI) c;
+		ArrayList<String> pompierNonSolId = new ArrayList<String>();
+		ArrayList<String> pomperDejaSolId = new ArrayList<String>();
+		pomperDejaSolId.add(pompierState.getExecutorId());
+		
+		AtomicEvent pompierDejaSol=new PompierDejaSollicite();
+		pompierDejaSol.putProperty("pompierId", pompierState.getExecutorId() );
+		
+		Iterator<String> fireStationsIditerator =
+				SmartCityDescriptor.createFireStationIdIterator();
+		while (fireStationsIditerator.hasNext()) {
+			String fireStationId = fireStationsIditerator.next();
+		}
+		
+		double minDistance = AbstractSmartCityDescriptor.distance(pompierState.getExecutorId(), pompierNonSolId.get(0)) ;
+		String plusPreStation = pompierNonSolId.get(0);
+		
+		for(int i=1;i<pompierNonSolId.size();i++) {
+			double tempD = AbstractSmartCityDescriptor.distance(pompierState.getExecutorId(), pompierNonSolId.get(i));
+			if(tempD < minDistance) {
+				minDistance = tempD;
+				plusPreStation = pompierNonSolId.get(i);
+			}
+		}
+		AtomicEvent pompierPlusPres = new PompierPlusPres();
+		pompierPlusPres.putProperty("pluspresStation", plusPreStation);
+		
+		ArrayList<EventI> eventComplex = new ArrayList<EventI>() ;
+		eventComplex.addAll(matchedEvents);
+		eventComplex.add(pompierDejaSol);
+		eventComplex.add(pompierPlusPres);
+
+		DemandeInterventionFeu dIntervention = new DemandeInterventionFeu(eventComplex);
+		
+		pompierState.propagerEvent(dIntervention);
+		
+		
+		
+		
+		/*
 		PompierCorrelatorStateI pompierState = (PompierCorrelatorStateI) c;
 		EventI interventionCauseFeu = new InterventionCauseFeu();
 		ArrayList<EventI> eventComplex = matchedEvents;
 		eventComplex.add(interventionCauseFeu);
 		DemandeInterventionFeu demandeInterventionFeu = new DemandeInterventionFeu(eventComplex);
 		pompierState.propagerEvent(demandeInterventionFeu);
+		*/
 	}
 
 	@Override

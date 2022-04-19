@@ -14,8 +14,11 @@ import gevite.evenement.EventI;
 import gevite.evenement.atomique.AtomicEvent;
 import gevite.evenement.atomique.pompier.AlarmFeu;
 import gevite.evenement.atomique.pompier.InterventionCauseFeu;
+import gevite.evenement.atomique.pompier.PompierDejaSollicite;
+import gevite.evenement.atomique.pompier.PompierPlusPres;
 import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.atomique.samu.SamuDejaSollicite;
+import gevite.evenement.atomique.samu.SamuPlusPres;
 import gevite.evenement.complexe.pompier.DemandeInterventionFeu;
 import gevite.evenement.complexe.pompier.PremiereAlarmFeu;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
@@ -51,49 +54,46 @@ public class F3 implements RuleI{
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
-		return (!pompierCorrelatorState.isEchelleDisponible())&&pompierCorrelatorState.caserneNonSolliciteExiste(matchedEvents);
+		return !pompierCorrelatorState.isEchelleDisponible();
 	}
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
-		
-		AlarmFeu alarmFeu=(AlarmFeu)matchedEvents.get(0);
 		PompierCorrelatorStateI pompierState = (PompierCorrelatorStateI) c;
-		ArrayList<String> fireStationNonSol = new ArrayList<String>();
-		ArrayList<String> fireStationDejaSolId = (ArrayList<String>)matchedEvents.get(0).getPropertyValue("fireStationSolList");
-		fireStationDejaSolId.add(pompierState.getExecutorId());
+		ArrayList<String> pompierNonSolId = new ArrayList<String>();
+		ArrayList<String> pomperDejaSolId = new ArrayList<String>();
+		pomperDejaSolId.add(pompierState.getExecutorId());
 		
+		AtomicEvent pompierDejaSol=new PompierDejaSollicite();
+		pompierDejaSol.putProperty("pompierId", pompierState.getExecutorId() );
 		
-		Iterator<String> samuStationsIditerator =
-				SmartCityDescriptor.createSAMUStationIdIterator();
-		while (samuStationsIditerator.hasNext()) {
-			String samuStationId = samuStationsIditerator.next();
-			if(!samuDejaSolId.contains(samuStationId)) {
-				samuNonSol.add(samuStationId);
-			}
+		Iterator<String> fireStationsIditerator =
+				SmartCityDescriptor.createFireStationIdIterator();
+		while (fireStationsIditerator.hasNext()) {
+			String fireStationId = fireStationsIditerator.next();
 		}
-		double minDistance = AbstractSmartCityDescriptor.distance(samuState.getExecutorId(), samuNonSol.get(0)) ;
-		String plusPreStation = samuNonSol.get(0);
 		
-		for(int i=1;i<samuNonSol.size();i++) {
-			double tempD = AbstractSmartCityDescriptor.distance(samuState.getExecutorId(), samuNonSol.get(i));
+		double minDistance = AbstractSmartCityDescriptor.distance(pompierState.getExecutorId(), pompierNonSolId.get(0)) ;
+		String plusPreStation = pompierNonSolId.get(0);
+		
+		for(int i=1;i<pompierNonSolId.size();i++) {
+			double tempD = AbstractSmartCityDescriptor.distance(pompierState.getExecutorId(), pompierNonSolId.get(i));
 			if(tempD < minDistance) {
 				minDistance = tempD;
-				plusPreStation = samuNonSol.get(i);
+				plusPreStation = pompierNonSolId.get(i);
 			}
 		}
+		AtomicEvent pompierPlusPres = new PompierPlusPres();
+		pompierPlusPres.putProperty("pluspresStation", plusPreStation);
 		
-		alarmSante.putProperty("pluspresStation",plusPreStation);
-		alarmSante.putProperty("samuDejaSolId",samuDejaSolId);
-
-		AtomicEvent samuDejaSol=new SamuDejaSollicite();
-		samuDejaSol.putProperty("samuId", samuState.getExecutorId() );
 		ArrayList<EventI> eventComplex = new ArrayList<EventI>() ;
 		eventComplex.addAll(matchedEvents);
-		eventComplex.add(samuDejaSol);
-		DemandeInterventionSamu dIntervention = new DemandeInterventionSamu(eventComplex);
+		eventComplex.add(pompierDejaSol);
+		eventComplex.add(pompierPlusPres);
+
+		DemandeInterventionFeu dIntervention = new DemandeInterventionFeu(eventComplex);
 		
-		samuState.propagerEvent(dIntervention);
+		pompierState.propagerEvent(dIntervention);
 		
 		
 		/*
