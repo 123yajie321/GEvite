@@ -19,7 +19,7 @@ import gevite.evenement.complexe.pompier.PremiereAlarmFeu;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.rule.RuleI;
 
-public class F5 implements RuleI{
+public class F6bis implements RuleI{
 
 	@Override
 	public ArrayList<EventI> match(EventBaseI eb) {
@@ -49,43 +49,17 @@ public class F5 implements RuleI{
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
-		return pompierCorrelatorState.isEchelleDisponible();
+		return !pompierCorrelatorState.isEchelleDisponible()&&!pompierCorrelatorState.caserneNonSolliciteExiste(matchedEvents);
 	}
 
 	@Override
 	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
-		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
-		DemandeInterventionFeu dInterventionPompier = (DemandeInterventionFeu)matchedEvents.get(0);
-		ArrayList<EventI> correlateEvents = dInterventionPompier.getCorrelatedEvents();
-		for(int i = 0; i< correlateEvents.size();i++) {
-			if(correlateEvents.get(i) instanceof PompierPlusPres) {
-				if(correlateEvents.get(i).getPropertyValue("pluspresStation").equals(pompierCorrelatorState.getExecutorId())) {
-					EventI alarmFeu = dInterventionPompier.getCorrelatedEvents().get(0);
-					pompierCorrelatorState.declancheFirstAlarme((AbsolutePosition) alarmFeu.getPropertyValue("position"), TypeOfFirefightingResource.HighLadderTruck);
-				}
-				
-			}
-		}
-		
-		/*
-		PompierCorrelatorStateI pompierState = (PompierCorrelatorStateI) c;
-		EventI interventionCauseFeu = new InterventionCauseFeu();
-		ArrayList<EventI> eventComplex = matchedEvents;
-		eventComplex.add(interventionCauseFeu);
-		DemandeInterventionFeu demandeInterventionFeu = new DemandeInterventionFeu(eventComplex);
-		pompierState.propagerEvent(demandeInterventionFeu);
-		*/
 	}
 
 	@Override
 	public void update(ArrayList<EventI> matchedEvents, EventBaseI eb) {
 		eb.removeEvent(matchedEvents.get(0));
-		DemandeInterventionFeu dInterventionPompier = (DemandeInterventionFeu)matchedEvents.get(0);
-		ArrayList<EventI> eventComplexe = new ArrayList<EventI>();
-		eventComplexe.add(dInterventionPompier.getCorrelatedEvents().get(0));
-		PremiereAlarmFeu premiereAlarmFeu = new PremiereAlarmFeu(eventComplexe);
-		eb.addEvent(premiereAlarmFeu);		
-		System.out.print(" F5 \n");
+		System.out.print(" F6bis \n");
 	}
 	
 

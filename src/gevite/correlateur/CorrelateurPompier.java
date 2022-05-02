@@ -11,6 +11,7 @@ import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
 import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
+import fr.sorbonne_u.cps.smartcity.descriptions.AbstractSmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
 import gevite.actions.FireStationActions;
@@ -26,6 +27,7 @@ import gevite.connector.ConnectorCorrelateurPompier;
 import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
+import gevite.evenement.complexe.samu.ConsciousFall;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.plugin.PluginActionExecuteOut;
 import gevite.plugin.PluginEmissionOut;
@@ -253,13 +255,34 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	@Override
 	public boolean caserneNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {
 		int nbCaserne=0;
+		ArrayList<EventI> correlateEvents = new ArrayList<EventI>();
+
+		if(matchedEvents.get(0) instanceof ) {
+			DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
+			correlateEvents = demandeInterventionSamu.getCorrelatedEvents();
+		}else if(matchedEvents.get(0) instanceof ){
+			ConsciousFall consciousFall = (ConsciousFall)matchedEvents.get(0);
+			correlateEvents = consciousFall.getCorrelatedEvents();
+		}
+		Iterator<String> samuStationsIditerator =
+				SmartCityDescriptor.createSAMUStationIdIterator();
+		while (samuStationsIditerator.hasNext()) {
+			String samuStationId = samuStationsIditerator.next();
+			nbCaserne++;
+		}
+		return nbCaserne > correlateEvents.size()-1;
+		
+		
+		
+		
+		int nbCaserne=0;
 		DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
 		ArrayList<EventI> correlateEvents=demandeInterventionSamu.getCorrelatedEvents();
 		
 		Iterator<String> fireStationsIditerator =
 				SmartCityDescriptor.createFireStationIdIterator();
 		while (fireStationsIditerator.hasNext()) {
-			String samuStationId = fireStationsIditerator.next();
+			String fireStationId = fireStationsIditerator.next();
 			nbCaserne++;
 			
 		}
@@ -275,7 +298,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 
 
 
-
+	
 	
 	
 	
