@@ -11,8 +11,8 @@ import gevite.cep.ResponseI;
 public class ConnectorCorrelateurExecuteurPlugin extends AbstractConnector implements ActionExecutionCI {
 
 	@Override
-	public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
-		return ((ActionExecutionCI)this.offering).execute(a, params);
+	public ResponseI executeAction(ActionI a, Serializable[] params) throws Exception {
+		return ((ActionExecutionCI)this.offering).executeAction(a, params);
 		
 	}
 	

@@ -26,6 +26,7 @@ import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.ResponseI;
 import gevite.cepbus.CEPBus;
+import gevite.connector.ConnectorCepManagement;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
 import gevite.connector.ConnectorExcuteurRegister;
@@ -50,58 +51,35 @@ import gevite.executeur.ExecuteurRegisterOutboundPort;
 import gevite.plugin.PluginActionExecuteIn;
 import gevite.plugin.PluginEmissionIn;
 import gevite.plugin.PluginEmissionOut;
+import gevite.port.CepManagementOutboundPort;
 
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class,SAMUNotificationCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,SAMUActionCI.class})
 public class Samu extends AbstractComponent implements SAMUNotificationImplI,ActionExecutionImplementationCI{
-	//EmitteurOutboundPort
-	protected EventEmissionCI sendOutRef;
 	
-	//protected String sendEventOutboundPort_URI;
+	protected EventEmissionCI sendOutRef;
 	protected String registeEmInboundPort_URI;
 	protected String registeExInboundPort_URI;
-
 	protected String SAMUReceiveNotifyInboundPort_URI;
 	protected String samuId;
 	protected String actionInboundPort_URI;
-	//protected String actionOutboundPort_URI;
-
-	protected EmitterRegisterOutboundPort erop;
-	protected ExecuteurRegisterOutboundPort exrop;
-
-	//protected EmitterSendOutboundPort esop;
-	
+	protected CepManagementOutboundPort cmop;
 	protected SAMUNotificationInboundPort snip;
 	protected SAMUActionOutboundPort saop;
-	
-	//receive avtion from correlateur
-	//protected SAMUActionExecutionInboundPort SAMUaeip;
-	
+	//receive action from correlateur
 	protected ActionExecutionCI SAMUaeip;
 	
-	//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
-	//String sendInboundPort,
+	
 	protected Samu(String samuInport,String samuId,String actionInboundPort) throws Exception {
 		super(2,0);
-		//this.sendEventOutboundPort_URI = sendOutport;
-		//this.registeEmInboundPort_URI = registeEmitteurInboundPort;
-		//this.registeExInboundPort_URI = registeExecuteurInboundPort;
 		this.SAMUReceiveNotifyInboundPort_URI = samuInport;
 		this.samuId = samuId;
 		
 		//The uri inboudport of samuProxy
-		this.actionInboundPort_URI = actionInboundPort;
-		
-		//this.SAMUaeip=new SAMUActionExecutionInboundPort( this);
-		//this.SAMUaeip.publishPort();
-		
-		this.erop = new EmitterRegisterOutboundPort(this);
-		this.erop.publishPort();
-		this.exrop = new ExecuteurRegisterOutboundPort(this);
-		this.exrop.publishPort();
-		//this.esop = new EmitterSendOutboundPort(this);
-		//this.esop.publishPort();
+		this.actionInboundPort_URI = actionInboundPort;	
+		this.cmop = new CepManagementOutboundPort(this);
+		this.cmop.publishPort();
 		this.snip = new SAMUNotificationInboundPort(SAMUReceiveNotifyInboundPort_URI, this);
 		this.snip.publishPort();
 		this.saop = new SAMUActionOutboundPort(this);
@@ -124,14 +102,9 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 
 		try {
 			this.doPortConnection(
-					this.erop.getPortURI(),
+					this.cmop.getPortURI(),
 					CEPBus.CSIP_URI,
-					ConnectorEmitterRegister.class.getCanonicalName());
-			this.doPortConnection(
-					this.exrop.getPortURI(),
-					CEPBus.CSIP_URI,
-					ConnectorExcuteurRegister.class.getCanonicalName());
-			
+					ConnectorCepManagement.class.getCanonicalName());
 			
 			this.doPortConnection(
 					this.saop.getPortURI(),
@@ -147,14 +120,9 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		String SendEventInbound_URI=this.erop.registerEmitter(samuId);
-		/*this.doPortConnection(
-				this.esop.getPortURI(),
-				SendEventInbound_URI,
-				ConnectorEmitterSend.class.getCanonicalName());
-				*/
+		String SendEventInbound_URI=this.cmop.registerEmitter(samuId);
 		String port_uriString=((PluginActionExecuteIn)this.getPlugin("pluginSamuActionExecute_in"+samuId)).getActionEecutionService();
-		this.exrop.registerExecutor(this.samuId,port_uriString );
+		this.cmop.registerExecutor(this.samuId,port_uriString );
 		PluginEmissionOut pluginOut = new PluginEmissionOut();
 		pluginOut.setInboundPortUri(SendEventInbound_URI);
 		pluginOut.setPluginURI("SamuPluginOut_"+samuId);
@@ -168,9 +136,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 	@Override
 	public synchronized void finalise() throws Exception {		
 		
-		this.doPortDisconnection(erop.getPortURI());
-		this.doPortDisconnection(exrop.getPortURI());
-		//this.doPortDisconnection(esop.getPortURI());
+		this.doPortDisconnection(cmop.getPortURI());
 		this.doPortDisconnection(saop.getPortURI());
 
 		super.finalise();
@@ -180,9 +146,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 	public synchronized void shutdown() throws ComponentShutdownException {
 		
 		try {
-			this.erop.unpublishPort();
-			this.exrop.unpublishPort();
-			//this.esop.unpublishPort();
+			this.cmop.unpublishPort();
 			this.saop.unpublishPort();
 			this.snip.unpublishPort();
 		} catch (Exception e) {
@@ -199,7 +163,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 	
 	
 	@Override
-public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
+public ResponseI executeAction(ActionI a, Serializable[] params) throws Exception {
 
 	assert a instanceof SamuActions;
 	assert params != null && params.length == 3 && params[0] instanceof AbsolutePosition&&params[2] instanceof TypeOfSAMURessources;
@@ -237,7 +201,6 @@ public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
 		AlarmeSante aSante = new AlarmeSante(occurrence);
 		aSante.putProperty("type", type);
 		aSante.putProperty("position", position);
-	   // aSante.putProperty("samuId", this.samuId);
 		this.sendOutRef.sendEvent(samuId, aSante);
 		System.out.println("samu send");
 		

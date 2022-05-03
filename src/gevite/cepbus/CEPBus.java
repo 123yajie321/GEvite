@@ -59,7 +59,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 
 
 	
-	protected CepServicesInboundPort csip;
+	protected CepManagementInboundPort csip;
 	//protected CepEventRecieveInboundPort cerip;
 	//protected CepEventSendCorrelateurOutboundPort cescop;
 
@@ -80,7 +80,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 		registerCorrelateurExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 		
 		this.uriExecuteurs=new ConcurrentHashMap<String,String>();
-		this.csip = new CepServicesInboundPort(CSIP_URI,this); 
+		this.csip = new CepManagementInboundPort(CSIP_URI,this); 
 		//this.cerip = new CepEventRecieveInboundPort(CERIP_URI,this);
 		//this.cescop = new CepEventSendCorrelateurOutboundPort(CESCOP_URI, this);
 		this.csip.publishPort();
@@ -116,6 +116,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 			try {
 				cescop = new CepEventSendCorrelateurOutboundPort(this);
 				cescop.publishPort();
+				System.out.println("debugggggg : "+ inboundPortURI );
 				this.doPortConnection(cescop.getPortURI(), inboundPortURI, ConnectorCepSendCorrelateur.class.getCanonicalName());
 				uriCorrelateurs.put(uri,cescop);
 				System.out.println(" Correlateur: " + uri+ "  register");

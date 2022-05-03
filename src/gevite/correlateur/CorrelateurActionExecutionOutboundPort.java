@@ -29,9 +29,9 @@ implements ActionExecutionCI {
 	
 
 	@Override
-	public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
+	public ResponseI executeAction(ActionI a, Serializable[] params) throws Exception {
 		
-		return ((ActionExecutionCI)this.getConnector()).execute(a, params);
+		return ((ActionExecutionCI)this.getConnector()).executeAction(a, params);
 	}
 
 }

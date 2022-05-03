@@ -30,6 +30,7 @@ import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.ResponseI;
 import gevite.cepbus.CEPBus;
+import gevite.connector.ConnectorCepManagement;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
 import gevite.connector.ConnectorExcuteurRegister;
@@ -50,54 +51,39 @@ import gevite.evenement.atomique.samu.MedecinAvailable;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 import gevite.plugin.PluginActionExecuteIn;
 import gevite.plugin.PluginEmissionOut;
+import gevite.port.CepManagementOutboundPort;
 
 @OfferedInterfaces(offered= {ActionExecutionCI.class,FireStationNotificationCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,FireStationActionCI.class})
 public class FireStation extends AbstractComponent implements FireStationNotificationImplI,ActionExecutionImplementationCI{
 
-		//EmitteurOutboundPort
+
 		protected EventEmissionCI sendOutRef;
 		
-		//protected String sendEventOutboundPort_URI;
 		protected String registeEmInboundPort_URI;
 		protected String registeExInboundPort_URI;
 
 		protected String FIREReceiveNotifyInboundPort_URI;
 		protected String fireStationId;
 		protected String actionInboundPort_URI;
-		//protected String actionOutboundPort_URI;
+	
 
-		protected EmitterRegisterOutboundPort erop;
-		protected ExecuteurRegisterOutboundPort exrop;
-
-		//protected EmitterSendOutboundPort esop;
+		protected CepManagementOutboundPort cmop;
+		
 		
 		protected FireStationNotificationInboundPort fnip;
 		protected FireStationActionOutboundPort faop;
-		//protected PompierActionExecutionInboundPort FSaeip;
 		protected ActionExecutionCI FSaeip;
 		
-		//String registeEmitteurInboundPort ,String registeExecuteurInboundPort(utiliser dans le cas deux CEPbus)
-		//String sendInboundPort
+		
 		protected FireStation(String fireInport,String fireStationId,String actionInboundPort) throws Exception {
 			super(2,0);
-			//this.sendEventOutboundPort_URI = sendOutport;
-			//this.registeEmInboundPort_URI = registeEmitteurInboundPort;
-			//this.registeExInboundPort_URI = registeExecuteurInboundPort;
+			
 			this.FIREReceiveNotifyInboundPort_URI = fireInport; 
 			this.fireStationId = fireStationId;
 			this.actionInboundPort_URI = actionInboundPort;
-			
-			//this.FSaeip=new PompierActionExecutionInboundPort(this);
-			//this.FSaeip.publishPort();
-			
-			
-			this.erop = new EmitterRegisterOutboundPort(this);
-			this.erop.publishPort();
-			this.exrop = new ExecuteurRegisterOutboundPort(this);
-			this.exrop.publishPort();
-			//this.esop = new EmitterSendOutboundPort(this);
-			//this.esop.publishPort();
+			this.cmop = new CepManagementOutboundPort(this);
+			this.cmop.publishPort();
 			this.fnip = new FireStationNotificationInboundPort(FIREReceiveNotifyInboundPort_URI, this);
 			this.fnip.publishPort();
 			this.faop = new FireStationActionOutboundPort(this);
@@ -120,13 +106,9 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 
 			try {
 				this.doPortConnection(
-						this.erop.getPortURI(),
+						this.cmop.getPortURI(),
 						CEPBus.CSIP_URI,
-						ConnectorEmitterRegister.class.getCanonicalName());
-				this.doPortConnection(
-						this.exrop.getPortURI(),
-						CEPBus.CSIP_URI,
-						ConnectorExcuteurRegister.class.getCanonicalName());
+						ConnectorCepManagement.class.getCanonicalName());
 				
 				this.doPortConnection(
 						this.faop.getPortURI(),
@@ -140,15 +122,9 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		@Override
 		public synchronized void execute() throws Exception {
 			super.execute();
-			String SendEventInbound_URI=this.erop.registerEmitter(fireStationId);
-			/*this.doPortConnection(
-					this.esop.getPortURI(),
-					SendEventInbound_URI,
-					ConnectorEmitterSend.class.getCanonicalName());
-					*/
-			
+			String SendEventInbound_URI=this.cmop.registerEmitter(fireStationId);
 			String port_uriString=((PluginActionExecuteIn)this.getPlugin("pluginFireStationActionExecute_in"+fireStationId)).getActionEecutionService();
-			this.exrop.registerExecutor(this.fireStationId,port_uriString );
+			this.cmop.registerExecutor(this.fireStationId,port_uriString );
 			PluginEmissionOut pluginOut = new PluginEmissionOut();
 			pluginOut.setInboundPortUri(SendEventInbound_URI);
 			pluginOut.setPluginURI("FireStationPluginOut_"+fireStationId);
@@ -161,11 +137,8 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		@Override
 		public synchronized void finalise() throws Exception {		
 			
-			this.doPortDisconnection(erop.getPortURI());
-			this.doPortDisconnection(exrop.getPortURI());
-			//this.doPortDisconnection(esop.getPortURI());
+			this.doPortDisconnection(cmop.getPortURI());
 			this.doPortDisconnection(faop.getPortURI());
-
 			super.finalise();
 		}
 		
@@ -173,9 +146,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		public synchronized void shutdown() throws ComponentShutdownException {
 			
 			try {
-				this.erop.unpublishPort();
-				this.exrop.unpublishPort();
-				//this.esop.unpublishPort();
+				this.cmop.unpublishPort();
 				this.faop.unpublishPort();
 				this.fnip.unpublishPort();
 				
@@ -188,7 +159,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		}
 		
 		@Override
-		public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
+		public ResponseI executeAction(ActionI a, Serializable[] params) throws Exception {
 			assert a instanceof FireStationActions;
 			assert params != null &&params[0] instanceof AbsolutePosition;
 			
@@ -226,7 +197,6 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			aFeu.putProperty("position", position);
 			aFeu.putProperty("type", type);
 			
-			//this.esop.sendEvent(fireStationId, aFeu);
 			this.sendOutRef.sendEvent(fireStationId, aFeu);
 			System.out.println("firestation send");
 
@@ -244,7 +214,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			EndFire endFire = new EndFire(occurrence);
 			endFire.putProperty("position", position);
 			
-			//this.esop.sendEvent(fireStationId, endFire);
+			
 			this.sendOutRef.sendEvent(fireStationId, endFire);
 
 		}
@@ -269,8 +239,6 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			dPriorite.putProperty("priority", priority);
 			dPriorite.putProperty("vehicleId", vehicleId);
 			dPriorite.putProperty("destination", destination);
-			
-			//this.esop.sendEvent(fireStationId, dPriorite);
 			this.sendOutRef.sendEvent(fireStationId, dPriorite);
 
 		}
@@ -284,8 +252,6 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 							   " has arrived at destination\n");
 			AtDestination atDestination = new AtDestination(occurrence);
 			atDestination.putProperty("vehicleId", vehicleId);
-			
-			//this.esop.sendEvent(fireStationId, atDestination);
 			this.sendOutRef.sendEvent(fireStationId, atDestination);
 
 		}
@@ -298,8 +264,6 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			this.traceMessage("Vehicle " + vehicleId + " has arrived at station\n");
 			AtStation atStation =  new AtStation(occurrence);
 			atStation.putProperty("vehicleId", atStation);
-			
-			//this.esop.sendEvent(fireStationId, atStation);
 			this.sendOutRef.sendEvent(fireStationId, atStation);
 
 		}
@@ -312,7 +276,6 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			this.traceMessage("No standard truck available received at " +
 							  occurrence + "\n");
 			StandardTrucksBusy StandardTrucksBusy = new StandardTrucksBusy(occurrence);
-			//this.esop.sendEvent(fireStationId, StandardTrucksBusy);
 			StandardTrucksBusy.putProperty("fireStationId", fireStationId);
 			this.sendOutRef.sendEvent(fireStationId, StandardTrucksBusy);
 
@@ -327,7 +290,6 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 							  occurrence + "\n");	
 			StandardTrucksAvailable StandardTrucksAvailable = new StandardTrucksAvailable(occurrence);
 			StandardTrucksAvailable.putProperty("fireStationId", fireStationId);
-			//this.esop.sendEvent(fireStationId, StandardTrucksAvailable);
 			this.sendOutRef.sendEvent(fireStationId, StandardTrucksAvailable);
 
 		}
@@ -340,7 +302,6 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			this.traceMessage("No high ladder truck available received at " +
 							  occurrence + "\n");
 			HighLadderTrucksBusy HighLadderTrucksBusy = new HighLadderTrucksBusy(occurrence);
-			//this.esop.sendEvent(fireStationId, HighLadderTrucksBusy);
 			HighLadderTrucksBusy.putProperty("fireStationId", fireStationId);
 			this.sendOutRef.sendEvent(fireStationId, HighLadderTrucksBusy);
 
@@ -354,7 +315,6 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			this.traceMessage("High ladder trucks available received at " +
 							  occurrence + "\n");
 			HighLadderTrucksAvailable HighLadderTrucksAvailable = new HighLadderTrucksAvailable(occurrence);
-			//this.esop.sendEvent(fireStationId, HighLadderTrucksAvailable);
 			HighLadderTrucksAvailable.putProperty("fireStationId", fireStationId);
 			this.sendOutRef.sendEvent(fireStationId, HighLadderTrucksAvailable);
 		}

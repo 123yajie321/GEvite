@@ -47,9 +47,9 @@ public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecu
 	}
 
 	@Override
-	public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
+	public ResponseI executeAction(ActionI a, Serializable[] params) throws Exception {
 	
-		return ((ActionExecutionImplementationCI)this.getOwner()).execute(a, params);
+		return ((ActionExecutionImplementationCI)this.getOwner()).executeAction(a, params);
 		
 	
 	}

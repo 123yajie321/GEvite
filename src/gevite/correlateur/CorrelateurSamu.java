@@ -50,179 +50,19 @@ import gevite.rule.RuleBase;
 @OfferedInterfaces(offered = {EventReceptionCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,ActionExecutionCI.class})
 
-public class CorrelateurSamu extends AbstractComponent implements SamuCorrelatorStateI{
+public class CorrelateurSamu extends AbstractCorrelateur implements SamuCorrelatorStateI{
 	
-	//public static final String CERCIP_URI = "cercip-uri";
-	//public static final String CCROP_URI = "ccrop-uri";
-	//public static final String CESCOP_URI = "cescop-uri";
-	
-	//EmitteurOutboundPort
-	protected EventEmissionCI cscop;
-	//protected ActionExecutionCI caeop;
-	
-	//protected ArrayList<ActionExecutionCI> list_caeop;
-	
-	protected ActionExecutionCI caeop;
-	protected CorrelateurRecieveEventInboundPort cercip;
-	protected CorrelateurCepServicesOutboundPort ccrop;
-	//protected CorrelateurActionExecutionOutboundPort caeop;
-	//protected CorrelateurSendCepOutboundPort cscop;
-	
-	protected EventBase baseEvent;
-	//protected HashMap<EventI, String>eventEmitter;
-	protected RuleBase baseRule;
-	protected String correlateurId;
-	//protected ArrayList<String>executors;
-	protected String  executor;
-	protected String sendEventInboundPort;
-	protected ArrayList<String>emitters;
-	protected LinkedBlockingQueue<EventI>bufferEvents;
-	
-	//protected Vector<AtomicBoolean>ambulancesAvailable;
-	//protected Vector<AtomicBoolean> medicsAvailable;
+	//boolean pour stocker la disponibilite
+	//des ressource d'executeur correspondant
 	protected AtomicBoolean ambulancesAvailable;
 	protected AtomicBoolean medicsAvailable;
 	
-	protected ThreadPoolExecutor recieveExecutor;
-	protected ThreadPoolExecutor actionExecutor;
-
-	
-	
 	protected CorrelateurSamu(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
-		super(2,0);
-		baseEvent =new EventBase();
-		this.cercip= new CorrelateurRecieveEventInboundPort(this);
-		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
-		//this.caeop=new CorrelateurActionExecutionOutboundPort(this);
-		//this.cscop=new CorrelateurSendCepOutboundPort(this);
-		//this.caeop.publishPort();
-		this.ccrop.publishPort();
-		this.cercip.publishPort();
-		//this.cscop.publishPort();
-		this.correlateurId= correlateurId;
-		this.executor=executor;
-		this.emitters=emitters;
-		this.baseRule=ruleBase;
-		//list_caeop = new ArrayList<ActionExecutionCI>();
+		super(correlateurId, executor, emitters, ruleBase);
 		this.ambulancesAvailable=new AtomicBoolean(true);
 		this.medicsAvailable=new AtomicBoolean(true);
-		//this.ambulancesAvailable=new Vector<AtomicBoolean>();
-		//this.medicsAvailable=new Vector<AtomicBoolean>();
-		recieveExecutor=new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-		recieveExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-		actionExecutor=new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-		actionExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-		bufferEvents=new LinkedBlockingQueue<EventI>();
-	}
-	
-
-	@Override
-	public synchronized void start()throws ComponentStartException{
-		try {
-			super.start();
-			this.doPortConnection(this.ccrop.getPortURI(), CEPBus.CSIP_URI,ConnectorCorrelateurCepServices.class.getCanonicalName() );
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
 		
 	}
-	
-	
-	
-	@Override
-	public synchronized void execute() throws Exception {
-		super.execute();
-		sendEventInboundPort= this.ccrop.registerCorrelator(correlateurId, this.cercip.getPortURI());
-		//this.doPortConnection(this.cscop.getPortURI(), sendEventInboundPort, ConnectorCorrelateurSendCep.class.getCanonicalName());
-		//String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(0));
-		//this.doPortConnection(this.caeop.getPortURI(), ActionExecutionInboundPort, ConnectorCorrelateurSAMU.class.getCanonicalName());
-	
-		PluginEmissionOut pluginSendOut = new PluginEmissionOut();
-		pluginSendOut.setInboundPortUri(sendEventInboundPort);
-		pluginSendOut.setPluginURI("CorrelateurSamuEmissionPluginOut_"+correlateurId);
-		this.installPlugin(pluginSendOut);
-		
-		cscop = pluginSendOut.getEmissionService();
-		
-		PluginActionExecuteOut pluginExecuteOut = new PluginActionExecuteOut();
-		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executor);
-		pluginExecuteOut.setInboundPortUri(ActionExecutionInboundPort);
-		pluginExecuteOut.setPluginURI("CorrelateurSamuActionExecutePluginOut_"+correlateurId);
-		this.installPlugin(pluginExecuteOut);
-		this.caeop=pluginExecuteOut.getActionEecutionService();
-		
-		
-		for(String emitter: emitters) {
-			this.ccrop.subscribe(correlateurId, emitter);
-		}
-		
-		
-		/*for(int i = 0; i < executors.size(); i++) {
-			PluginActionExecuteOut pluginExecuteOut = new PluginActionExecuteOut();
-			String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executors.get(i));
-			pluginExecuteOut.setInboundPortUri(ActionExecutionInboundPort);
-			pluginExecuteOut.setPluginuURI("CorrelateurSamuActionExecutePluginOut_"+correlateurId);
-			this.installPlugin(pluginExecuteOt);
-			
-			list_caeop.add(pluginExecuteOut.getActionEecutionService());
-		}*/
-	}
-	
-	@Override
-	public synchronized void finalise() throws Exception {		
-		this.doPortDisconnection(this.ccrop.getPortURI());
-		//this.doPortDisconnection(this.caeop.getPortURI());
-		//this.doPortDisconnection(this.cscop.getPortURI());
-		super.finalise();
-	}
-	
-	@Override
-	public synchronized void shutdown() throws ComponentShutdownException {
-			
-			try {
-				this.ccrop.unpublishPort();
-				//this.caeop.unpublishPort();
-				//this.cscop.unpublishPort();
-				this.cercip.unpublishPort();
-				
-			} catch (Exception e) {
-				throw new ComponentShutdownException(e) ;
-			}
-			
-			
-			super.shutdown();
-		}
-	
-	public void addEvent(String emitterURI, EventI event) throws Exception {
-
-		/*if(event instanceof AlarmeSante ) {System.out.println(" CorrelateurSamu receive alarme sante :"+(event.getPropertyValue("personId") != null ?
-  				" form person " + event.getPropertyValue("personId") :	""));}
-		
-		if(event instanceof SignaleManuel  ) {System.out.println("CorrelateurSamu receive Signal Manuel from "+ event.getPropertyValue("personId"));}*/
-		Runnable RecieveTask=()->{
-			bufferEvents.add(event);
-			System.out.println("correlateur"+correlateurId+" receive event from "+emitterURI);
-		};	
-		
-		recieveExecutor.submit(RecieveTask);
-		
-		Runnable ActionTask=()->{
-			try {
-				EventI e = bufferEvents.take();
-				this.baseEvent.addEvent(e);
-				baseRule.fireFirstOn(baseEvent, this);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		};	
-		
-		actionExecutor.submit(ActionTask);
-	}
-
-
 	
 	
 	/*S16*/
@@ -253,15 +93,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 
 	@Override
 	public boolean inZone(AbsolutePosition p) {
-		/*for(String e:executors) {
-			if(	SmartCityDescriptor.dependsUpon(p,this.executor))
-						
-				return true;
-		}
-		return false;*/
 		return SmartCityDescriptor.dependsUpon(p,this.executor);
-		
-		
 	}
 
 
@@ -279,7 +111,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		SamuActions	intervention=  SamuActions.InterventionAmbulance;
 		String uri=((CorrelateurActionExecutionOutboundPort) caeop).getPortURI();
 		System.out.println("the action Port : "+uri);
-		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
+		this.caeop.executeAction(intervention, new Serializable[] {position,personId,type}); 
 		System.out.println("intervanetionAmbulance finished");
 	
 	}
@@ -290,7 +122,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		SamuActions	intervention=  SamuActions.IntervetionMedcin;
 		String uri=((CorrelateurActionExecutionOutboundPort) caeop).getPortURI();
 		System.out.println("the action Port : "+uri);
-		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
+		this.caeop.executeAction(intervention, new Serializable[] {position,personId,type}); 
 		System.out.println("intervanetionMedecin finished");
 	
 	}
@@ -300,7 +132,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	public void triggerMedicCall(AbsolutePosition position, String personId, TypeOfSAMURessources type)
 			throws Exception {
 		SamuActions intervention=SamuActions.AppelMedcin;
-		this.caeop.execute(intervention, new Serializable[] {position,personId,type}); 
+		this.caeop.executeAction(intervention, new Serializable[] {position,personId,type}); 
 		
 	}
 	
@@ -376,22 +208,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	@Override
 	public void propagerEvent(EventI event) throws Exception {
 		this.cscop.sendEvent(this.correlateurId, event);
-	}
-
-	@Override
-	public String getExecutorId() throws Exception {
-		
-		return this.executor;
-	}
-
-
-	
-
-
-
-
-	
-	
+	}	
 	
 	
 

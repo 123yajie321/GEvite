@@ -29,9 +29,9 @@ public class PompierActionExecutionInboundPort extends AbstractInboundPort imple
 	}
 
 	@Override
-	public ResponseI execute(ActionI a, Serializable[] params) throws  Exception {
+	public ResponseI executeAction(ActionI a, Serializable[] params) throws  Exception {
 		
-		return	this.getOwner().handleRequest(fs -> ((FireStation)fs).execute(a, params));
+		return	this.getOwner().handleRequest(fs -> ((FireStation)fs).executeAction(a, params));
 		
 		
 	

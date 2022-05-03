@@ -5,16 +5,16 @@ import fr.sorbonne_u.components.interfaces.OfferedCI;
 import fr.sorbonne_u.components.ports.AbstractInboundPort;
 import gevite.cep.CEPBusManagementCI;
 
-public class CepServicesInboundPort extends AbstractInboundPort implements CEPBusManagementCI {
+public class CepManagementInboundPort extends AbstractInboundPort implements CEPBusManagementCI {
 	
 	private static final long serialVersionUID=1L;
 
-	public CepServicesInboundPort(ComponentI owner) throws Exception {
+	public CepManagementInboundPort(ComponentI owner) throws Exception {
 		super(CEPBusManagementCI.class,owner);
 		
 	}
 	
-	public CepServicesInboundPort(String uri,ComponentI owner) throws Exception{
+	public CepManagementInboundPort(String uri,ComponentI owner) throws Exception{
 		super(uri, CEPBusManagementCI.class,owner);
 		
 	}

@@ -29,9 +29,9 @@ public class SAMUActionExecutionInboundPort extends AbstractInboundPort implemen
 	}
 
 	@Override
-	public ResponseI execute(ActionI a, Serializable[] params) throws  Exception {
+	public ResponseI executeAction(ActionI a, Serializable[] params) throws  Exception {
 		
-		return	this.getOwner().handleRequest(samu -> ((Samu)samu).execute(a, params));
+		return	this.getOwner().handleRequest(samu -> ((Samu)samu).executeAction(a, params));
 		
 		
 	

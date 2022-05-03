@@ -8,7 +8,7 @@ import gevite.actions.ActionI;
 
 public interface ActionExecutionImplementationCI extends RequiredCI, OfferedCI {
 	
-	public ResponseI execute(ActionI a,Serializable[] params) throws Exception;
+	public ResponseI executeAction(ActionI a,Serializable[] params) throws Exception;
 	
 
 

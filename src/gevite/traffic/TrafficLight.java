@@ -27,6 +27,7 @@ import gevite.cep.CEPBusManagementCI;
 import gevite.cep.EventEmissionCI;
 import gevite.cep.ResponseI;
 import gevite.cepbus.CEPBus;
+import gevite.connector.ConnectorCepManagement;
 import gevite.connector.ConnectorEmitterRegister;
 import gevite.connector.ConnectorEmitterSend;
 import gevite.connector.ConnectorExcuteurRegister;
@@ -39,6 +40,7 @@ import gevite.evenement.atomique.circulation.PassageVehicule;
 import gevite.executeur.ExecuteurRegisterOutboundPort;
 import gevite.plugin.PluginActionExecuteIn;
 import gevite.plugin.PluginEmissionOut;
+import gevite.port.CepManagementOutboundPort;
 @OfferedInterfaces(offered= {ActionExecutionCI.class,TrafficLightNotificationCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,TrafficLightActionCI.class})
 public class TrafficLight extends AbstractComponent implements TrafficLightNotificationImplI,ActionExecutionImplementationCI{
@@ -56,8 +58,9 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	protected String actionInboundPort_URI;
 	//protected String actionOutboundPort_URI;
 
-	protected EmitterRegisterOutboundPort erop;
-	protected ExecuteurRegisterOutboundPort exrop;
+	//protected EmitterRegisterOutboundPort cmop;
+	protected CepManagementOutboundPort cmop;
+	//protected ExecuteurRegisterOutboundPort exrop;
 
 	//protected EmitterSendOutboundPort esop;
 	
@@ -82,10 +85,10 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 		//this.TrafficLightAeip=new TrafficLightActionExecutionInboundPort( this);
 		//this.TrafficLightAeip.publishPort();
 		
-		this.erop = new EmitterRegisterOutboundPort(this);
-		this.erop.publishPort();
-		this.exrop = new ExecuteurRegisterOutboundPort(this);
-		this.exrop.publishPort();
+		this.cmop = new CepManagementOutboundPort(this);
+		this.cmop.publishPort();
+		//this.exrop = new ExecuteurRegisterOutboundPort(this);
+		//this.exrop.publishPort();
 		//this.esop = new EmitterSendOutboundPort(this);
 		//this.esop.publishPort();
 		this.tnip = new TrafficLightNotificationInboundPort(TrafficReceiveNotifyInboundPort_URI, this);
@@ -110,13 +113,13 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 
 		try {
 			this.doPortConnection(
-					this.erop.getPortURI(),
+					this.cmop.getPortURI(),
 					CEPBus.CSIP_URI,
-					ConnectorEmitterRegister.class.getCanonicalName());
-			this.doPortConnection(
-					this.exrop.getPortURI(),
-					CEPBus.CSIP_URI,
-					ConnectorExcuteurRegister.class.getCanonicalName());
+					ConnectorCepManagement.class.getCanonicalName());
+			/*
+			 * this.doPortConnection( this.exrop.getPortURI(), CEPBus.CSIP_URI,
+			 * ConnectorExcuteurRegister.class.getCanonicalName());
+			 */
 			
 			this.doPortConnection(
 					this.taop.getPortURI(),
@@ -133,7 +136,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	@Override
 	public synchronized void execute() throws Exception {
 		super.execute();
-		String SendEventInbound_URI=this.erop.registerEmitter(idTrafficLight);
+		String SendEventInbound_URI=this.cmop.registerEmitter(idTrafficLight);
 		/*this.doPortConnection(
 				this.esop.getPortURI(),
 				SendEventInbound_URI,
@@ -141,7 +144,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 			*/
 		
 		String port_uriString=((PluginActionExecuteIn)this.getPlugin("pluginTrafficLightActionExecute_in"+idTrafficLight)).getActionEecutionService();
-		this.exrop.registerExecutor(this.idTrafficLight,port_uriString );
+		this.cmop.registerExecutor(this.idTrafficLight,port_uriString );
 		PluginEmissionOut pluginOut = new PluginEmissionOut();
 		pluginOut.setInboundPortUri(SendEventInbound_URI);
 		pluginOut.setPluginURI("TrafficLightPluginOut_"+idTrafficLight);
@@ -154,8 +157,8 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	@Override
 	public synchronized void finalise() throws Exception {		
 		
-		this.doPortDisconnection(erop.getPortURI());
-		this.doPortDisconnection(exrop.getPortURI());
+		this.doPortDisconnection(cmop.getPortURI());
+		//this.doPortDisconnection(exrop.getPortURI());
 		//this.doPortDisconnection(esop.getPortURI());
 		this.doPortDisconnection(taop.getPortURI());
 
@@ -166,8 +169,8 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 	public synchronized void shutdown() throws ComponentShutdownException {
 		
 		try {
-			this.erop.unpublishPort();
-			this.exrop.unpublishPort();
+			this.cmop.unpublishPort();
+			//this.exrop.unpublishPort();
 			//this.esop.unpublishPort();
 			this.taop.unpublishPort();
 			this.tnip.unpublishPort();
@@ -200,7 +203,7 @@ public class TrafficLight extends AbstractComponent implements TrafficLightNotif
 
 	}
 	@Override
-	public ResponseI execute(ActionI a, Serializable[] params) throws Exception {
+	public ResponseI executeAction(ActionI a, Serializable[] params) throws Exception {
 		assert a instanceof TrafficLightActions;
 		TypeOfTrafficLightPriority priority=null;
 		if(params !=null) {

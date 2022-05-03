@@ -26,14 +26,14 @@ public class PluginActionExecutionInboundPort extends AbstractInboundPort implem
 	}
 
 	@Override
-	public ResponseI execute(ActionI a, Serializable[] params) throws  Exception {
+	public ResponseI executeAction(ActionI a, Serializable[] params) throws  Exception {
 		
 		return this.getOwner().handleRequest(
 				new AbstractComponent.AbstractService<ResponseI>(this.getPluginURI()) {
 					@Override
 					public ResponseI call() throws Exception{
 						return ((PluginActionExecuteIn)this.getServiceProviderReference()).
-						execute(a, params);
+						executeAction(a, params);
 					}
 				});
 		//System.out.println("fin Execute port");

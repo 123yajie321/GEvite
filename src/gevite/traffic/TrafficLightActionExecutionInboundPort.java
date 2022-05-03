@@ -29,10 +29,10 @@ public class TrafficLightActionExecutionInboundPort extends AbstractInboundPort 
 	}
 
 	@Override
-	public ResponseI execute(ActionI a, Serializable[] params) throws  Exception {
+	public ResponseI executeAction(ActionI a, Serializable[] params) throws  Exception {
 		
 		
-		return	this.getOwner().handleRequest(tf -> ((TrafficLight)tf).execute(a, params));
+		return	this.getOwner().handleRequest(tf -> ((TrafficLight)tf).executeAction(a, params));
 		
 		
 	

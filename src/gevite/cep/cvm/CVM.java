@@ -263,7 +263,7 @@ public class CVM extends AbstractSmartCityCVM {
 					AbstractComponent.createComponent(CorrelateurtTraffic.class.getCanonicalName(), 
 							new Object[]{
 									correlateurId,
-									trafficLight,
+									trafficLightIdList.get(i),
 									abonnementCorrelateurTrafficLight,
 									ruleBaseTrafficLight
 							});
