@@ -8,13 +8,15 @@ import gevite.evenement.atomique.AtomicEvent;
 
 public class SignaleManuel extends AtomicEvent {
 	
+	
+	private static final long serialVersionUID = 1L;
+
 	public SignaleManuel() {
 		super();
 	}
 
 	public SignaleManuel(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;
+		super(occurrence);
 	}
 	
 

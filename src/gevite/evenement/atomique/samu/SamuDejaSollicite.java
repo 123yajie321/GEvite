@@ -14,8 +14,7 @@ public class SamuDejaSollicite extends AtomicEvent{
 	}
 
 	public SamuDejaSollicite(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 
 }

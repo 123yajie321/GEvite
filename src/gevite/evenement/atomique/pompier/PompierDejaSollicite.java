@@ -14,8 +14,7 @@ public class PompierDejaSollicite extends AtomicEvent{
 	}
 
 	public PompierDejaSollicite(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 
 }

@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class EventBase implements EventBaseI {
-	//private final double period=10.0;
+
 	private ArrayList<EventI> listEvent;
 	
 	

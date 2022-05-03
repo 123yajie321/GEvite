@@ -15,9 +15,8 @@ public class AmbulancesAvailable extends AtomicEvent {
 	}
 	
 	public AmbulancesAvailable(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
-	}
+		super(occurrence);
 	
+	}
 
 }

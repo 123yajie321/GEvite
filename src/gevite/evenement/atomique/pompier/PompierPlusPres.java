@@ -14,8 +14,7 @@ public class PompierPlusPres extends AtomicEvent{
 	}
 
 	public PompierPlusPres(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 
 }

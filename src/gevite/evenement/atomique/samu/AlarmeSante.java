@@ -8,6 +8,7 @@ import gevite.evenement.atomique.AtomicEvent;
 
 public class AlarmeSante extends AtomicEvent {
 	
+
 	private static final long serialVersionUID = 1L;
 
 	public AlarmeSante() {
@@ -15,9 +16,7 @@ public class AlarmeSante extends AtomicEvent {
 	}
 
 	public AlarmeSante(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
-
 
 }

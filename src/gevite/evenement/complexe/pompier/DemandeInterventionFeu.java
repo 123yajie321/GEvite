@@ -10,17 +10,15 @@ import gevite.evenement.complexe.ComplexEventI;
 
 public class DemandeInterventionFeu extends ComplexEvent implements ComplexEventI {
 	
-	private HashMap<String, Serializable> listPoperty;
-	private ArrayList<EventI> correlateEvents;
 	
+	private static final long serialVersionUID = 1L;
+
 	public DemandeInterventionFeu(ArrayList<EventI> correlateEvents) {
 		super(correlateEvents);
 	}
 
-	@Override
-	public ArrayList<EventI> getCorrelatedEvents() {
-		return this.correlateEvents;
+	public DemandeInterventionFeu() {
+		super();
 	}
-	
 
 }

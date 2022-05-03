@@ -8,19 +8,18 @@ import gevite.evenement.EventI;
 import gevite.evenement.complexe.ComplexEvent;
 import gevite.evenement.complexe.ComplexEventI;
 
-public class AttentePassageComplexe extends ComplexEvent implements ComplexEventI {
+public class AttentePassageComplexe extends ComplexEvent  {
 	
-	private HashMap<String, Serializable> listPoperty;
-	private ArrayList<EventI> correlateEvents;
-	
+	private static final long serialVersionUID = 1L;
+
 	public AttentePassageComplexe(ArrayList<EventI> correlateEvents) {
 		super(correlateEvents);
 	}
 
-	@Override
-	public ArrayList<EventI> getCorrelatedEvents() {
-		return this.correlateEvents;
+	public AttentePassageComplexe() {
+		super();
 	}
+
 	
 
 }

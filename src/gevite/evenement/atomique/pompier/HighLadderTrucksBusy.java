@@ -15,8 +15,7 @@ public class HighLadderTrucksBusy extends AtomicEvent {
 	}
 	
 	public HighLadderTrucksBusy(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 	
 

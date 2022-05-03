@@ -16,7 +16,6 @@ public class AmbulancesBusy extends AtomicEvent {
 	}
 	
 	public AmbulancesBusy(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 }

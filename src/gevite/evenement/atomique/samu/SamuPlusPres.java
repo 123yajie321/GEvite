@@ -14,8 +14,7 @@ public class SamuPlusPres extends AtomicEvent{
 	}
 
 	public SamuPlusPres(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 
 }

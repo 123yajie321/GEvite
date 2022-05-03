@@ -15,8 +15,7 @@ public class StandardTrucksBusy extends AtomicEvent {
 	}
 	
 	public StandardTrucksBusy(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);	
 	}
 	
 

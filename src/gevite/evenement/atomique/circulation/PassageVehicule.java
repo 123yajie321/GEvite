@@ -14,8 +14,7 @@ public class PassageVehicule extends AtomicEvent {
 	}
 
 	public PassageVehicule(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 
 

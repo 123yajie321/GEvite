@@ -12,21 +12,19 @@ import gevite.evenement.complexe.ComplexEventI;
 
 public class ConsciousFall  extends ComplexEvent implements ComplexEventI {
 
-	private HashMap<String, Serializable> listPoperty;
-	private ArrayList<EventI> correlateEvents;
-	
+
+	private static final long serialVersionUID = 1L;
+
 	public ConsciousFall(ArrayList<EventI> correlateEvents) {
 		super(correlateEvents);
 		
 	}
 
-
-
-	@Override
-	public ArrayList<EventI> getCorrelatedEvents() {
-		return this.correlateEvents;
+	public ConsciousFall() {
+		super();
+		
 	}
-	
+
 	
 	
 	

@@ -11,12 +11,17 @@ import gevite.evenement.EventI;
 public abstract class ComplexEvent implements ComplexEventI {
 
 
-	private HashMap<String, Serializable> listPoperty;
-	private ArrayList<EventI> relatedEvents;
+
+	protected ArrayList<EventI> relatedEvents;
 	protected LocalTime createtime;
 	
 	public ComplexEvent(ArrayList<EventI> relatedEvents) {
 		this.relatedEvents = relatedEvents;
+		createtime=TimeManager.get().getCurrentLocalTime();
+	}
+	
+	public ComplexEvent() {
+		this.relatedEvents = new ArrayList<EventI>();
 		createtime=TimeManager.get().getCurrentLocalTime();
 	}
 	
@@ -27,21 +32,34 @@ public abstract class ComplexEvent implements ComplexEventI {
 	}
 
 	@Override
-	public boolean hasProperty(String name) {
-		
-		return listPoperty.containsKey(name);
-	}
-
-	@Override
-	public Serializable getPropertyValue(String name) {
-		
-		return listPoperty.get(name);
-	}
-
-	@Override
 	public ArrayList<EventI> getCorrelatedEvents() {
 		
 		return relatedEvents;
 	}
+	
+	public void addCorrelatedEvent(EventI event) {
+		relatedEvents.add(event);
+	}
+	
+	public void remouveCorrelatedEvent(EventI event) {
+		relatedEvents.remove(event);
+	}
+	
+	@Override
+	public boolean hasProperty(String name) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Serializable getPropertyValue(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+
+	
+	
 
 }

@@ -7,15 +7,24 @@ import java.util.HashMap;
 import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
 
 public abstract class AtomicEvent implements AtomicEventI {
-	
+
+
 	protected HashMap<String, Serializable> listPoperty;
 	protected LocalTime createtime;
 	
+	
+	
+	
+	public AtomicEvent(LocalTime createTime) {
+		listPoperty = new HashMap<String, Serializable>();
+		this.createtime=createTime;
+	}
 	
 	public AtomicEvent() {
 		listPoperty = new HashMap<String, Serializable>();
 		createtime=TimeManager.get().getCurrentLocalTime();
 	}
+	
 	
 	
 	@Override

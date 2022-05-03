@@ -13,7 +13,6 @@ import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.AtomicEvent;
 import gevite.evenement.atomique.samu.AlarmeSante;
-import gevite.evenement.atomique.samu.InterventionCausesSamu;
 import gevite.evenement.atomique.samu.SamuDejaSollicite;
 import gevite.evenement.atomique.samu.SamuPlusPres;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
@@ -64,7 +63,7 @@ public class S4 implements RuleI{
 		samuDejaSolId.add(samuState.getExecutorId());
 		
 		AtomicEvent samuDejaSol=new SamuDejaSollicite();
-		samuDejaSol.putProperty("samuId", samuState.getExecutorId() );
+		samuDejaSol.putProperty("samuIdList",samuDejaSolId );
 		
 		Iterator<String> samuStationsIditerator =
 				SmartCityDescriptor.createSAMUStationIdIterator();
@@ -87,12 +86,12 @@ public class S4 implements RuleI{
 		AtomicEvent samuPlusPres = new SamuPlusPres();
 		samuPlusPres.putProperty("pluspresStation", plusPreStation);
 		
-		ArrayList<EventI> eventComplex = new ArrayList<EventI>() ;
-		eventComplex.addAll(matchedEvents);
-		eventComplex.add(samuDejaSol);
-		eventComplex.add(samuPlusPres);
+		ArrayList<EventI> eventlist = new ArrayList<EventI>() ;
+		eventlist.add(samuDejaSol);
+		eventlist.add(samuPlusPres);
+		eventlist.addAll(matchedEvents);
 
-		DemandeInterventionSamu dIntervention = new DemandeInterventionSamu(eventComplex);
+		DemandeInterventionSamu dIntervention = new DemandeInterventionSamu(eventlist);
 		
 		samuState.propagerEvent(dIntervention);
 		

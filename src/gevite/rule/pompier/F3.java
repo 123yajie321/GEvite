@@ -54,7 +54,7 @@ public class F3 implements RuleI{
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
-		return !pompierCorrelatorState.isEchelleDisponible();
+		return !pompierCorrelatorState.isEchelleDisponible()&&pompierCorrelatorState.caserneNonSolliciteExiste(matchedEvents);
 	}
 
 	@Override
@@ -65,12 +65,17 @@ public class F3 implements RuleI{
 		pomperDejaSolId.add(pompierState.getExecutorId());
 		
 		AtomicEvent pompierDejaSol=new PompierDejaSollicite();
-		pompierDejaSol.putProperty("pompierId", pompierState.getExecutorId() );
+		pompierDejaSol.putProperty("FireStationIdList", pomperDejaSolId );
 		
 		Iterator<String> fireStationsIditerator =
 				SmartCityDescriptor.createFireStationIdIterator();
 		while (fireStationsIditerator.hasNext()) {
 			String fireStationId = fireStationsIditerator.next();
+			if(!pomperDejaSolId.contains(fireStationId)) {
+				pompierNonSolId.add(fireStationId);
+			}
+		
+		
 		}
 		
 		double minDistance = AbstractSmartCityDescriptor.distance(pompierState.getExecutorId(), pompierNonSolId.get(0)) ;
@@ -87,9 +92,9 @@ public class F3 implements RuleI{
 		pompierPlusPres.putProperty("pluspresStation", plusPreStation);
 		
 		ArrayList<EventI> eventComplex = new ArrayList<EventI>() ;
-		eventComplex.addAll(matchedEvents);
 		eventComplex.add(pompierDejaSol);
 		eventComplex.add(pompierPlusPres);
+		eventComplex.addAll(matchedEvents);
 
 		DemandeInterventionFeu dIntervention = new DemandeInterventionFeu(eventComplex);
 		

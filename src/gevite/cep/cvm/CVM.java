@@ -173,9 +173,6 @@ public class CVM extends AbstractSmartCityCVM {
 				for(int i=0;i<correlateurPompierid-1;i++) {
 					int id=i+1;
 					String correlateurId="correlateurPompier"+id;
-					ArrayList<String>tmp=new ArrayList<>();
-					tmp.add(fireStations.get(i));
-					
 					 ArrayList<String> abonnement=new ArrayList<>();
 					   abonnement.addAll(fireSationCorrelateursAbonnement);
 					   abonnement.add(fireStations.get(i));
@@ -183,8 +180,8 @@ public class CVM extends AbstractSmartCityCVM {
 					AbstractComponent.createComponent(CorrelateurPompier.class.getCanonicalName(), 
 							new Object[]{
 									correlateurId,
-									tmp,
-									fireSationCorrelateursAbonnement,
+									fireStations.get(i),
+									abonnement,
 									ruleBasePompier
 							});
 				}
@@ -221,7 +218,7 @@ public class CVM extends AbstractSmartCityCVM {
 				   ArrayList<String> abonnement=new ArrayList<>();
 				   abonnement.addAll(samuCorrelateurAbonnement);
 				   abonnement.add(samus.get(i));
-					//correlateur sa,u
+				
 					AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), 
 							new Object[]{
 									correlateurId,

@@ -10,6 +10,7 @@ import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import fr.sorbonne_u.components.AbstractComponent;
@@ -35,9 +36,11 @@ import gevite.connector.ConnectorCorrelateurSAMU;
 import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
+import gevite.evenement.atomique.AtomicEvent;
 import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.atomique.samu.SamuDejaSollicite;
 import gevite.evenement.atomique.samu.SignaleManuel;
+import gevite.evenement.complexe.ComplexEvent;
 import gevite.evenement.complexe.samu.ConsciousFall;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.plugin.PluginActionExecuteOut;
@@ -105,6 +108,11 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 		this.medicsAvailable=new AtomicBoolean(true);
 		//this.ambulancesAvailable=new Vector<AtomicBoolean>();
 		//this.medicsAvailable=new Vector<AtomicBoolean>();
+		recieveExecutor=new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		recieveExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+		actionExecutor=new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		actionExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+		bufferEvents=new LinkedBlockingQueue<EventI>();
 	}
 	
 
@@ -221,25 +229,25 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
     public void setAmbulancesNoAvailable() throws Exception {
     	
     	
-    	this.ambulancesAvailable.compareAndExchange(true, false);
+    	((AtomicBoolean) this.ambulancesAvailable).getAndSet(false);
     }
 	
 	
 	/*S17*/
     public void setMedcinNoAvailable() throws Exception{
-    	this.medicsAvailable.compareAndExchange(true, false);
+    	this.medicsAvailable.getAndSet(false);
     }
 	
 	
 	/*S18*/
     public void setAmbulancesAvailable() throws Exception{
-    	this.ambulancesAvailable.compareAndExchange(false, true);
+    	this.ambulancesAvailable.getAndSet(true);
     }
 	
 	
 	/*S19*/
     public void setMedcinAvailable() throws Exception{
-    	this.medicsAvailable.compareAndExchange(false, true);
+    	this.medicsAvailable.getAndSet(true);
     	
     }	
 
@@ -298,6 +306,10 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 	
 	@Override
 	public boolean samuNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {
+		
+		EventI eventRecu=matchedEvents.get(0);
+		
+		//recuperer le nombre  total de samu  et leur id
 		int nbsamu=0;
         ArrayList<String>samuList=new ArrayList<String>();
 		Iterator<String> samuStationsIditerator =
@@ -307,8 +319,21 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 			nbsamu++;
 			samuList.add(samuStationId);
 		}
+		
+		//si le event recu n'est pas un complexeEvent comme "DemandeInterventionSamu",
+		// on sait que c'est le 1 fois qu'il sollicite un samu , donc si le nombre de samu>1,
+		//on sait qu'il existe des samu no encore sollicite
+		
+		if (eventRecu instanceof AtomicEvent) {
+			return nbsamu > 1;
+		}
+		
+		
+		ArrayList<EventI>listEvent=((ComplexEvent) eventRecu).getCorrelatedEvents();
+	
+		
 		SamuDejaSollicite samusEvent=null;
-		for(EventI e:matchedEvents) {
+		for(EventI e:listEvent) {
 			if(e instanceof SamuDejaSollicite) {
 				samusEvent=(SamuDejaSollicite) e;
 				break;
@@ -318,6 +343,7 @@ public class CorrelateurSamu extends AbstractComponent implements SamuCorrelator
 			return nbsamu > 1;
 		}else {
 			for(String s:samuList) {
+				//chercher s'il  existe un samu n'est pas dans la liste des samu deja sollicite 
 				if( !(((String) samusEvent.getPropertyValue("samuIdList")).contains(s)))
 					return true;
 			}

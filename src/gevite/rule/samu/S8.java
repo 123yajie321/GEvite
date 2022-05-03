@@ -16,7 +16,6 @@ import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.AtomicEvent;
 import gevite.evenement.atomique.samu.AlarmeSante;
-import gevite.evenement.atomique.samu.InterventionCausesSamu;
 import gevite.evenement.atomique.samu.SamuDejaSollicite;
 import gevite.evenement.atomique.samu.SamuPlusPres;
 import gevite.evenement.atomique.samu.SignaleManuel;
@@ -105,10 +104,9 @@ public class S8 implements RuleI{
 		samuPlusPres.putProperty("pluspresStation", plusPreStation);
 		
 		ArrayList<EventI> eventComplex = new ArrayList<EventI>() ;
-		eventComplex.addAll(matchedEvents);
 		eventComplex.add(samuDejaSol);
 		eventComplex.add(samuPlusPres);	
-		
+		eventComplex.addAll(matchedEvents);
 		ConsciousFall fall = new ConsciousFall(eventComplex);
 		samuState.propagerEvent(fall);
 		/*

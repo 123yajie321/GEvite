@@ -8,12 +8,13 @@ import gevite.evenement.atomique.AtomicEvent;
 
 public class AtDestination extends AtomicEvent{
 	
+	private static final long serialVersionUID = 1L;
+
 	public AtDestination() {
 		super();
 	}
 
 	public AtDestination(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;
+		super(occurrence);
 	}
 }

@@ -15,8 +15,7 @@ public class AlarmFeu extends AtomicEvent {
 	}
 
 	public AlarmFeu(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 
 }

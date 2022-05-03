@@ -10,8 +10,15 @@ import gevite.evenement.complexe.ComplexEventI;
 
 public class DemandeInterventionSamu extends ComplexEvent implements ComplexEventI {
 
+	private static final long serialVersionUID = 1L;
+
 	public DemandeInterventionSamu(ArrayList<EventI> relatedEvents) {
 		super(relatedEvents);
+	
+	}
+	
+	public DemandeInterventionSamu() {
+		super();
 	
 	}
 	

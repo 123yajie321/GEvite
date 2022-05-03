@@ -15,8 +15,7 @@ public class StandardTrucksAvailable extends AtomicEvent {
 	}
 	
 	public StandardTrucksAvailable(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);	
 	}
 	
 

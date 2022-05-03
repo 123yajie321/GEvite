@@ -15,7 +15,6 @@ public class MedecinBusy extends AtomicEvent {
 	}
 	
 	public MedecinBusy(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 }

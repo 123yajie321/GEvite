@@ -15,8 +15,7 @@ public class EndFire extends AtomicEvent {
 	}
 
 	public EndFire(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);
 	}
 
 }

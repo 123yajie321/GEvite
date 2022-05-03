@@ -13,8 +13,7 @@ public class DemandePriorite extends AtomicEvent{
 	}
 
 	public DemandePriorite(LocalTime occurrence) {
-		listPoperty = new HashMap<String, Serializable>();
-		createtime = occurrence;	
+		super(occurrence);	
 	}
 	
 	

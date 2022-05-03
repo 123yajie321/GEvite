@@ -27,6 +27,10 @@ import gevite.connector.ConnectorCorrelateurPompier;
 import gevite.connector.ConnectorCorrelateurSendCep;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
+import gevite.evenement.atomique.AtomicEvent;
+import gevite.evenement.atomique.pompier.PompierDejaSollicite;
+import gevite.evenement.atomique.samu.SamuDejaSollicite;
+import gevite.evenement.complexe.ComplexEvent;
 import gevite.evenement.complexe.samu.ConsciousFall;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
 import gevite.plugin.PluginActionExecuteOut;
@@ -45,7 +49,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	//EmitteurOutboundPort
 	protected EventEmissionCI cscop;
 	
-	protected ArrayList<ActionExecutionCI> list_caeop;
+	//protected ArrayList<ActionExecutionCI> list_caeop;
 
 	protected ActionExecutionCI caeop;
 
@@ -80,7 +84,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 		this.executor=executor;
 		this.emitters=emitters;
 		this.baseRule=ruleBase;
-		list_caeop = new ArrayList<ActionExecutionCI>();
+		//list_caeop = new ArrayList<ActionExecutionCI>();
 
 	}
 	
@@ -193,7 +197,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	public void declancheFirstAlarme(AbsolutePosition position, TypeOfFirefightingResource type) throws Exception {
 		FireStationActions firstAlarmActions = FireStationActions.FirstAlarme;
 		
-		this.list_caeop.get(0).execute(firstAlarmActions, new Serializable[] {position,type}); 			
+		this.caeop.execute(firstAlarmActions, new Serializable[] {position,type}); 			
 	}
 
 
@@ -201,7 +205,7 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	@Override
 	public void declancheSecondAlarme(AbsolutePosition position) throws Exception {
 		FireStationActions secondAlarmActions = FireStationActions.FirstAlarme;
-		this.list_caeop.get(0).execute(secondAlarmActions, new Serializable[] {position}); 			
+		this.caeop.execute(secondAlarmActions, new Serializable[] {position}); 			
 	}		
 
 	@Override
@@ -254,39 +258,48 @@ public class CorrelateurPompier extends AbstractComponent implements PompierCorr
 	
 	@Override
 	public boolean caserneNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {
+		EventI eventRecu=matchedEvents.get(0);
+		
+		//recuperer le nombre total de firestation et leur id
 		int nbCaserne=0;
-		ArrayList<EventI> correlateEvents = new ArrayList<EventI>();
-
-		if(matchedEvents.get(0) instanceof ) {
-			DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
-			correlateEvents = demandeInterventionSamu.getCorrelatedEvents();
-		}else if(matchedEvents.get(0) instanceof ){
-			ConsciousFall consciousFall = (ConsciousFall)matchedEvents.get(0);
-			correlateEvents = consciousFall.getCorrelatedEvents();
-		}
-		Iterator<String> samuStationsIditerator =
-				SmartCityDescriptor.createSAMUStationIdIterator();
-		while (samuStationsIditerator.hasNext()) {
-			String samuStationId = samuStationsIditerator.next();
-			nbCaserne++;
-		}
-		return nbCaserne > correlateEvents.size()-1;
-		
-		
-		
-		
-		int nbCaserne=0;
-		DemandeInterventionSamu demandeInterventionSamu=(DemandeInterventionSamu) matchedEvents.get(0);
-		ArrayList<EventI> correlateEvents=demandeInterventionSamu.getCorrelatedEvents();
-		
+		ArrayList<String> fireStationlist = new ArrayList<String>();
 		Iterator<String> fireStationsIditerator =
 				SmartCityDescriptor.createFireStationIdIterator();
+		
 		while (fireStationsIditerator.hasNext()) {
 			String fireStationId = fireStationsIditerator.next();
 			nbCaserne++;
-			
+			fireStationlist.add(fireStationId);
 		}
-		return nbCaserne > correlateEvents.size()-1;
+		
+		//si le event recu n'est pas un complexeEvent comme "DemandeInterventionFeu",
+		// on sait que c'est le 1 fois qu'il sollicite un firestation , donc si le nombre de firestation>1,
+		//on sait qu'il existe des firestation no encore sollicite
+				
+		if (eventRecu instanceof AtomicEvent) {
+			return nbCaserne > 1;
+		}
+		
+		
+		ArrayList<EventI>listEvent=((ComplexEvent) eventRecu).getCorrelatedEvents();
+		PompierDejaSollicite pompiersollicite=null;
+		for(EventI e:listEvent) {
+			if(e instanceof PompierDejaSollicite) {
+				pompiersollicite=(PompierDejaSollicite) e;
+				break;
+			}
+		}
+		if(pompiersollicite == null) {
+			return nbCaserne > 1;
+		}else {
+			for(String s:fireStationlist) {
+				if( !(((String) pompiersollicite.getPropertyValue("FireStationIdList")).contains(s)))
+					return true;
+			}
+		}
+		return false;		
+		
+		
 		
 	}
 
