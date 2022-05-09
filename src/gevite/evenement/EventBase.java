@@ -1,10 +1,13 @@
 package gevite.evenement;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+
+import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
+
+
 
 public class EventBase implements EventBaseI {
 
@@ -19,7 +22,19 @@ public class EventBase implements EventBaseI {
 
 	@Override
 	public void addEvent(EventI e) {
-		listEvent.add(e);
+		
+		boolean insert=false;
+		for(int i=0;i<listEvent.size();i++) {
+			if(e.getTimeStamp().isBefore(listEvent.get(i).getTimeStamp())) {
+				listEvent.add(i, e);
+				insert=true;
+				break;
+			}
+		}
+		if(!insert) {
+			listEvent.add(e);
+			
+		}
 	}
 
 	@Override
@@ -46,17 +61,21 @@ public class EventBase implements EventBaseI {
 	
 	@Override
 	public void clearEvents(Duration d) {
-		/*
-		for(int i = 0 ; i < listEvent.size() ; i++) {
-			LocalTime time=LocalTime.now();
-			if( Duration.between(time, listEvent.get(i).getTimeStamp())>d) {
-				listEvent.remove(i);
-				i--;
-				
-			}
+		
+		if(d==null) {
+			
+			listEvent.clear();
+		}else {
+			
+			LocalTime now=TimeManager.get().getCurrentLocalTime();
+			listEvent.removeIf(e -> 
+						d.getNano()< Duration.between(now, e.getTimeStamp()).getNano());
 		}
-*/
+		
+	
 	}
+
+	
 	
 
 }

@@ -53,8 +53,9 @@ public class CepManagementInboundPort extends AbstractInboundPort implements CEP
 	public void registerExecutor(String uri, String inboundPortURI)throws Exception {
 		
 		this.getOwner().handleRequest(
-				cep-> ((CEPBus)cep).registerExecuteur(uri,inboundPortURI)
-						);
+					cep-> {((CEPBus)cep).registerExecuteur(uri,inboundPortURI);
+					return null;
+				});
 	}
 
 	@Override

@@ -69,9 +69,11 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 	protected SAMUActionOutboundPort saop;
 	//receive action from correlateur
 	protected ActionExecutionCI SAMUaeip;
+	protected String busManagementInboundPortUri;
 	
 	
-	protected Samu(String samuInport,String samuId,String actionInboundPort) throws Exception {
+	
+	protected Samu(String samuInport,String samuId,String actionInboundPort,String busManagementInboundPortUri) throws Exception {
 		super(2,0);
 		this.SAMUReceiveNotifyInboundPort_URI = samuInport;
 		this.samuId = samuId;
@@ -84,6 +86,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 		this.snip.publishPort();
 		this.saop = new SAMUActionOutboundPort(this);
 		this.saop.publishPort();
+		this.busManagementInboundPortUri=busManagementInboundPortUri;
 		
 		PluginActionExecuteIn pluginActionExecuteIn=new PluginActionExecuteIn();
 		pluginActionExecuteIn.setPluginURI("pluginSamuActionExecute_in"+samuId);
@@ -103,7 +106,7 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 		try {
 			this.doPortConnection(
 					this.cmop.getPortURI(),
-					CEPBus.CSIP_URI,
+					this.busManagementInboundPortUri,
 					ConnectorCepManagement.class.getCanonicalName());
 			
 			this.doPortConnection(

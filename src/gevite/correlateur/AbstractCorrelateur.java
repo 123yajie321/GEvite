@@ -43,11 +43,12 @@ public abstract class AbstractCorrelateur extends AbstractComponent {
 	protected ThreadPoolExecutor recieveExecutor;
 	//pool de thread pour ajouter les evenements recu au base et declencher les regles
 	protected ThreadPoolExecutor actionExecutor;
+	protected String busManagementInboundPortUri;
 	
 	
-	
-	protected AbstractCorrelateur(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase) throws Exception {
+	protected AbstractCorrelateur(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase,String busManagementInboundPortUri) throws Exception {
 		super(2, 0);
+		this.busManagementInboundPortUri=busManagementInboundPortUri;
 		baseEvent =new EventBase();
 		this.cercip= new CorrelateurRecieveEventInboundPort(this);
 		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
@@ -68,7 +69,7 @@ public abstract class AbstractCorrelateur extends AbstractComponent {
 	public synchronized void start()throws ComponentStartException{
 		try {
 			super.start();
-			this.doPortConnection(this.ccrop.getPortURI(), CEPBus.CSIP_URI,ConnectorCorrelateurCepServices.class.getCanonicalName() );
+			this.doPortConnection(this.ccrop.getPortURI(), busManagementInboundPortUri,ConnectorCorrelateurCepServices.class.getCanonicalName() );
 			
 		} catch (Exception e) {
 			
