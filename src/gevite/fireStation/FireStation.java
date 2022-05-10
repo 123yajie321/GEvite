@@ -66,7 +66,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		protected String FIREReceiveNotifyInboundPort_URI;
 		protected String fireStationId;
 		protected String actionInboundPort_URI;
-	
+	    protected String busManagementInboundPortUri;
 
 		protected CepManagementOutboundPort cmop;
 		
@@ -76,12 +76,13 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		protected ActionExecutionCI FSaeip;
 		
 		
-		protected FireStation(String fireInport,String fireStationId,String actionInboundPort) throws Exception {
+		protected FireStation(String fireInport,String fireStationId,String actionInboundPort,String busManagementInboundPortUri) throws Exception {
 			super(2,0);
 			
 			this.FIREReceiveNotifyInboundPort_URI = fireInport; 
 			this.fireStationId = fireStationId;
 			this.actionInboundPort_URI = actionInboundPort;
+			this.busManagementInboundPortUri=busManagementInboundPortUri;
 			this.cmop = new CepManagementOutboundPort(this);
 			this.cmop.publishPort();
 			this.fnip = new FireStationNotificationInboundPort(FIREReceiveNotifyInboundPort_URI, this);
@@ -107,7 +108,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 			try {
 				this.doPortConnection(
 						this.cmop.getPortURI(),
-						CEPBus.CSIP_URI,
+						busManagementInboundPortUri,
 						ConnectorCepManagement.class.getCanonicalName());
 				
 				this.doPortConnection(

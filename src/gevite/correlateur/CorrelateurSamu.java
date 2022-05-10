@@ -57,8 +57,8 @@ public class CorrelateurSamu extends AbstractCorrelateur implements SamuCorrelat
 	protected AtomicBoolean ambulancesAvailable;
 	protected AtomicBoolean medicsAvailable;
 	
-	protected CorrelateurSamu(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
-		super(correlateurId, executor, emitters, ruleBase);
+	protected CorrelateurSamu(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase,String busManagementInboundPortUri) throws Exception{
+		super(correlateurId, executor, emitters, ruleBase,busManagementInboundPortUri);
 		this.ambulancesAvailable=new AtomicBoolean(true);
 		this.medicsAvailable=new AtomicBoolean(true);
 		

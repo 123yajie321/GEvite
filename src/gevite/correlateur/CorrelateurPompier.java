@@ -48,8 +48,8 @@ public class CorrelateurPompier extends AbstractCorrelateur implements PompierCo
 	protected AtomicBoolean echelleAvailable;
 	protected AtomicBoolean camionAvailable;
 	
-	protected CorrelateurPompier(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
-		super(correlateurId, executor, emitters, ruleBase);
+	protected CorrelateurPompier(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase,String busManagementInboundPortUri) throws Exception{
+		super(correlateurId, executor, emitters, ruleBase,busManagementInboundPortUri);
 		this.echelleAvailable=new AtomicBoolean(true);
 		this.camionAvailable=new AtomicBoolean(true);
 	}

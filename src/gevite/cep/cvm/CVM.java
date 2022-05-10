@@ -49,7 +49,12 @@ public class CVM extends AbstractSmartCityCVM {
 	static int correlateurPompierid=1;
 	static int correlateurTrafficLight=1;
 	static int trafficLightId=0;
-	
+	public static final String CSIP1_URI = "csip1-uri";		//uri of inbound port for management
+	public static final String CERIP1_URI = "cerip1-uri";	//uri of inbound port to recieving evnt from emitter or correlateur
+	public static final String CSIP2_URI = "csip2-uri";	
+	public static final String CERIP2_URI = "cerip2-uri";
+	public static final String REOBIP1_URI="reobip1-uri";//uri of inbound port to recieving evnt from other bus
+	public static final String REOBIP2_URI="reobip2-uri";
 	
 	public CVM() throws Exception {
 		super();
@@ -132,7 +137,7 @@ public class CVM extends AbstractSmartCityCVM {
 		
 
 		//create CEPBus
-		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {});
+		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {"BUS1","BUS2",CSIP1_URI,CERIP1_URI,REOBIP1_URI});
 
 
 		ArrayList<String>samuCorrelateurAbonnement=new ArrayList<String>();
@@ -158,7 +163,8 @@ public class CVM extends AbstractSmartCityCVM {
 								notificationInboundPortURI,
 								fireStationId,
 								SmartCityDescriptor.
-												getActionInboundPortURI(fireStationId)
+												getActionInboundPortURI(fireStationId),
+												CSIP1_URI
 								});
 					
 					String correlateurId="correlateurPompier"+correlateurPompierid;
@@ -182,7 +188,9 @@ public class CVM extends AbstractSmartCityCVM {
 									correlateurId,
 									fireStations.get(i),
 									abonnement,
-									ruleBasePompier
+									ruleBasePompier,
+									CSIP1_URI
+
 							});
 				}
 				
@@ -202,7 +210,7 @@ public class CVM extends AbstractSmartCityCVM {
 									notificationInboundPortURI,
 									samuStationId,
 									SmartCityDescriptor.
-												getActionInboundPortURI(samuStationId)
+												getActionInboundPortURI(samuStationId),CSIP1_URI
 									});
 					String correlateurId="correlateurSamu"+correlateurSamuid;
 					correlateurSamuid++;
@@ -224,7 +232,7 @@ public class CVM extends AbstractSmartCityCVM {
 									correlateurId,
 									samus.get(i),
 									abonnement,
-									ruleBaseSamu
+									ruleBaseSamu,CSIP1_URI
 							});
 				}
 				
@@ -247,7 +255,7 @@ public class CVM extends AbstractSmartCityCVM {
 									p,
 									SmartCityDescriptor.
 														getActionInboundPortURI(p),
-									trafficId
+									trafficId,CSIP1_URI
 									});
 					trafficLightId++;
 				}
@@ -265,7 +273,7 @@ public class CVM extends AbstractSmartCityCVM {
 									correlateurId,
 									trafficLightIdList.get(i),
 									abonnementCorrelateurTrafficLight,
-									ruleBaseTrafficLight
+									ruleBaseTrafficLight,CSIP1_URI
 							});
 				}
 				super.deploy();

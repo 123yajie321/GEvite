@@ -35,8 +35,8 @@ public class CorrelateurtTraffic extends AbstractCorrelateur implements Circulat
 	
 	
 	
-	protected CorrelateurtTraffic(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase) throws Exception{
-		super(correlateurId, executor, emitters, ruleBase);
+	protected CorrelateurtTraffic(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase,String busManagementInboundPortUri) throws Exception{
+		super(correlateurId, executor, emitters, ruleBase,busManagementInboundPortUri);
 	}
 	
 	

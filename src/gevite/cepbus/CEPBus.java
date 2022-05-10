@@ -46,7 +46,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 	
 	protected String managementInboundPortUri;
     protected String receiveEventInboundPortUri;
-    
+    protected String receiveEventOtherBusInboundPortUri;
    
     //stoker les event recu et leur emitter
     protected LinkedBlockingQueue<Pair<EventI,String>> eventsRecu;
@@ -68,12 +68,13 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 	//protected CepEventSendCorrelateurOutboundPort cescop;
 
 
-	protected CEPBus(String  busId,String nextBusID,String managementInboudPortUri, String receiveEventInboundPortUri ,String receiveEventAnotherBusInboundPortUri)throws Exception {
+	protected CEPBus(String  busId,String nextBusID,String managementInboudPortUri, String receiveEventInboundPortUri ,String receiveEventOtherBusInboundPortUri)throws Exception {
 		super(2, 0);
 		this.BusId=busId;
 		this.managementInboundPortUri=managementInboudPortUri;
 		this.receiveEventInboundPortUri=receiveEventInboundPortUri;
 		this.nextBusId=nextBusID;
+		this.receiveEventOtherBusInboundPortUri=receiveEventOtherBusInboundPortUri;
 		
 		//uriEmitters = new HashSet<String>();
 		uriEmitters=new LinkedBlockingQueue<String>();
