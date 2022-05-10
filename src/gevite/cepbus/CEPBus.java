@@ -55,11 +55,12 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 	protected LinkedBlockingQueue<String > uriEmitters;
     protected ConcurrentHashMap<String, CepEventSendCorrelateurOutboundPort > uriCorrelateurs;
 	protected ConcurrentHashMap<String,String> uriExecuteurs;
-
+                               
+	//cle:uriEmitters  value:liste des correlateurs qui abonne cette Emitter
 	protected ConcurrentHashMap<String,Vector<String>> uriSubscription;
 	protected ThreadPoolExecutor sendExecutor;
 	protected ThreadPoolExecutor registerCorrelateurExecutor;
-   
+    
 
 
 	
@@ -213,9 +214,9 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 				uriSubscription.put(subscriberURI, emitters);
 			}*/
 			
-			uriSubscription.putIfAbsent(subscriberURI,new Vector<String>());
-			uriSubscription.get(subscriberURI).add(emitterURI);
-			System.out.println(subscriberURI+ " subscribe : "+emitterURI);
+			uriSubscription.putIfAbsent(emitterURI,new Vector<String>());
+			uriSubscription.get(emitterURI).add(subscriberURI);
+			System.out.println(emitterURI+ " subscribe par : "+subscriberURI);
 			return true;
 			
 		
@@ -225,7 +226,7 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 	
 	public boolean unsubscribe(String subscriberURI, String emitterURI)throws Exception{
 		
-		uriSubscription.get(subscriberURI).remove(emitterURI);
+		uriSubscription.get(emitterURI).remove(subscriberURI);
 		
 		return true;
 	}
@@ -248,7 +249,14 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 	
 	public String unregisterCorrelator(String uri)throws Exception {
 		
-		uriSubscription.remove(uri); 
+		uriSubscription.remove(uri);
+		Iterator<Entry<String, Vector<String>>> iterator=uriSubscription.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String,Vector<String>> entry = (Map.Entry<String,Vector<String>> )iterator.next();
+				Vector<String> subscribers= entry.getValue();
+				subscribers.remove(uri);	
+		}
+		
 		uriCorrelateurs.remove(uri);
 		 
 		
@@ -309,21 +317,13 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 			Pair<EventI, String> pair;
 			try { 
 					pair = eventsRecu.take();
-					Iterator<Entry<String, Vector<String>>> iterator=uriSubscription.entrySet().iterator();
-					while (iterator.hasNext()) {
-						Map.Entry<String,Vector<String>> entry = (Map.Entry<String,Vector<String>> )iterator.next();
-						Vector<String> emitters= entry.getValue();
-							if(emitters.contains(pair.getSecond())) {
-								
-								String uri_correlateur= entry.getKey();
-								CepEventSendCorrelateurOutboundPort cepscop=uriCorrelateurs.get(uri_correlateur);
-								//this.doPortConnection(CESCOP_URI, receiveEventInboundPort, ConnectorCepSendCorrelateur.class.getCanonicalName());
-								cepscop.receiveEvent(pair.getSecond(), pair.getFirst());
-								//System.out.println("BUS send  "+ uri_correlateur+" a event");
-							}
+					Vector<String> subscribers= uriSubscription.get(pair.getSecond());
+					for(String subscriber:subscribers) {
+						CepEventSendCorrelateurOutboundPort cepscop=uriCorrelateurs.get(subscriber);
+						cepscop.receiveEvent(pair.getSecond(), pair.getFirst());
 					}
+					
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			

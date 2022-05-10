@@ -30,7 +30,7 @@ public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 		//this.addRequiredInterface(ReflectionCI.class);
 		//ReflectionOutboundPort  rop= new ReflectionOutboundPort(this.getOwner());
 		super.initialise();
-		this.addOfferedInterface(EventEmissionCI.class);
+		//this.addOfferedInterface(EventEmissionCI.class);
 		this.receivePluginInboundPort = new PluginCepEventRecieveInboundPort(PortUri,this.getPluginURI(),this.getOwner());
 		this.receivePluginInboundPort.publishPort();
 }

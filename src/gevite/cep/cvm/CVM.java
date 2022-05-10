@@ -55,6 +55,8 @@ public class CVM extends AbstractSmartCityCVM {
 	public static final String CERIP2_URI = "cerip2-uri";
 	public static final String REOBIP1_URI="reobip1-uri";//uri of inbound port to recieving evnt from other bus
 	public static final String REOBIP2_URI="reobip2-uri";
+	public static final String BUSID1="bus1";
+	public static final String BUSID2="bus2";
 	
 	public CVM() throws Exception {
 		super();
@@ -134,10 +136,10 @@ public class CVM extends AbstractSmartCityCVM {
 		//stcoker id des TrafficLight
 		ArrayList<String> trafficLightIdList = new ArrayList<String>();
 		
-		
+	
 
 		//create CEPBus
-		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {"BUS1","BUS2",CSIP1_URI,CERIP1_URI,REOBIP1_URI});
+		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {BUSID1,BUSID2,CSIP1_URI,CERIP1_URI,REOBIP1_URI});
 
 
 		ArrayList<String>samuCorrelateurAbonnement=new ArrayList<String>();

@@ -35,7 +35,7 @@ public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecu
 		//this.addRequiredInterface(ReflectionCI.class);
 		//ReflectionOutboundPort  rop= new ReflectionOutboundPort(this.getOwner());
 		super.initialise();
-		this.addOfferedInterface(ActionExecutionCI.class);
+		//this.addOfferedInterface(ActionExecutionCI.class);
 		this.actionExecutionPluginInboundPort = new PluginActionExecutionInboundPort(this.getPluginURI(),this.getOwner());
 		this.actionExecutionPluginInboundPort.publishPort();
 }
