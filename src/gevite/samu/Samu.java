@@ -115,6 +115,8 @@ public class Samu extends AbstractComponent implements SAMUNotificationImplI,Act
 					SAMUActionConnector.class.getCanonicalName());
 
 		} catch (Exception e) {
+			e.printStackTrace();
+			
 		}
 	}
 	

@@ -134,7 +134,7 @@ public class DistributedCVM extends AbstractDistributedCVM{
 			String fireStationId = fireStationIdsIterator.next();
 			abonnementCorrelateurTrafficLight.add(fireStationId);
 			String notificationInboundPortURI = AbstractPort.generatePortURI();
-			this.register(fireStationId, notificationInboundPortURI);
+			//this.register(fireStationId, notificationInboundPortURI);
 			//pompier
 			AbstractComponent.createComponent(
 				FireStation.class.getCanonicalName(),
@@ -153,7 +153,7 @@ public class DistributedCVM extends AbstractDistributedCVM{
 			
 			
 		
-		}else if (AbstractDistributedCVM.getThisJVMURI().equals(JVM2_URI)) {
+		}}else if (AbstractDistributedCVM.getThisJVMURI().equals(JVM2_URI)) {
 			AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {BUSID2,BUSID1,CSIP2_URI,CERIP2_URI,REOBIP2_URI});
 		}else {
 			System.out.println("Unknow JVM URI : " + AbstractDistributedCVM.getThisJVMURI());

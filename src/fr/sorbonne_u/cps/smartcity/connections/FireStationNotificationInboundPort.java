@@ -241,7 +241,7 @@ implements	FireStationNotificationCI
 	@Override
 	public void			notifyHighLadderTrucksAvailable(LocalTime occurrence)
 	throws Exception
-	{
+	{    
 		this.getOwner().handleRequest(
 			o -> {	((FireStationNotificationImplI)o).
 								notifyHighLadderTrucksAvailable(occurrence);

@@ -12,8 +12,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="lib" path="Simulation-21032022.jar"/>
 	<classpathentry kind="lib" path="BCM4Java-CyPhy-12102021.jar"/>
-	<classpathentry kind="lib" path="SmartCitySmall-14042022.jar"/>
 	<classpathentry kind="lib" path="SmartCityCommons-14042022.jar"/>
 	<classpathentry kind="lib" path="BCM4Java-13042022.jar"/>
+	<classpathentry kind="lib" path="SmartCitySmall-11052022.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

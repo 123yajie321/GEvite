@@ -20,6 +20,7 @@ import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
+import fr.sorbonne_u.exceptions.PreconditionException;
 import gevite.actions.ActionI;
 import gevite.actions.FireStationActions;
 import gevite.actions.SamuActions;
@@ -115,24 +116,42 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 						this.faop.getPortURI(),
 						this.actionInboundPort_URI,
 						FireStationActionConnector.class.getCanonicalName());	
+					System.out.println("action execute connected");
 			} catch (Exception e) {
-				throw new ComponentStartException(e) ;
+				e.printStackTrace();
 			}
 		}
 		
 		@Override
 		public synchronized void execute() throws Exception {
 			super.execute();
+			
 			String SendEventInbound_URI=this.cmop.registerEmitter(fireStationId);
 			String port_uriString=((PluginActionExecuteIn)this.getPlugin("pluginFireStationActionExecute_in"+fireStationId)).getActionEecutionService();
 			this.cmop.registerExecutor(this.fireStationId,port_uriString );
+			System.out.println(" begin pluginOut!!!");
 			PluginEmissionOut pluginOut = new PluginEmissionOut();
 			pluginOut.setInboundPortUri(SendEventInbound_URI);
 			pluginOut.setPluginURI("FireStationPluginOut_"+fireStationId);
+			System.out.println(" pluginOut setted uri");
+			
+			if(pluginOut != null&& pluginOut.getPluginURI() != null&&
+					!this.isInstalled(pluginOut.getPluginURI())&&
+					!pluginOut.isInitialised()&&this.isPluginFacilitiesConfigured()&&
+					!this.isInstalled(pluginOut.getPluginURI())
+					) {
+				System.out.println(" condition passer !!");
+			}
+			
 			this.installPlugin(pluginOut);
-			
+			System.out.println("Event emission plugin installed!!!!");
 			sendOutRef = pluginOut.getEmissionService();
-			
+			if(sendOutRef !=null) {
+				System.out.println("get send event out port");
+				
+			}else {
+				System.out.println("null !!!!");
+			}
 		}
 		
 		@Override
@@ -299,7 +318,7 @@ public class FireStation extends AbstractComponent implements FireStationNotific
 		@Override
 		public void			notifyNoHighLadderTruckAvailable(LocalTime occurrence)
 		throws Exception
-		{
+		{    
 			this.traceMessage("No high ladder truck available received at " +
 							  occurrence + "\n");
 			HighLadderTrucksBusy HighLadderTrucksBusy = new HighLadderTrucksBusy(occurrence);
