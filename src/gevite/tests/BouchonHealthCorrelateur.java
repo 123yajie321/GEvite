@@ -1,6 +1,7 @@
 package gevite.tests;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
@@ -26,12 +27,6 @@ public class BouchonHealthCorrelateur implements SamuCorrelatorStateI{
 			throws Exception {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public boolean procheSamuExiste() throws Exception {
-		// TODO Auto-generated method stub
-		return true;
 	}
 
 	@Override
@@ -75,6 +70,25 @@ public class BouchonHealthCorrelateur implements SamuCorrelatorStateI{
 	public void setMedcinAvailable() throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean samuNonSolliciteExiste(ArrayList<EventI> mathedEvents) throws Exception {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public void intervanetionMedecin(AbsolutePosition position, String personId, TypeOfSAMURessources type)
+			throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getExecutorId() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

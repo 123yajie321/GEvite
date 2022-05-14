@@ -1,6 +1,7 @@
 package gevite.tests;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
@@ -41,11 +42,7 @@ public class BouchonPompierCorrelateur implements PompierCorrelatorStateI{
 		
 	}
 
-	@Override
-	public boolean procheCaserneExiste() throws Exception {
-		// TODO Auto-generated method stub
-		return true;
-	}
+
 
 	@Override
 	public void propagerEvent(EventI event) throws Exception {
@@ -75,6 +72,17 @@ public class BouchonPompierCorrelateur implements PompierCorrelatorStateI{
 	public void setStandardTRucksAvailable() throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean caserneNonSolliciteExiste(ArrayList<EventI> mathedEvents) throws Exception {
+		return true;
+	}
+
+	@Override
+	public String getExecutorId() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

@@ -5,12 +5,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
 
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
+import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
 import gevite.correlateur.CorrelateurSamu;
 import gevite.correlateur.CorrelateurCepServicesOutboundPort;
 import gevite.correlateur.CorrelatorStateI;
@@ -25,10 +27,12 @@ public class S1Test {
 
 	@Test
 	void test() throws Exception {
-		EventBase base=new EventBase();
-		AlarmeSante aSante = new AlarmeSante();
-		CorrelatorStateI bouchonCorrelateur = (CorrelatorStateI) new BouchonHealthCorrelateur();
+		LocalTime time = LocalTime.of(8, 0);
 
+		EventBase base=new EventBase();
+		AlarmeSante aSante = new AlarmeSante(time);
+		CorrelatorStateI bouchonCorrelateur = (CorrelatorStateI) new BouchonHealthCorrelateur();
+		
 		
 		aSante.putProperty("type", TypeOfHealthAlarm.EMERGENCY);
 		aSante.putProperty("position", new AbsolutePosition(1,2) );

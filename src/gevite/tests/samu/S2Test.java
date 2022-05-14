@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,9 @@ public class S2Test {
 	@Test
 	void test() throws Exception {
 		EventBase base=new EventBase();
-		AlarmeSante aSante = new AlarmeSante();
+		LocalTime time = LocalTime.of(8, 0);
+
+		AlarmeSante aSante = new AlarmeSante(time);
 		CorrelatorStateI bouchonCorrelateur = (CorrelatorStateI) new BouchonHealthCorrelateur();
 
 		
@@ -44,7 +47,7 @@ public class S2Test {
 		assertEquals(new AbsolutePosition(1,2), result.get(0).getPropertyValue("position"));
 
 		assertTrue(s2.correlate(result));
-		//assertTrue(s2.filter(result, bouchonCorrelateur)); // ambulance is not available
+		assertFalse(s2.filter(result, bouchonCorrelateur)); // ambulance is not available
 		
 		s2.update(result, base);
 		assertFalse(base.appearsIn(aSante));

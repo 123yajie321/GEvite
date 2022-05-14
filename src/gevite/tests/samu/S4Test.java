@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,9 @@ public class S4Test {
 	@Test
 	void test() throws Exception {
 		EventBase base=new EventBase();
-		AlarmeSante aSante = new AlarmeSante();
+		LocalTime time = LocalTime.of(8, 0);
+
+		AlarmeSante aSante = new AlarmeSante(time);
 		CorrelatorStateI bouchonCorrelateur = (CorrelatorStateI) new BouchonHealthCorrelateur();
 
 		
