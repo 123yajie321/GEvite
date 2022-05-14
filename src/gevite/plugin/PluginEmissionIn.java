@@ -30,7 +30,7 @@ public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 		//this.addRequiredInterface(ReflectionCI.class);
 		//ReflectionOutboundPort  rop= new ReflectionOutboundPort(this.getOwner());
 		super.initialise();
-		//this.addOfferedInterface(EventEmissionCI.class);
+		this.addOfferedInterface(EventEmissionCI.class);
 		this.receivePluginInboundPort = new PluginCepEventRecieveInboundPort(PortUri,this.getPluginURI(),this.getOwner());
 		this.receivePluginInboundPort.publishPort();
 }
@@ -38,7 +38,7 @@ public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 	public void uninstall() throws Exception {
 		this.receivePluginInboundPort.unpublishPort();
 		this.receivePluginInboundPort.destroyPort();
-		this.removeRequiredInterface(EventEmissionCI.class);
+		this.removeOfferedInterface(EventEmissionCI.class);
 	}
 	
 	@Override

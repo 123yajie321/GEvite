@@ -41,8 +41,8 @@ import gevite.executeur.ExecuteurRegisterOutboundPort;
 import gevite.plugin.PluginActionExecuteIn;
 import gevite.plugin.PluginEmissionOut;
 import gevite.port.CepManagementOutboundPort;
-@OfferedInterfaces(offered= {ActionExecutionCI.class,TrafficLightNotificationCI.class})
-@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,TrafficLightActionCI.class})
+@OfferedInterfaces(offered= {TrafficLightNotificationCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,TrafficLightActionCI.class})
 public class TrafficLight extends AbstractComponent implements TrafficLightNotificationImplI,ActionExecutionImplementationCI{
 	//EmitteurOutboundPort
 	protected EventEmissionCI sendOutRef;

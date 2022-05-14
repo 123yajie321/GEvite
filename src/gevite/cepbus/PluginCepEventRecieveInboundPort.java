@@ -23,14 +23,17 @@ public class PluginCepEventRecieveInboundPort extends AbstractInboundPort implem
 	@Override
 	public void sendEvent(String emitterURI, EventI event) throws Exception {
 	
-		this.getOwner().handleRequest(
-				new AbstractComponent.AbstractService<Void>(this.getPluginURI()) {
+		this.getOwner().runTask(
+				new AbstractComponent.AbstractTask(this.getPluginURI()) {
 					@Override
-					public Void call() throws Exception{
-						((PluginEmissionIn)this.getServiceProviderReference()).
-						sendEvent(emitterURI, event);
+					public void run() {
+						try {
+							((PluginEmissionIn)this.getTaskProviderReference()).sendEvent(emitterURI, event);
+						} catch (Exception e) {
 						
-						return null;
+							e.printStackTrace();
+						}
+						
 					}
 				});
 		

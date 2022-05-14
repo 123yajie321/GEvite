@@ -54,8 +54,8 @@ import gevite.plugin.PluginActionExecuteIn;
 import gevite.plugin.PluginEmissionOut;
 import gevite.port.CepManagementOutboundPort;
 
-@OfferedInterfaces(offered= {ActionExecutionCI.class,FireStationNotificationCI.class})
-@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,FireStationActionCI.class})
+@OfferedInterfaces(offered= {FireStationNotificationCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,FireStationActionCI.class})
 public class FireStation extends AbstractComponent implements FireStationNotificationImplI,ActionExecutionImplementationCI{
 
 

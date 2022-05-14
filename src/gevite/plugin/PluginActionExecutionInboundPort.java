@@ -36,9 +36,7 @@ public class PluginActionExecutionInboundPort extends AbstractInboundPort implem
 						executeAction(a, params);
 					}
 				});
-		//System.out.println("fin Execute port");
-
-		//return	this.getOwner().handleRequest(samu -> ((Samu)samu).execute(a, params));
+		
 
 	}
 

@@ -54,8 +54,8 @@ import gevite.plugin.PluginEmissionOut;
 import gevite.port.CepManagementOutboundPort;
 
 
-@OfferedInterfaces(offered= {ActionExecutionCI.class,SAMUNotificationCI.class})
-@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,SAMUActionCI.class})
+@OfferedInterfaces(offered= {SAMUNotificationCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class,SAMUActionCI.class})
 public class Samu extends AbstractComponent implements SAMUNotificationImplI,ActionExecutionImplementationCI{
 	
 	protected EventEmissionCI sendOutRef;

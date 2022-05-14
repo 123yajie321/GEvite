@@ -18,11 +18,11 @@ public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecu
 	private static final long serialVersionUID=1L;
 	
 	protected PluginActionExecutionInboundPort actionExecutionPluginInboundPort;
-	//protected String PortUri; 
+
 	
 	public PluginActionExecuteIn() {
 		super();
-		//this.PortUri=uri;
+	
 	}
 	
 	@Override
@@ -32,10 +32,8 @@ public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecu
 	
 	@Override
 	public void initialise() throws Exception{
-		//this.addRequiredInterface(ReflectionCI.class);
-		//ReflectionOutboundPort  rop= new ReflectionOutboundPort(this.getOwner());
 		super.initialise();
-		//this.addOfferedInterface(ActionExecutionCI.class);
+		this.addOfferedInterface(ActionExecutionCI.class);
 		this.actionExecutionPluginInboundPort = new PluginActionExecutionInboundPort(this.getPluginURI(),this.getOwner());
 		this.actionExecutionPluginInboundPort.publishPort();
 }
@@ -43,7 +41,7 @@ public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecu
 	public void uninstall() throws Exception {
 		this.actionExecutionPluginInboundPort.unpublishPort();
 		this.actionExecutionPluginInboundPort.destroyPort();
-		this.removeRequiredInterface(ActionExecutionCI.class);
+		this.removeOfferedInterface(ActionExecutionCI.class);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package gevite.cep.cvm;
+package gevite.cvm;
 
 import java.time.LocalTime;
 import java.util.ArrayList;

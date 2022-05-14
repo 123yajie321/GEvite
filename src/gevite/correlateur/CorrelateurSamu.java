@@ -48,7 +48,7 @@ import gevite.plugin.PluginEmissionOut;
 import gevite.rule.RuleBase;
 
 @OfferedInterfaces(offered = {EventReceptionCI.class})
-@RequiredInterfaces(required = {CEPBusManagementCI.class,EventEmissionCI.class,ActionExecutionCI.class})
+@RequiredInterfaces(required = {CEPBusManagementCI.class})
 
 public class CorrelateurSamu extends AbstractCorrelateur implements SamuCorrelatorStateI{
 	
