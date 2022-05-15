@@ -85,7 +85,12 @@ public class BouchonPompierCorrelateur implements PompierCorrelatorStateI{
 		return null;
 	}
 
-	
+	@Override
+	public void declancheGeneralAlarme(AbsolutePosition position) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 	
 }

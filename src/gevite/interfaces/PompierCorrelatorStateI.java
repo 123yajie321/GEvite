@@ -22,6 +22,11 @@ public interface PompierCorrelatorStateI extends CorrelatorStateI{
 	public boolean caserneNonSolliciteExiste(ArrayList<EventI>mathedEvents)throws Exception;
 	public void propagerEvent(EventI event) throws Exception;
 	
+	
+	/*f9*/
+	public void declancheGeneralAlarme(AbsolutePosition position)throws Exception;
+
+	
 	/*f15*/
 	public void setHighLadderTrucksBusy()throws Exception;
 	/*f16*/

@@ -50,9 +50,6 @@ public class S1Test {
 		
 		s1.update(result, base);
 		assertFalse(base.appearsIn(aSante));
-		
-		
 	}
-
 
 }

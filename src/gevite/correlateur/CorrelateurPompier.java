@@ -79,7 +79,13 @@ public class CorrelateurPompier extends AbstractCorrelateur implements PompierCo
 	public void declancheSecondAlarme(AbsolutePosition position) throws Exception {
 		FireStationActions secondAlarmActions = FireStationActions.SecondAlarme;
 		this.caeop.executeAction(secondAlarmActions, new Serializable[] {position}); 			
-	}		
+	}	
+	
+	@Override
+	public void declancheGeneralAlarme(AbsolutePosition position) throws Exception {
+		FireStationActions secondAlarmActions = FireStationActions.GeneraleAlarme;
+		this.caeop.executeAction(secondAlarmActions, new Serializable[] {position}); 					
+	}
 
 	@Override
 	public void propagerEvent(EventI event) throws Exception {
@@ -132,7 +138,7 @@ public class CorrelateurPompier extends AbstractCorrelateur implements PompierCo
 	}
 	/**
 	 * Determine if there are any fire stations that have not already been asked about
-	 * @param ArrayList<EventI>
+	 * @param matchedEvents ArrayList of EventI
 	 * @return boolean
 	 * */
 	
@@ -173,8 +179,11 @@ public class CorrelateurPompier extends AbstractCorrelateur implements PompierCo
 			return nbCaserne > 1;
 		}else {
 			for(String s:fireStationlist) {
-				if( !(((String) pompiersollicite.getPropertyValue("FireStationIdList")).contains(s)))
+				ArrayList<String> fireStationList = (ArrayList<String>)pompiersollicite.getPropertyValue("FireStationIdList");
+				if( !fireStationList.contains(s)) {
 					return true;
+				}
+					
 			}
 		}
 		return false;		

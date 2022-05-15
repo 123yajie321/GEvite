@@ -25,8 +25,8 @@ public class F5 implements RuleI{
 		EventI dIntervention=null;
 		for (int i = 0 ; i < eb.numberOfEvents() && (dIntervention == null ) ; i++) {
 			EventI e = eb.getEvent(i);
-			if (e instanceof DemandeInterventionFeu && e.hasProperty("type")&& e.hasProperty("position")
-					&& e.getPropertyValue("type")== TypeOfFire.Building
+			if (e instanceof DemandeInterventionFeu && ((DemandeInterventionFeu) e).getCorrelatedEvents().get(0).hasProperty("type")&& ((DemandeInterventionFeu) e).getCorrelatedEvents().get(0).hasProperty("position")
+					&& ((DemandeInterventionFeu) e).getCorrelatedEvents().get(0).getPropertyValue("type")== TypeOfFire.Building
 			) {
 				dIntervention = e;
 			}
@@ -48,32 +48,28 @@ public class F5 implements RuleI{
 	@Override
 	public boolean filter(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
 		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
-		return pompierCorrelatorState.isEchelleDisponible();
-	}
-
-	@Override
-	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
-		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
 		DemandeInterventionFeu dInterventionPompier = (DemandeInterventionFeu)matchedEvents.get(0);
 		ArrayList<EventI> correlateEvents = dInterventionPompier.getCorrelatedEvents();
 		for(int i = 0; i< correlateEvents.size();i++) {
 			if(correlateEvents.get(i) instanceof PompierPlusPres) {
 				if(correlateEvents.get(i).getPropertyValue("pluspresStation").equals(pompierCorrelatorState.getExecutorId())) {
-					EventI alarmFeu = dInterventionPompier.getCorrelatedEvents().get(0);
-					pompierCorrelatorState.declancheFirstAlarme((AbsolutePosition) alarmFeu.getPropertyValue("position"), TypeOfFirefightingResource.HighLadderTruck);
+					return pompierCorrelatorState.isEchelleDisponible();
 				}
 				
 			}
 		}
+		return false;
 		
-		/*
-		PompierCorrelatorStateI pompierState = (PompierCorrelatorStateI) c;
-		EventI interventionCauseFeu = new InterventionCauseFeu();
-		ArrayList<EventI> eventComplex = matchedEvents;
-		eventComplex.add(interventionCauseFeu);
-		DemandeInterventionFeu demandeInterventionFeu = new DemandeInterventionFeu(eventComplex);
-		pompierState.propagerEvent(demandeInterventionFeu);
-		*/
+	}
+
+	@Override
+	public void act(ArrayList<EventI> matchedEvents, CorrelatorStateI c) throws Exception {
+		PompierCorrelatorStateI pompierCorrelatorState = (PompierCorrelatorStateI) c;
+		DemandeInterventionFeu dInterventionPompier = (DemandeInterventionFeu)matchedEvents.get(0);	
+		EventI alarmFeu = dInterventionPompier.getCorrelatedEvents().get(0);
+		pompierCorrelatorState.declancheFirstAlarme((AbsolutePosition) alarmFeu.getPropertyValue("position"), TypeOfFirefightingResource.HighLadderTruck);
+		
+		
 	}
 
 	@Override

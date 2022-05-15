@@ -133,7 +133,7 @@ public class CorrelateurSamu extends AbstractCorrelateur implements SamuCorrelat
 	
 	/**
 	 * Determine if there are any samu that have not already been asked about
-	 * @param ArrayList<EventI>
+	 * @param matchedEvents ArrayList of EventI
 	 * @return boolean
 	 * */
 	

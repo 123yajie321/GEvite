@@ -7,7 +7,7 @@ import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
 
 public interface CirculationCorrelatorStateI extends CorrelatorStateI{
 	
-	/**c1*/
+	/*c1*/
 	public void changePriority(TypeOfTrafficLightPriority p,IntersectionPosition position) throws Exception;
 	/*	
 	public boolean estAvantDestination(Serializable destination)throws Exception;

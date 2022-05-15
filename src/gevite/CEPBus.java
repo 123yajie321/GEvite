@@ -263,12 +263,16 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 	}
 	/**
 	 * Send the received event to the next bus, and to the correlator who subscribed to it
-	 * */
+	 * @param emitterURI String
+	 * @param event EventI
+	 * @param busId String
+	 * @throws Exception exception
+	 */
 	public void receiveEventOtherBus(String emitterURI, EventI event,String busId) throws Exception {
 		
 		if(busId==this.BusId) {
 			return; 
-		}
+		}	
 		else {
 			Pair<EventI, String> pair=new Pair<EventI, String>(event, emitterURI);
 			submitSendEventTask(pair,BusId);
@@ -278,6 +282,8 @@ public class CEPBus extends AbstractComponent implements EventEmissionImplementa
 
 	/**
 	 * Add a new send task to the thread pool
+	 * @param pair Pair of EventI, String
+	 * @param busId String
 	 * */
 	public void submitSendEventTask(Pair<EventI, String> pair,String busId) {
 		

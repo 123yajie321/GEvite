@@ -93,6 +93,5 @@ public class BouchonHealthCorrelateur implements SamuCorrelatorStateI{
 
 	
 	
-	
 
 }

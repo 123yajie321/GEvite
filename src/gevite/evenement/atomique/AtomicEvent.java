@@ -9,6 +9,7 @@ import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
 public abstract class AtomicEvent implements AtomicEventI {
 
 
+	private static final long serialVersionUID = 1L;
 	protected HashMap<String, Serializable> listPoperty;
 	protected LocalTime createtime;
 	

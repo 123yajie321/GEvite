@@ -93,16 +93,6 @@ public class F4 implements RuleI{
 		pompierState.propagerEvent(dIntervention);
 		
 		
-		
-		
-		/*
-		PompierCorrelatorStateI pompierState = (PompierCorrelatorStateI) c;
-		EventI interventionCauseFeu = new InterventionCauseFeu();
-		ArrayList<EventI> eventComplex = matchedEvents;
-		eventComplex.add(interventionCauseFeu);
-		DemandeInterventionFeu demandeInterventionFeu = new DemandeInterventionFeu(eventComplex);
-		pompierState.propagerEvent(demandeInterventionFeu);
-		*/
 	}
 
 	@Override
@@ -110,6 +100,4 @@ public class F4 implements RuleI{
 		eb.removeEvent(matchedEvents.get(0));
 		System.out.print(" F4 \n");
 	}
-	
-
 }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,9 @@ public class S18Test {
 	@Test
 	void test() throws Exception {
 		EventBase base=new EventBase();
-		AmbulancesAvailable abAvailable = new AmbulancesAvailable();
+		LocalTime time = LocalTime.of(8, 0);
+
+		AmbulancesAvailable abAvailable = new AmbulancesAvailable(time);
 		CorrelatorStateI bouchonCorrelateur = (CorrelatorStateI) new BouchonHealthCorrelateur();
 
 		base.addEvent(abAvailable);
@@ -43,6 +46,5 @@ public class S18Test {
 		
 		
 	}
-
 
 }

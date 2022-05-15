@@ -8,6 +8,9 @@ import gevite.evenement.atomique.AtomicEvent;
 
 public class DemandePriorite extends AtomicEvent{
 	
+
+	private static final long serialVersionUID = 1L;
+
 	public DemandePriorite(){
 		super();
 	}

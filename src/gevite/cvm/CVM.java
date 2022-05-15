@@ -21,7 +21,11 @@ import gevite.interfaces.CEPBusManagementCI;
 import gevite.rule.RuleBase;
 import gevite.rule.circulation.C1;
 import gevite.rule.pompier.F1;
+import gevite.rule.pompier.F10;
+import gevite.rule.pompier.F10bis;
 import gevite.rule.pompier.F11;
+import gevite.rule.pompier.F12;
+import gevite.rule.pompier.F13;
 import gevite.rule.pompier.F15;
 import gevite.rule.pompier.F16;
 import gevite.rule.pompier.F17;
@@ -29,7 +33,17 @@ import gevite.rule.pompier.F18;
 import gevite.rule.pompier.F2;
 import gevite.rule.pompier.F3;
 import gevite.rule.pompier.F4;
+import gevite.rule.pompier.F5;
+import gevite.rule.pompier.F6bis;
+import gevite.rule.pompier.F7;
+import gevite.rule.pompier.F8bis;
+import gevite.rule.pompier.F9;
 import gevite.rule.samu.S1;
+import gevite.rule.samu.S10bis;
+import gevite.rule.samu.S11;
+import gevite.rule.samu.S12bis;
+import gevite.rule.samu.S13;
+import gevite.rule.samu.S15;
 import gevite.rule.samu.S16;
 import gevite.rule.samu.S17;
 import gevite.rule.samu.S18;
@@ -41,6 +55,7 @@ import gevite.rule.samu.S5;
 import gevite.rule.samu.S6;
 import gevite.rule.samu.S7;
 import gevite.rule.samu.S8;
+import gevite.rule.samu.S9;
 
 public class CVM extends AbstractSmartCityCVM {
 	static int correlateurSamuid=1;
@@ -73,6 +88,15 @@ public class CVM extends AbstractSmartCityCVM {
 		S6 S6 = new S6();
 		S7 S7 = new S7();
 		S8 S8 = new S8();
+		S9 S9 = new S9();
+		S10bis S10bis = new S10bis();
+		S11 S11 = new S11();
+		S12bis S12bis = new S12bis();
+		S13 S13 = new S13();
+		S15 S15 = new S15();
+
+
+
 		S16 S16= new S16();
 		S17 S17 = new S17();
 		S18 S18 = new S18();
@@ -86,6 +110,12 @@ public class CVM extends AbstractSmartCityCVM {
 		ruleBaseSamu.addRule(S6);
 		ruleBaseSamu.addRule(S7);
 		ruleBaseSamu.addRule(S8);
+		ruleBaseSamu.addRule(S9);
+		ruleBaseSamu.addRule(S10bis);
+		ruleBaseSamu.addRule(S11);
+		ruleBaseSamu.addRule(S12bis);
+		ruleBaseSamu.addRule(S13);
+		ruleBaseSamu.addRule(S15);
 		ruleBaseSamu.addRule(S16);
 		ruleBaseSamu.addRule(S17);
 		ruleBaseSamu.addRule(S18);
@@ -96,7 +126,16 @@ public class CVM extends AbstractSmartCityCVM {
 		F2 f2 = new F2();
 		F3 f3 = new F3();
 		F4 f4 = new F4();
+		F5 f5 = new F5();
+		F6bis f6bis = new F6bis();
+		F7 f7 = new F7();
+		F8bis f8bis = new F8bis();
+		F9 f9 = new F9();
+		F10 f10 = new F10();
+		F10bis f10bis = new F10bis();
 		F11 f11 = new F11();
+		F12 f12 = new F12();
+		F13 f13 = new F13();
 		F15 f15 = new F15();
 		F16 f16= new F16();
 		F17 f17 = new F17();
@@ -106,12 +145,22 @@ public class CVM extends AbstractSmartCityCVM {
 		ruleBasePompier.addRule(f2);
 		ruleBasePompier.addRule(f3);
 		ruleBasePompier.addRule(f4);
+		ruleBasePompier.addRule(f5);
+		ruleBasePompier.addRule(f6bis);
+		ruleBasePompier.addRule(f7);
+		ruleBasePompier.addRule(f8bis);
+		ruleBasePompier.addRule(f9);
+		ruleBasePompier.addRule(f10);
+		ruleBasePompier.addRule(f10bis);
+
 		ruleBasePompier.addRule(f11);
+		ruleBasePompier.addRule(f12);
+		ruleBasePompier.addRule(f13);
+
 		ruleBasePompier.addRule(f15);
 		ruleBasePompier.addRule(f16);
 		ruleBasePompier.addRule(f17);
 		ruleBasePompier.addRule(f18);
-		
 		RuleBase ruleBaseTrafficLight = new RuleBase();
 		C1 c1 = new C1();
 		ruleBaseTrafficLight.addRule(c1);

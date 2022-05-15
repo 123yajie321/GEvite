@@ -138,6 +138,9 @@ public abstract class AbstractCorrelateur extends AbstractComponent {
 	/**
 	 * recevoir les evenements ,les mettre dans le tampon,
 	 * submit le tache au pool thread pour declencher les actions
+	 * @param emitterURI String
+	 * @param event EventI
+	 * @throws Exception exception
 	 */
 	
 	public void addEvent(String emitterURI, EventI event) throws Exception {
@@ -166,6 +169,7 @@ public abstract class AbstractCorrelateur extends AbstractComponent {
 	/**
 	 * premettre de recuprer l'excuteur que le correlateur connete avec
 	 * @return String
+	 * @throws Exception exception
 	 */
 	
 	public String getExecutorId() throws Exception {

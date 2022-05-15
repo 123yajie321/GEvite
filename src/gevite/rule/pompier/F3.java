@@ -111,6 +111,5 @@ public class F3 implements RuleI{
 		eb.removeEvent(matchedEvents.get(0));
 		System.out.print(" F3 \n");
 	}
-	
 
 }
