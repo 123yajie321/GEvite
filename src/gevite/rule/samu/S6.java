@@ -10,8 +10,6 @@ import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.descriptions.AbstractSmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
 import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
-import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.AtomicEvent;
@@ -20,6 +18,8 @@ import gevite.evenement.atomique.samu.SamuDejaSollicite;
 import gevite.evenement.atomique.samu.SamuPlusPres;
 import gevite.evenement.atomique.samu.SignaleManuel;
 import gevite.evenement.complexe.samu.DemandeInterventionSamu;
+import gevite.interfaces.CorrelatorStateI;
+import gevite.interfaces.SamuCorrelatorStateI;
 import gevite.rule.RuleI;
 
 public class S6 implements RuleI{

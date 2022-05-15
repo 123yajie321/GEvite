@@ -7,17 +7,13 @@ import java.util.ArrayList;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFire;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
-import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
-import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.PompierCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.pompier.AlarmFeu;
-import gevite.evenement.atomique.pompier.AlarmeFeuCause;
-import gevite.evenement.atomique.samu.AlarmeSante;
-import gevite.evenement.atomique.samu.SignaleManuel;
 import gevite.evenement.complexe.pompier.PremiereAlarmFeu;
 import gevite.evenement.complexe.pompier.SecondAlarmFeu;
+import gevite.interfaces.CorrelatorStateI;
+import gevite.interfaces.PompierCorrelatorStateI;
 import gevite.rule.RuleI;
 
 public class F11 implements RuleI{

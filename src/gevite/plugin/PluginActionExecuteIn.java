@@ -1,23 +1,26 @@
 package gevite.plugin;
 
 import java.io.Serializable;
-
 import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
 import gevite.actions.ActionI;
-import gevite.cep.ActionExecutionCI;
-import gevite.cep.ActionExecutionImplementationCI;
-import gevite.cep.EventEmissionCI;
-import gevite.cep.ResponseI;
-import gevite.cepbus.CEPBus;
-import gevite.cepbus.CepEventRecieveInboundPort;
-import gevite.cepbus.PluginCepEventRecieveInboundPort;
-import gevite.evenement.EventI;
+import gevite.interfaces.ActionExecutionCI;
+import gevite.interfaces.ActionExecutionImplementationI;
+import gevite.interfaces.ResponseI;
+import gevite.port.ActionExecutionInboundPortForPlugin;
+
+/**
+ * The class <code>PluginActionExecuteIn</code> implements the the executor component side  plug-in
+ * for the <code>ActionExecutionCI</code> component interface and associated ports and
+ * connectors.
+ *    
+ * @author Yajie LIU, Zimeng ZHANG
+ */
 
 public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecutionCI{
 	private static final long serialVersionUID=1L;
 	
-	protected PluginActionExecutionInboundPort actionExecutionPluginInboundPort;
+	protected ActionExecutionInboundPortForPlugin actionExecutionPluginInboundPort;
 
 	
 	public PluginActionExecuteIn() {
@@ -34,7 +37,7 @@ public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecu
 	public void initialise() throws Exception{
 		super.initialise();
 		this.addOfferedInterface(ActionExecutionCI.class);
-		this.actionExecutionPluginInboundPort = new PluginActionExecutionInboundPort(this.getPluginURI(),this.getOwner());
+		this.actionExecutionPluginInboundPort = new ActionExecutionInboundPortForPlugin(this.getPluginURI(),this.getOwner());
 		this.actionExecutionPluginInboundPort.publishPort();
 }
 	@Override
@@ -47,7 +50,7 @@ public class PluginActionExecuteIn extends AbstractPlugin implements ActionExecu
 	@Override
 	public ResponseI executeAction(ActionI a, Serializable[] params) throws Exception {
 	
-		return ((ActionExecutionImplementationCI)this.getOwner()).executeAction(a, params);
+		return ((ActionExecutionImplementationI)this.getOwner()).executeAction(a, params);
 		
 	
 	}

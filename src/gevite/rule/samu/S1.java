@@ -7,11 +7,11 @@ import javax.swing.text.html.HTML.Tag;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
-import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.interfaces.CorrelatorStateI;
+import gevite.interfaces.SamuCorrelatorStateI;
 import gevite.rule.RuleI;
 
 public class S1 implements RuleI {

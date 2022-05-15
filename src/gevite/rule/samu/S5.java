@@ -8,13 +8,13 @@ import java.util.concurrent.TimeUnit;
 
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
 import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
-import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.AtomicEvent;
 import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.atomique.samu.SignaleManuel;
+import gevite.interfaces.CorrelatorStateI;
+import gevite.interfaces.SamuCorrelatorStateI;
 import gevite.rule.RuleI;
 
 public class S5 implements RuleI{

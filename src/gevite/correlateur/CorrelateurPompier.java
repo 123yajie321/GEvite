@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.annotations.OfferedInterfaces;
 import fr.sorbonne_u.components.annotations.RequiredInterfaces;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
@@ -16,27 +15,28 @@ import fr.sorbonne_u.cps.smartcity.descriptions.AbstractSmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
 import gevite.actions.FireStationActions;
-import gevite.actions.SamuActions;
-import gevite.cep.ActionExecutionCI;
-import gevite.cep.CEPBusManagementCI;
-import gevite.cep.EventEmissionCI;
-import gevite.cep.EventReceptionCI;
-import gevite.cepbus.CEPBus;
-import gevite.connector.ConnectorCorrelateurCepServices;
-import gevite.connector.ConnectorCorrelateurExecutor;
-import gevite.connector.ConnectorCorrelateurPompier;
-import gevite.connector.ConnectorCorrelateurSendCep;
-import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.AtomicEvent;
 import gevite.evenement.atomique.pompier.PompierDejaSollicite;
-import gevite.evenement.atomique.samu.SamuDejaSollicite;
 import gevite.evenement.complexe.ComplexEvent;
-import gevite.evenement.complexe.samu.ConsciousFall;
-import gevite.evenement.complexe.samu.DemandeInterventionSamu;
-import gevite.plugin.PluginActionExecuteOut;
-import gevite.plugin.PluginEmissionOut;
+import gevite.interfaces.CEPBusManagementCI;
+import gevite.interfaces.EventReceptionCI;
+import gevite.interfaces.PompierCorrelatorStateI;
 import gevite.rule.RuleBase;
+/**
+ * The class <code>CorrelateurPompier</code> implements a component that can
+ * send and receive events, demand l'executor fire staion connected to execute actions
+ * 
+ *  <p>
+ * The component implements the {@code PompierCorrelatorStateI} interface
+ * to verify the correlate condition,trigger demand of execution action
+ * </p>
+ *    
+ * @author Yajie LIU, Zimeng ZHANG
+ */
+
+
+
 
 @OfferedInterfaces(offered = {EventReceptionCI.class})
 @RequiredInterfaces(required = {CEPBusManagementCI.class})
@@ -44,8 +44,9 @@ import gevite.rule.RuleBase;
 public class CorrelateurPompier extends AbstractCorrelateur implements PompierCorrelatorStateI  {
 	
 	
-	
+	/**boolean to stock  the availability of HighLadderTrucks */
 	protected AtomicBoolean echelleAvailable;
+	/**boolean to stock  the availability of camion */
 	protected AtomicBoolean camionAvailable;
 	
 	protected CorrelateurPompier(String correlateurId,String executor,ArrayList<String>emitters,RuleBase ruleBase,String busManagementInboundPortUri) throws Exception{
@@ -69,7 +70,6 @@ public class CorrelateurPompier extends AbstractCorrelateur implements PompierCo
 	@Override
 	public void declancheFirstAlarme(AbsolutePosition position, TypeOfFirefightingResource type) throws Exception {
 		FireStationActions firstAlarmActions = FireStationActions.FirstAlarme;
-		
 		this.caeop.executeAction(firstAlarmActions, new Serializable[] {position,type}); 			
 	}
 
@@ -77,7 +77,7 @@ public class CorrelateurPompier extends AbstractCorrelateur implements PompierCo
 
 	@Override
 	public void declancheSecondAlarme(AbsolutePosition position) throws Exception {
-		FireStationActions secondAlarmActions = FireStationActions.FirstAlarme;
+		FireStationActions secondAlarmActions = FireStationActions.SecondAlarme;
 		this.caeop.executeAction(secondAlarmActions, new Serializable[] {position}); 			
 	}		
 
@@ -130,6 +130,11 @@ public class CorrelateurPompier extends AbstractCorrelateur implements PompierCo
 		this.camionAvailable.getAndSet(true);
 		
 	}
+	/**
+	 * Determine if there are any fire stations that have not already been asked about
+	 * @param ArrayList<EventI>
+	 * @return boolean
+	 * */
 	
 	@Override
 	public boolean caserneNonSolliciteExiste(ArrayList<EventI>matchedEvents)throws Exception {

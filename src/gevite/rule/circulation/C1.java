@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
-import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.SamuCorrelatorStateI;
-import gevite.correlateur.CirculationCorrelatorStateI;
 import gevite.evenement.EventBaseI;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.circulation.AttentePassage;
@@ -14,6 +11,9 @@ import gevite.evenement.atomique.circulation.DemandePriorite;
 import gevite.evenement.atomique.circulation.PassageVehicule;
 import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.complexe.circulation.AttentePassageComplexe;
+import gevite.interfaces.CirculationCorrelatorStateI;
+import gevite.interfaces.CorrelatorStateI;
+import gevite.interfaces.SamuCorrelatorStateI;
 import gevite.rule.RuleI;
 
 public class C1 implements RuleI{

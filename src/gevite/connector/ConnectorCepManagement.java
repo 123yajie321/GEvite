@@ -1,8 +1,13 @@
 package gevite.connector;
 
 import fr.sorbonne_u.components.connectors.AbstractConnector;
-import gevite.cep.CEPBusManagementCI;
+import gevite.interfaces.CEPBusManagementCI;
 
+/**
+ * The class <code>ConnectorCepManagement</code> implements a connector for the
+ * <code>CEPBusManagementCI</code> component interface.
+ * @author	Yajie LIU, Zimeng ZHANG
+ */
 public class ConnectorCepManagement extends AbstractConnector implements CEPBusManagementCI {
 
 	@Override

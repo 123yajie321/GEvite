@@ -10,13 +10,12 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 import gevite.correlateur.CorrelateurSamu;
-import gevite.correlateur.CorrelateurCepServicesOutboundPort;
-import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
 import gevite.evenement.atomique.samu.AmbulancesAvailable;
+import gevite.interfaces.CorrelatorStateI;
+import gevite.interfaces.SamuCorrelatorStateI;
 import gevite.rule.samu.S1;
 import gevite.rule.samu.S18;
 import gevite.tests.BouchonHealthCorrelateur;

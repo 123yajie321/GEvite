@@ -9,40 +9,54 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import fr.sorbonne_u.components.AbstractComponent;
 import fr.sorbonne_u.components.exceptions.ComponentShutdownException;
 import fr.sorbonne_u.components.exceptions.ComponentStartException;
-import gevite.cep.ActionExecutionCI;
-import gevite.cep.EventEmissionCI;
-import gevite.cepbus.CEPBus;
-import gevite.connector.ConnectorCorrelateurCepServices;
+import gevite.CEPBus;
+import gevite.connector.ConnectorCepManagement;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
+import gevite.interfaces.ActionExecutionCI;
+import gevite.interfaces.CorrelatorStateI;
+import gevite.interfaces.EventEmissionCI;
 import gevite.plugin.PluginActionExecuteOut;
 import gevite.plugin.PluginEmissionOut;
+import gevite.port.CepManagementOutboundPort;
+import gevite.port.CorrelateurRecieveEventInboundPort;
 import gevite.rule.RuleBase;
+
+/**
+ * The class <code>AbstractCorrelateur</code> extends 
+ * AbstractComponent,represents the basic information and methods for correlators    
+ * @author Yajie LIU, Zimeng ZHANG
+ */
 
 public abstract class AbstractCorrelateur extends AbstractComponent {
 	
-	//Outbound port pour envoyer event au bus 
+	/** Outbound port pour envoyer event au bus */
 	protected EventEmissionCI cscop;
-	//Outbound port pour delancer l'action de l'executor
+	/** Outbound port pour delancer l'action de l'executor */
 	protected ActionExecutionCI caeop;
-	
+	/** Inbound port pour recevoir Evnet depuis CepBus  */
 	protected CorrelateurRecieveEventInboundPort cercip;
-	
-	protected CorrelateurCepServicesOutboundPort ccrop;
+	/** Outbound port demande managenement de CepBus */
+	protected CepManagementOutboundPort ccrop;
+	/**Base de event de correlateur*/
 	protected EventBase baseEvent;
+	/**Base de regle de correlateur*/
 	protected RuleBase baseRule;
+	/**Identifiant de correlateur*/
 	protected String correlateurId;
+	/**l'executeur que le correlateur connecte*/
 	protected String  executor;
+	/**Le URI de Inbound Port de destination,ici c'est le bus */
 	protected String sendEventInboundPort;
-	//l'ensemble des émetteurs auxquels le correlateur est abonné
+	/**l'ensemble des émetteurs que le correlateur  abonne */
 	protected ArrayList<String>emitters;
-	
+	/**le tampon qui stocke Event que le correlateur recu et n'a pas encore ajoute au event base */
 	protected LinkedBlockingQueue<EventI>bufferEvents;
-	
-	//pool de thread pour recevoir des evenement depuis le bus  
+	/**pool de thread pour recevoir des evenement depuis le bus  */
 	protected ThreadPoolExecutor recieveExecutor;
-	//pool de thread pour ajouter les evenements recu au base et declencher les regles
+	/**pool de thread pour ajouter les evenements recu au base et declencher les regles */
 	protected ThreadPoolExecutor actionExecutor;
+	/**uri of inbound port de CEPBus pour le  management*/
 	protected String busManagementInboundPortUri;
 	
 	
@@ -51,7 +65,7 @@ public abstract class AbstractCorrelateur extends AbstractComponent {
 		this.busManagementInboundPortUri=busManagementInboundPortUri;
 		baseEvent =new EventBase();
 		this.cercip= new CorrelateurRecieveEventInboundPort(this);
-		this.ccrop=new CorrelateurCepServicesOutboundPort(this);
+		this.ccrop=new CepManagementOutboundPort(this);
 		this.correlateurId= correlateurId;
 		this.executor=executor;
 		this.emitters=emitters;
@@ -69,7 +83,7 @@ public abstract class AbstractCorrelateur extends AbstractComponent {
 	public synchronized void start()throws ComponentStartException{
 		try {
 			super.start();
-			this.doPortConnection(this.ccrop.getPortURI(), busManagementInboundPortUri,ConnectorCorrelateurCepServices.class.getCanonicalName() );
+			this.doPortConnection(this.ccrop.getPortURI(), busManagementInboundPortUri,ConnectorCepManagement.class.getCanonicalName() );
 			
 		} catch (Exception e) {
 			
@@ -87,20 +101,17 @@ public abstract class AbstractCorrelateur extends AbstractComponent {
 		pluginSendOut.setInboundPortUri(sendEventInboundPort);
 		pluginSendOut.setPluginURI("CorrelateurEmissionPluginOut_"+correlateurId);
 		this.installPlugin(pluginSendOut);
-		
 		cscop = pluginSendOut.getEmissionService();
-		
 		PluginActionExecuteOut pluginExecuteOut = new PluginActionExecuteOut();
 		String ActionExecutionInboundPort=this.ccrop.getExecutorInboundPortURI(executor);
 		pluginExecuteOut.setInboundPortUri(ActionExecutionInboundPort);
 		pluginExecuteOut.setPluginURI("CorrelateurActionExecutePluginOut_"+correlateurId);
 		this.installPlugin(pluginExecuteOut);
 		this.caeop=pluginExecuteOut.getActionEecutionService();
-		
 		for(String emitter: emitters) {
 			this.ccrop.subscribe(correlateurId, emitter);
+			}
 		}
-	}
 	
 
 	@Override
@@ -124,6 +135,11 @@ public abstract class AbstractCorrelateur extends AbstractComponent {
 			super.shutdown();
 	}
 	
+	/**
+	 * recevoir les evenements ,les mettre dans le tampon,
+	 * submit le tache au pool thread pour declencher les actions
+	 */
+	
 	public void addEvent(String emitterURI, EventI event) throws Exception {
 
 		Runnable RecieveTask=()->{
@@ -145,6 +161,12 @@ public abstract class AbstractCorrelateur extends AbstractComponent {
 		
 		actionExecutor.submit(ActionTask);
 	}
+	
+	
+	/**
+	 * premettre de recuprer l'excuteur que le correlateur connete avec
+	 * @return String
+	 */
 	
 	public String getExecutorId() throws Exception {
 		return this.executor;

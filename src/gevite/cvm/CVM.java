@@ -10,14 +10,14 @@ import fr.sorbonne_u.cps.smartcity.AbstractSmartCityCVM;
 import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.utils.TimeManager;
-import gevite.cep.CEPBusManagementCI;
-import gevite.cepbus.CEPBus;
-import gevite.connector.ConnectorCorrelateurCepServices;
-import gevite.connector.ConnectorEmitterRegister;
+import gevite.CEPBus;
 import gevite.correlateur.CorrelateurPompier;
 import gevite.correlateur.CorrelateurSamu;
 import gevite.correlateur.CorrelateurtTraffic;
-import gevite.fireStation.FireStation;
+import gevite.facades.FireStation;
+import gevite.facades.Samu;
+import gevite.facades.TrafficLight;
+import gevite.interfaces.CEPBusManagementCI;
 import gevite.rule.RuleBase;
 import gevite.rule.circulation.C1;
 import gevite.rule.pompier.F1;
@@ -41,8 +41,6 @@ import gevite.rule.samu.S5;
 import gevite.rule.samu.S6;
 import gevite.rule.samu.S7;
 import gevite.rule.samu.S8;
-import gevite.samu.Samu;
-import gevite.traffic.TrafficLight;
 
 public class CVM extends AbstractSmartCityCVM {
 	static int correlateurSamuid=1;
@@ -64,18 +62,6 @@ public class CVM extends AbstractSmartCityCVM {
 	
 	@Override
 	public void deploy() throws Exception {
-		/*
-		
-		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {});
-		String desURI = AbstractComponent.createComponent(Emetteur.class.getCanonicalName(), new Object[] {});
-		this.doPortConnection(desURI, Emetteur.EROP_URI, CEPBus.CRIP_URI, ConnectorEmitterRegister.class.getCanonicalName());
-
-		String correlateurURI = AbstractComponent.createComponent(Correlateur.class.getCanonicalName(), new Object[] {});
-		//System.out.println(correlateurURI+";"+Correlateur.CCROP_URI+";"+CEPBus.CCRIP_URI);
-		this.doPortConnection(correlateurURI,Correlateur.CCROP_URI, CEPBus.CRIP_URI, ConnectorCorrelateurRegister.class.getCanonicalName());
-
-		super.deploy();
-		*/
 		
 		// create RuleBase
 		RuleBase ruleBaseSamu = new RuleBase();
@@ -139,7 +125,7 @@ public class CVM extends AbstractSmartCityCVM {
 	
 
 		//create CEPBus
-		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {BUSID1,BUSID2,CSIP1_URI,CERIP1_URI,REOBIP1_URI});
+		AbstractComponent.createComponent(CEPBus.class.getCanonicalName(), new Object[] {BUSID1,CSIP1_URI,CERIP1_URI/*,REOBIP1_URI,REOBIP2_URI*/});
 
 
 		ArrayList<String>samuCorrelateurAbonnement=new ArrayList<String>();
@@ -147,139 +133,136 @@ public class CVM extends AbstractSmartCityCVM {
 		ArrayList<String> fireStations = new ArrayList<String>();
 		ArrayList<String> samus = new ArrayList<String>();
 		
-		//String correlateurURI = AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), new Object[] {});
+
+		Iterator<String> fireStationIdsIterator =
+					SmartCityDescriptor.createFireStationIdIterator();
+		while (fireStationIdsIterator.hasNext()) {
+			String fireStationId = fireStationIdsIterator.next();
+			abonnementCorrelateurTrafficLight.add(fireStationId);
+			String notificationInboundPortURI = AbstractPort.generatePortURI();
+			this.register(fireStationId, notificationInboundPortURI);
+			//pompier
+			AbstractComponent.createComponent(
+				FireStation.class.getCanonicalName(),
+				new Object[]{
+						notificationInboundPortURI,
+						fireStationId,
+						SmartCityDescriptor.
+										getActionInboundPortURI(fireStationId),
+										CSIP1_URI
+						});
+			
+			String correlateurId="correlateurPompier"+correlateurPompierid;
+			correlateurPompierid++;
+			fireSationCorrelateursAbonnement.add(correlateurId);
+			fireStations.add(fireStationId);
+			
+			
+		}
+		
+		
+		for(int i=0;i<correlateurPompierid-1;i++) {
+			int id=i+1;
+			String correlateurId="correlateurPompier"+id;
+			 ArrayList<String> abonnement=new ArrayList<>();
+			   abonnement.addAll(fireSationCorrelateursAbonnement);
+			   abonnement.add(fireStations.get(i));
+			//correlateur pompier
+			AbstractComponent.createComponent(CorrelateurPompier.class.getCanonicalName(), 
+					new Object[]{
+							correlateurId,
+							fireStations.get(i),
+							abonnement,
+							ruleBasePompier,
+							CSIP1_URI
+
+					});
+		}
 		
 		
 
-				Iterator<String> fireStationIdsIterator =
-							SmartCityDescriptor.createFireStationIdIterator();
-				while (fireStationIdsIterator.hasNext()) {
-					String fireStationId = fireStationIdsIterator.next();
-					abonnementCorrelateurTrafficLight.add(fireStationId);
-					String notificationInboundPortURI = AbstractPort.generatePortURI();
-					this.register(fireStationId, notificationInboundPortURI);
-					//pompier
-					AbstractComponent.createComponent(
-						FireStation.class.getCanonicalName(),
-						new Object[]{
-								notificationInboundPortURI,
-								fireStationId,
-								SmartCityDescriptor.
-												getActionInboundPortURI(fireStationId),
-												CSIP1_URI
-								});
-					
-					String correlateurId="correlateurPompier"+correlateurPompierid;
-					correlateurPompierid++;
-					fireSationCorrelateursAbonnement.add(correlateurId);
-					fireStations.add(fireStationId);
-					//fireSationCorrelateursAbonnement.add(fireStationId);
-					//correlateur pompier
-					
-				}
-				
-				for(int i=0;i<correlateurPompierid-1;i++) {
-					int id=i+1;
-					String correlateurId="correlateurPompier"+id;
-					 ArrayList<String> abonnement=new ArrayList<>();
-					   abonnement.addAll(fireSationCorrelateursAbonnement);
-					   abonnement.add(fireStations.get(i));
-					//correlateur pompier
-					AbstractComponent.createComponent(CorrelateurPompier.class.getCanonicalName(), 
-							new Object[]{
-									correlateurId,
-									fireStations.get(i),
-									abonnement,
-									ruleBasePompier,
-									CSIP1_URI
-
+		Iterator<String> samuStationsIditerator =
+					SmartCityDescriptor.createSAMUStationIdIterator();
+		while (samuStationsIditerator.hasNext()) {
+			String samuStationId = samuStationsIditerator.next();
+			abonnementCorrelateurTrafficLight.add(samuStationId);
+			String notificationInboundPortURI = AbstractPort.generatePortURI();
+			this.register(samuStationId, notificationInboundPortURI);
+			//samu
+			AbstractComponent.createComponent(
+					Samu.class.getCanonicalName(),
+					new Object[]{
+							notificationInboundPortURI,
+							samuStationId,
+							SmartCityDescriptor.
+										getActionInboundPortURI(samuStationId),CSIP1_URI
 							});
-				}
-				
-				
-
-				Iterator<String> samuStationsIditerator =
-							SmartCityDescriptor.createSAMUStationIdIterator();
-				while (samuStationsIditerator.hasNext()) {
-					String samuStationId = samuStationsIditerator.next();
-					abonnementCorrelateurTrafficLight.add(samuStationId);
-					String notificationInboundPortURI = AbstractPort.generatePortURI();
-					this.register(samuStationId, notificationInboundPortURI);
-					//samu
-					AbstractComponent.createComponent(
-							Samu.class.getCanonicalName(),
-							new Object[]{
-									notificationInboundPortURI,
-									samuStationId,
-									SmartCityDescriptor.
-												getActionInboundPortURI(samuStationId),CSIP1_URI
-									});
-					String correlateurId="correlateurSamu"+correlateurSamuid;
-					correlateurSamuid++;
-					samus.add(samuStationId);
-					samuCorrelateurAbonnement.add(correlateurId);
-					//samuCorrelateurAbonnement.add(samuStationId);
-				
-				}
-				
-				for(int i=0;i<correlateurSamuid-1;i++) {
-					int id=i+1;
-					String correlateurId="correlateurSamu"+id;
-				   ArrayList<String> abonnement=new ArrayList<>();
-				   abonnement.addAll(samuCorrelateurAbonnement);
-				   abonnement.add(samus.get(i));
-				
-					AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), 
-							new Object[]{
-									correlateurId,
-									samus.get(i),
-									abonnement,
-									ruleBaseSamu,CSIP1_URI
-							});
-				}
-				
-				
-				Iterator<IntersectionPosition> trafficLightsIterator =
-							SmartCityDescriptor.createTrafficLightPositionIterator();
-				while (trafficLightsIterator.hasNext()) {
-					IntersectionPosition p = trafficLightsIterator.next();
-					String notificationInboundPortURI = AbstractPort.generatePortURI();
-					this.register(p.toString(), notificationInboundPortURI);
-					String trafficId = "trafficLight "+ trafficLightId;
-					trafficLightIdList.add(trafficId);
-					abonnementCorrelateurTrafficLight.add(trafficId);
-					
-					//trafficLight
-					AbstractComponent.createComponent(
-							TrafficLight.class.getCanonicalName(),
-							new Object[]{
-									notificationInboundPortURI,
-									p,
-									SmartCityDescriptor.
-														getActionInboundPortURI(p),
-									trafficId,CSIP1_URI
-									});
-					trafficLightId++;
-				}
-				
-				
-				for(int i=0;i<trafficLightId;i++) {
-					
-					String correlateurId="correlateurTrafficLight "+correlateurTrafficLight;
-					correlateurTrafficLight++;
-						
-					ArrayList<String>trafficLight=new ArrayList<String>();
-					trafficLight.add(trafficLightIdList.get(i));
-					AbstractComponent.createComponent(CorrelateurtTraffic.class.getCanonicalName(), 
-							new Object[]{
-									correlateurId,
-									trafficLightIdList.get(i),
-									abonnementCorrelateurTrafficLight,
-									ruleBaseTrafficLight,CSIP1_URI
-							});
-				}
-				super.deploy();
+			String correlateurId="correlateurSamu"+correlateurSamuid;
+			correlateurSamuid++;
+			samus.add(samuStationId);
+			samuCorrelateurAbonnement.add(correlateurId);
 		
+		}
+		
+		for(int i=0;i<correlateurSamuid-1;i++) {
+			int id=i+1;
+			String correlateurId="correlateurSamu"+id;
+		   ArrayList<String> abonnement=new ArrayList<>();
+		   abonnement.addAll(samuCorrelateurAbonnement);
+		   abonnement.add(samus.get(i));
+		
+			AbstractComponent.createComponent(CorrelateurSamu.class.getCanonicalName(), 
+					new Object[]{
+							correlateurId,
+							samus.get(i),
+							abonnement,
+							ruleBaseSamu,CSIP1_URI
+					});
+		}
+		
+		
+		Iterator<IntersectionPosition> trafficLightsIterator =
+					SmartCityDescriptor.createTrafficLightPositionIterator();
+		while (trafficLightsIterator.hasNext()) {
+			IntersectionPosition p = trafficLightsIterator.next();
+			String notificationInboundPortURI = AbstractPort.generatePortURI();
+			this.register(p.toString(), notificationInboundPortURI);
+			String trafficId = "trafficLight "+ trafficLightId;
+			trafficLightIdList.add(trafficId);
+			
+			//trafficLight
+			AbstractComponent.createComponent(
+					TrafficLight.class.getCanonicalName(),
+					new Object[]{
+							notificationInboundPortURI,
+							p,
+							SmartCityDescriptor.
+												getActionInboundPortURI(p),
+							trafficId,CSIP1_URI
+							});
+			trafficLightId++;
+		}
+			
+		
+		
+		for(int i=0;i<trafficLightId;i++) {
+			
+			String correlateurId="correlateurTrafficLight "+correlateurTrafficLight;
+			correlateurTrafficLight++;
+				
+			 ArrayList<String> abonnement=new ArrayList<>();
+			 abonnement.addAll(abonnementCorrelateurTrafficLight);
+			 abonnement.add(trafficLightIdList.get(i));
+			AbstractComponent.createComponent(CorrelateurtTraffic.class.getCanonicalName(), 
+					new Object[]{
+							correlateurId,
+							trafficLightIdList.get(i),
+							abonnement,
+							ruleBaseTrafficLight,CSIP1_URI
+					});
+		}
+		super.deploy();
+
 		
 	}
 

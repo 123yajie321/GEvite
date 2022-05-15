@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfFirefightingResource;
-import gevite.correlateur.CorrelatorStateI;
-import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventI;
-import gevite.correlateur.PompierCorrelatorStateI;
+import gevite.interfaces.CorrelatorStateI;
+import gevite.interfaces.PompierCorrelatorStateI;
+import gevite.interfaces.SamuCorrelatorStateI;
 
 public class BouchonPompierCorrelateur implements PompierCorrelatorStateI{
 

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
-import gevite.correlateur.CirculationCorrelatorStateI;
+import gevite.interfaces.CirculationCorrelatorStateI;
 
 
 public class BouchonCirculationCorrelateur implements CirculationCorrelatorStateI{

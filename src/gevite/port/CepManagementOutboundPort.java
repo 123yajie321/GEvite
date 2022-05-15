@@ -3,7 +3,12 @@ package gevite.port;
 import fr.sorbonne_u.components.ComponentI;
 import fr.sorbonne_u.components.interfaces.RequiredCI;
 import fr.sorbonne_u.components.ports.AbstractOutboundPort;
-import gevite.cep.CEPBusManagementCI;
+import gevite.interfaces.CEPBusManagementCI;
+/**
+ * The class <code>CepManagementOutboundPort</code> implements an outbound port for the
+ * <code>CEPBusManagementCI</code> component interface.
+ * @author	Yajie LIU, Zimeng ZHANG
+ */
 
 public class CepManagementOutboundPort extends AbstractOutboundPort implements CEPBusManagementCI {
 

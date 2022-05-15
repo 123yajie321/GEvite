@@ -2,7 +2,6 @@ package gevite.evenement.atomique.samu;
 
 import java.io.Serializable;
 import java.time.LocalTime;
-import java.util.HashMap;
 
 import gevite.evenement.atomique.AtomicEvent;
 

@@ -2,17 +2,25 @@ package gevite.plugin;
 
 import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
-import gevite.cep.EventEmissionCI;
-import gevite.cep.EventEmissionImplementationCI;
-import gevite.cepbus.CEPBus;
-import gevite.cepbus.CepEventRecieveInboundPort;
-import gevite.cepbus.PluginCepEventRecieveInboundPort;
 import gevite.evenement.EventI;
+import gevite.interfaces.EventEmissionCI;
+import gevite.interfaces.EventEmissionImplementationI;
+import gevite.port.CepEventRecieveInboundPortForPlugin;
+
+/**
+ * The class <code>PluginEmissionIn</code> implements the the CepBus component side  plug-in
+ * for the <code>EventEmissionCI</code> component interface and associated ports and
+ * connectors.
+ *    
+ * @author Yajie LIU, Zimeng ZHANG
+ */
+
+
 
 public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 	private static final long serialVersionUID=1L;
 	
-	protected PluginCepEventRecieveInboundPort receivePluginInboundPort;
+	protected CepEventRecieveInboundPortForPlugin receivePluginInboundPort;
 	protected String PortUri; 
 	
 	public PluginEmissionIn(String uri) {
@@ -27,11 +35,9 @@ public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 	
 	@Override
 	public void initialise() throws Exception{
-		//this.addRequiredInterface(ReflectionCI.class);
-		//ReflectionOutboundPort  rop= new ReflectionOutboundPort(this.getOwner());
 		super.initialise();
 		this.addOfferedInterface(EventEmissionCI.class);
-		this.receivePluginInboundPort = new PluginCepEventRecieveInboundPort(PortUri,this.getPluginURI(),this.getOwner());
+		this.receivePluginInboundPort = new CepEventRecieveInboundPortForPlugin(PortUri,this.getPluginURI(),this.getOwner());
 		this.receivePluginInboundPort.publishPort();
 }
 	@Override
@@ -44,14 +50,7 @@ public class PluginEmissionIn extends AbstractPlugin implements EventEmissionCI{
 	@Override
 	public void sendEvent(String emitterURI, EventI event) throws Exception {
 	
-		/*
-		this.getOwner().handleRequest(
-				cep -> {	((CEPBus)cep).
-									recieveEvent(emitterURI, event);;
-						return null;
-					 });
-					 */
-		((EventEmissionImplementationCI)this.getOwner()).sendEvent(emitterURI, event);;
+		((EventEmissionImplementationI)this.getOwner()).sendEvent(emitterURI, event);;
 	
 	}
 

@@ -2,27 +2,34 @@ package gevite.plugin;
 
 import fr.sorbonne_u.components.AbstractPlugin;
 import fr.sorbonne_u.components.ComponentI;
-import gevite.cep.ActionExecutionCI;
-import gevite.cep.EventEmissionCI;
-import gevite.connector.ConnectorCorrelateurExecuteurPlugin;
-import gevite.connector.ConnectorEmitterSend;
-import gevite.connector.ConnectorEmitterSendPlugin;
-import gevite.correlateur.CorrelateurActionExecutionOutboundPort;
-import gevite.emitteur.EmitterSendOutboundPort;
+import gevite.connector.ConnectorCorrelateurExecuteur;
+import gevite.connector.ConnectorEventEmission;
+import gevite.interfaces.ActionExecutionCI;
+import gevite.interfaces.EventEmissionCI;
+import gevite.port.ActionExecutionOutboundPort;
+import gevite.port.SendEventOutboundPort;
+
+/**
+ * The class <code>PluginActionExecuteOut</code> implements the the client side  plug-in
+ * for the <code>ActionExecutionCI</code> component interface and associated ports and
+ * connectors.
+ *    
+ * @author Yajie LIU, Zimeng ZHANG
+ */
 
 public class PluginActionExecuteOut extends AbstractPlugin{
 	
 	private static final long serialVersionUID=1L;
 	protected String inboundPortUri;
 
-	protected CorrelateurActionExecutionOutboundPort caeop;
+	protected ActionExecutionOutboundPort caeop;
 	
 	@Override
 	public void	installOn(ComponentI owner) throws Exception{
 		super.installOn(owner);
 		
 		this.addRequiredInterface(ActionExecutionCI.class);
-		this.caeop = new CorrelateurActionExecutionOutboundPort(this.getOwner());
+		this.caeop = new ActionExecutionOutboundPort(this.getOwner());
 		this.caeop.publishPort();
 		
 	}
@@ -33,12 +40,10 @@ public class PluginActionExecuteOut extends AbstractPlugin{
 	
 	@Override
 	public void initialise() throws Exception{
-		//this.addRequiredInterface(ReflectionCI.class);
-		//ReflectionOutboundPort  rop= new ReflectionOutboundPort(this.getOwner());
 		this.getOwner().doPortConnection(
 				this.caeop.getPortURI(),
 				this.inboundPortUri, 
-				ConnectorCorrelateurExecuteurPlugin.class.getCanonicalName());
+				ConnectorCorrelateurExecuteur.class.getCanonicalName());
 		
 		super.initialise();
 	}
@@ -46,7 +51,6 @@ public class PluginActionExecuteOut extends AbstractPlugin{
 	@Override
 	public void finalise() throws Exception {		
 		this.getOwner().doPortDisconnection(caeop.getPortURI());
-		//super.finalise();
 	}
 	
 	@Override

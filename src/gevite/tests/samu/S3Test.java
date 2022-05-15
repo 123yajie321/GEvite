@@ -11,10 +11,10 @@ import org.junit.jupiter.api.Test;
 
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfHealthAlarm;
-import gevite.correlateur.CorrelatorStateI;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
 import gevite.evenement.atomique.samu.AlarmeSante;
+import gevite.interfaces.CorrelatorStateI;
 import gevite.rule.samu.S3;
 import gevite.tests.BouchonHealthCorrelateur;
 

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 import fr.sorbonne_u.cps.smartcity.grid.AbsolutePosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfSAMURessources;
-import gevite.correlateur.SamuCorrelatorStateI;
 import gevite.evenement.EventI;
+import gevite.interfaces.SamuCorrelatorStateI;
 
 public class BouchonHealthCorrelateur implements SamuCorrelatorStateI{
 

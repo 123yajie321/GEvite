@@ -1,8 +1,17 @@
 
 package gevite.correlateur;
 
-
-
+/**
+ * The class <code>CorrelateurtTraffic</code> implements a component that can
+ * send and receive events, demand l'executor traffic Light connected to execute actions
+ * 
+ *  <p>
+ * The component implements the {@code CirculationCorrelatorStateI} interface
+ * to verify the correlate condition,trigger demand of execution action
+ * </p>
+ *    
+ * @author Yajie LIU, Zimeng ZHANG
+ */
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,15 +24,15 @@ import fr.sorbonne_u.cps.smartcity.SmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.descriptions.AbstractSmartCityDescriptor;
 import fr.sorbonne_u.cps.smartcity.grid.IntersectionPosition;
 import fr.sorbonne_u.cps.smartcity.interfaces.TypeOfTrafficLightPriority;
+import gevite.CEPBus;
 import gevite.actions.TrafficLightActions;
-import gevite.cep.ActionExecutionCI;
-import gevite.cep.CEPBusManagementCI;
-import gevite.cep.EventEmissionCI;
-import gevite.cep.EventReceptionCI;
-import gevite.cepbus.CEPBus;
-import gevite.connector.ConnectorCorrelateurCepServices;
 import gevite.evenement.EventBase;
 import gevite.evenement.EventI;
+import gevite.interfaces.ActionExecutionCI;
+import gevite.interfaces.CEPBusManagementCI;
+import gevite.interfaces.CirculationCorrelatorStateI;
+import gevite.interfaces.EventEmissionCI;
+import gevite.interfaces.EventReceptionCI;
 import gevite.plugin.PluginActionExecuteOut;
 import gevite.plugin.PluginEmissionOut;
 import gevite.rule.RuleBase;
@@ -40,46 +49,10 @@ public class CorrelateurtTraffic extends AbstractCorrelateur implements Circulat
 	}
 	
 	
-	/*
 
-	@Override
-	public boolean estAvantDestination(Serializable destination) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
-
-	@Override
-	public void passerIntersectionN(Serializable priorite) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-	@Override
-	public boolean estApresDestination(Serializable destination) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	*/
 
 	@Override
 	public void changePriority(TypeOfTrafficLightPriority p,IntersectionPosition position) throws Exception {
-		int index = 0;
-		Iterator<IntersectionPosition> trafficLightsIterator =
-				SmartCityDescriptor.createTrafficLightPositionIterator();
-		
-	
-		/*
-		while (trafficLightsIterator.hasNext()) {
-			if(trafficLightsIterator.next().equals(position)) {
-				break;
-			}
-			index++;
-		}
-		*/
 		TrafficLightActions traffic=TrafficLightActions.changePriority;
 		this.caeop.executeAction(traffic, new Serializable[] {p}); 
 		
@@ -87,7 +60,27 @@ public class CorrelateurtTraffic extends AbstractCorrelateur implements Circulat
 
 
 
+	/* pas encore implemente
 
+	@Override
+	public boolean estAvantDestination(Serializable destination) {
+		
+		return false;
+	}
+
+	@Override
+	public void passerIntersectionN(Serializable priorite) {
+		
+		
+	}
+
+
+	@Override
+	public boolean estApresDestination(Serializable destination) {
+
+		return false;
+	}
+	*/
 	
 	
 	
